@@ -1,0 +1,99 @@
+﻿
+@{
+    Layout = null;
+    var title = "使用記錄查詢";
+
+    var selItem_lbl_cmb1 = (List<SelectListItem>)ViewBag.selItem_lbl_cmb1;
+    var selItem_value_appSysId = (List<SelectListItem>)ViewBag.selItem_value_appSysId;
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    @*<link href="~/Content/themes/default/easyui.css" rel="stylesheet" />*@
+    @*<link href="~/Content/themes/bootstrap/easyui.css" rel="stylesheet" />*@
+    <link href="~/Content/themes/gray/easyui.css" rel="stylesheet" />
+    <link href="~/Content/themes/icon.css" rel="stylesheet" />
+
+    <link href="~/Content/ZhCss1.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-1.11.3.min.js"></script>
+    <script src="~/Scripts/jquery.easyui-1.4.5.min.js"></script>
+    <script src="~/Scripts/locale/easyui-lang-zh_TW.js"></script>
+    <script src="~/Scripts/ZhEeasyUI-01.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#dg').datagrid('options').url = "/S02010/GetGridJSON";
+        });
+
+        function btnQuery() {
+            $("#dg").datagrid("load", {
+                "lbl_cmb1": $("#lbl_cmb1").combobox("getValue"),
+                "value_cmb1": $("#value_cmb1").textbox("getValue"),
+                "value_appSysId": $("#value_appSysId").combobox("getValue"),
+                "value_date1": $("#value_date1").datetimebox("getValue"),
+                "value_date2": $("#value_date2").datetimebox("getValue")
+            })
+        }
+
+    </script>
+
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei';
+            background-color: white;
+        }
+
+        .datagrid-cell {
+            font-size: 14px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body id="body" class="easyui-layout">
+    <div id="divQuery" style="height: 100px; padding:10px;" data-options="region:'north',title:'Condition',split:true">
+        <table>
+            <tr>
+                <td width="250">
+                    帳號類型：
+                    @Html.DropDownList("value_appSysId", selItem_value_appSysId, null, new { @class = "easyui-combobox", editable = "false", style = "width: 150px;height:30px;" })
+                </td>
+                <td width="250">
+                    @Html.DropDownList("lbl_cmb1", selItem_lbl_cmb1, null, new { id = "lbl_cmb1", @class = "easyui-combobox", editable = "false", style = "width:90px; height:30px;" })
+                    <input id="value_cmb1" name="value_cmb1" class="easyui-textbox" style="width:120px;height:30px;" />
+                </td>
+                <td width="250">啟始時間&nbsp;&nbsp;<input id="value_date1" class="easyui-datetimebox" name="value_date1" value="@DateTime.Now.ToString("yyyy-MM-dd 00:00:00")" style="height:30px;" required /></td>
+                <td width="250">結束時間&nbsp;&nbsp;<input id="value_date2" class="easyui-datetimebox" name="value_date2" value="@DateTime.Now.ToString("yyyy-MM-dd 23:59:59")" style="height:30px;" required /></td>
+                <td width="250"><a href="javascript:void(0)" id="btnQuery" name="btnQuery" class="easyui-linkbutton" iconCls="icon-search" style="height:30px;" onclick="btnQuery()">Search</a></td>
+            </tr>
+        </table>
+
+
+    </div>
+    <div data-options="region:'center',title:'@title',split:true">
+        <table id="dg" class="easyui-datagrid" toolbar="#toolbar" style="width:auto;" method="post" fit="true"
+               pagination="true" pagesize="50" rownumbers="true" singleselect="true">
+            <thead>
+                <tr>
+                    <th field="actSerial" sortable="true" editor="text" align="center">序號</th>
+                    <th field="userId" sortable="true" editor="text">帳號</th>
+                    <th field="userName" sortable="true" editor="text">姓名</th>
+                    <th field="userTitle" sortable="true" editor="text">職稱</th>
+                    <th field="clientIp" sortable="true" editor="text">IP</th>
+                    <th field="creatTime" sortable="true" editor="text">登入時間</th>
+                    <th field="statusName" sortable="true" editor="text">系統</th>
+                    <th field="platform" sortable="true" editor="text">裝置平台</th>
+                    <th field="model" sortable="true" editor="text">版本型號</th>
+                    <th field="UUID" sortable="true" editor="text">UUID</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,304 @@
+﻿
+@{
+    Layout = null;
+    var title = "Web Morrison ePOD App";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    <link href="~/Scripts/SB_Admin2/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/dist/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/morrisjs/morris.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Scripts/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.css" rel="stylesheet" />
+    <link href="~/Content/ZhCss2.css" rel="stylesheet" />
+    <link href="~/Vender/T30/Carline.css" rel="stylesheet" />
+
+    <script src="~/Scripts/SB_Admin2/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/raphael/raphael.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/morrisjs/morris.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/data/morris-data.js"></script>
+    <script src="~/Scripts/SB_Admin2/js/sb-admin-2.js"></script>
+    <script src="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.min.js"></script>
+    <script src="~/Vender/language/language.js"></script>
+
+    <script>
+        var webTicket = '@ViewBag.webTicket';
+        var paramPass = new Object();
+
+        $(document).ready(function () {
+            initData();
+            $('body').fadeIn('slow');
+        });
+
+
+        function initData() {
+            var removePosition = window.location.href.lastIndexOf('?') + 1;
+            var paramStr1 = window.location.href.substr(removePosition, window.location.href.length - removePosition);
+            var paramStr2 = paramStr1.split('&');
+            for (var i = 0; i < paramStr2.length; i++) {
+                var param = paramStr2[i].split('=');
+                paramPass[param[0]] = param[1];
+            }
+
+
+            $("#viewPODDiv").on("click", function () {
+                window.location = '/MorrisonWEB/T19?bol_no=' + paramPass["bol_no"] + '&usePage=T16';
+            })
+
+            $('#T16_lbl_title').html(paramPass['bol_no']);
+
+            //if (paramPass['taskStatus'] == '25') {
+            //    $('#btnAction').show();
+            //} else {
+            //    $('#btnAction').hide();
+            //}
+
+            GetBolData();
+            checkDriver();
+        }
+
+        function GetBolData() {
+            var actRow = {
+                'bol_no': paramPass['bol_no'],
+                'ticket': webTicket,
+                'clientIp': '0123456789'
+            }
+
+            GetAjaxV3('Delivery/T16_GetBolData', actRow, true, function (data) {
+                if (data != "connError") {
+                    if (data.resultCode == "10") {
+                        for (var i = 0; i < data.rows.length; i++) {
+                            var dg = '';
+                            var row = data.rows[i];
+
+                            $('#destationName').html(row.shipName + ' ' + row.shipName2);
+                            $('#address').html(row.shipAddr + ' ' + row.shipAddr2);
+                            $('#apptc').html(row.appcnm);
+
+                            var scheduledDeliveryDate = '';
+                            scheduledDeliveryDate += row.schddeliv_d != '' ? row.schddeliv_d.substr(4, 2) + '/' + row.schddeliv_d.substr(6, 2) + '/' + row.schddeliv_d.substr(0, 4) + "&nbsp;&nbsp;" : '';
+                            scheduledDeliveryDate += row.schddeliv_t_from != '' ? row.schddeliv_t_from.substr(0, 2) + ':' + row.schddeliv_t_from.substr(2, 2) : '';
+                            scheduledDeliveryDate += row.schddeliv_t_to != '' ? '~' + row.schddeliv_t_to.substr(0, 2) + ':' + row.schddeliv_t_to.substr(2, 2) : '';
+
+                            $('#scheduledDeliveryDate').html(scheduledDeliveryDate);
+
+                            $('#plts').html(Math.round(row.plts));
+                            $('#totalBoxesQty').html(Math.round(row.totalBoxesQty));
+                            $('#wgt').html(Math.round(row.wgt));
+
+                            if (row.taskStatus == "30") $("#viewPODDiv").show();
+                        }
+
+                    } else {
+                        swal("Error", data.error, "warning");
+                    }
+                }
+            });
+        }
+
+
+        function btnAction() {
+            window.location = "/MorrisonWEB/T20?bol_no=" + paramPass["bol_no"] + "&type=30";
+            //$('#dlg').modal();
+
+            //$('#btnCamera').attr('onclick', 'btnCamera(\'' + paramPass['bol_no'] + '\')');
+            //$('#btnAlbum').attr('onclick', 'btnAlbum(\'' + paramPass['bol_no'] + '\')');
+            //$('#btnSign').attr('onclick', 'btnSign(\'' + paramPass['bol_no'] + '\',\'T16\')');
+        }
+
+        function checkDriver() {
+            var actRow = {
+                'dispatch_id': paramPass["dispatch_id"],
+                'ticket': webTicket,
+                'clientIp': '0123456789'
+            }
+            GetAjaxV3('Delivery/T15_GetDriverId', actRow, true, function (data) {
+                if (data != "connError") {
+                    if (data.resultCode == "10") {
+                        if (data.isDriver == "N") {
+                            //不是司機的話隱藏add按鈕
+                            $("#btnAction").hide();
+                        } else {
+                            //是司機然後狀態為25 顯示ADD按紐 是司機狀態不是25的話不顯示按紐
+                            if (paramPass['taskStatus'] == '25') {
+                                $('#btnAction').show();
+                            }
+                        }
+                    } else {
+                        swal("Error", data.error, "warning");
+                    }
+                }
+                else {
+                    sysConnFail();
+                }
+            })
+        }
+
+        function onBackDown() {
+            window.location = "/MorrisonWEB/T15?dispatch_id=" + paramPass["dispatch_id"];
+        }
+
+        function GetAjaxV3(route, actRow, async, returnData) {
+            /// <summary>
+            /// 一般呼叫API的ajax方法，該方法會出現Loading的dialog，但前提是async必須設定為true
+            /// </summary>
+            /// <param name="route">str，API的路徑，範例：API檔案名稱/API功能名稱</param>
+            /// <param name="actRow">obj，傳給API的參數</param>
+            /// <param name="async">bit，設定是否為非同步</param>
+            /// <param name="returnData">obj，無須寫任何方法</param>
+            /// <returns>執行完畢後回傳API的結果，若resultCode為10，表示API執行成功，若為01表示API執行過程中有誤，若回傳connError表示連線失敗</returns>
+
+            $.ajax({
+                url: "/api/" + route,
+                type: "POST",
+                dataType: "json",
+                data: actRow,
+                async: async,
+                headers: {
+                    'Authorization': 'Basic ' + btoa('zhtech:24369238')
+                },
+                success: function (data) {
+                    returnData(data);
+                },
+                error: function (data) {
+                    returnData("connError");
+                }
+            })
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0c4da2;
+            color: #fff;
+        }
+
+        table tr td {
+            padding: 10px;
+        }
+
+        .footer {
+            background-color: #0c4da2;
+            z-index: 10;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            min-width: 100%;
+            transition: opacity 0.5s ease-out;
+            /*width: 120%;*/
+            /*overflow: hidden;*/
+            /*height: 52px;*/
+        }
+    </style>
+
+</head>
+
+<body style="font-family:'Microsoft JhengHei';">
+    <div class="container">
+        <div class="row" style="height:60px;margin:0rem;">
+            <div class="col-12" style="height:60px;padding:0px;">
+
+                <div class="row" style="padding:15px 15px 10px 10px;font-size:18px">
+                    <table width="100%">
+                        <tr>
+                            <td width="10%" align="left" style="padding-left:20px;">
+                                <a href="javascript:void(0);" onclick="onBackDown()"><img src="~/images/s_backPage.png" width="25" /></a>
+                            </td>
+                            <td width="80%" align="center">
+                                <strong><span id="T16_lbl_title"></span></strong>
+                            </td>
+                            <td width="10%" align="right">
+                                <a href="#" id="btnAction" style="display:none;" onclick="btnAction();"><img src="~/images/icon_add.png" style="width:30px;padding-top:5px;" /></a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <hr style="border-bottom: 2px solid white;margin:10px 0px 10px 0px;">
+        <div class="row" style="padding:15px;">
+            <div class="col-12">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" style="background-color:#0c4da2;color:white;border-color:aliceblue;">
+                        <span id="T16_lbl_destinationName">Destination name</span><br />
+                        <span id="destationName"></span>
+                    </li>
+                    <li class="list-group-item" style="background-color:#0c4da2;color:white;border-color:aliceblue;">
+                        <span id="T16_lbl_address">Address</span><br />
+                        <span id="address"></span>
+                    </li>
+                    <li class="list-group-item" style="background-color:#0c4da2;color:white;border-color:aliceblue;">
+                        <span id="T16_lbl_apptc">APPT/C #</span><br />
+                        <span id="apptc" style="word-wrap: break-word;word-break: break-all;white-space: pre-wrap !important;"></span>
+                    </li>
+                    <li class="list-group-item" style="background-color:#0c4da2;color:white;border-color:aliceblue;">
+                        <span id="T16_lbl_scheduledDeliveryDate">Scheduled delivery date</span><br />
+                        <span id="scheduledDeliveryDate"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <hr style="border-bottom: 2px solid white;margin:10px 0px 10px 0px;">
+        <div class="row" style="padding:15px;">
+            <div class="col-12">
+                <div style="padding-bottom:10px;"><span id="T16_lbl_customerOrderInfo">● Customer Order Info.</span></div>
+                <table class="table-bordered" style="width:100%;color:white;">
+                    <tr>
+                        <td colspan="3" align="center" style="background-color:white;color:black;"><span id="T16_td_tableTitle">Grand Total</span></td>
+                    </tr>
+                    <tr>
+                        <td align="center" id="T16_td_plts">pallets</td>
+                        <td align="center" id="T16_td_totalBoxesQty">cartons</td>
+                        <td align="center" id="T16_td_wgt">Weight</td>
+                    </tr>
+                    <tr>
+                        <td align="center" id="plts"></td>
+                        <td align="center" id="totalBoxesQty"></td>
+                        <td align="center" id="wgt"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="footer" id="viewPODDiv" style="width:100%;display:none;">
+            <div class="col-12" style="height:50px;padding:0;bottom:0">
+                <div class="row" style="padding:0;bottom:0">
+                    <div class="col-12 justify-content-center align-self-center" style="text-align:center;color:white;bottom:0;width:100%;padding-top:5px;">
+                        <a style="bottom:0;width:100%;background-color:white;border-color:white;color:black;font-weight:bold;font-size:20px;" class="btn btn-primary" id="viewPOD"><span id="T16_btn_viewPOD">View POD</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="dlg" tabindex="-1" role="dialog" aria-labelledby="dlgTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="dlgTitle" style="color:black;">Submit POD</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="list-group list-group-flush">
+                            <a href="javascript:void(0);" class="list-group-item list-group-item-action"><span id="T16_btn_UploadPOD">Upload POD</span></a>
+                            <a href="javascript:void(0);" id="btnCamera" class="list-group-item list-group-item-action">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="T16_btn_Camera">Camera</span></a>
+                            <a href="javascript:void(0);" id="btnAlbum" class="list-group-item list-group-item-action">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="T16_btn_Album">Album</span></a>
+                            <a href="javascript:void(0);" id="btnSign" class="list-group-item list-group-item-action">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="T16_btn_sign">Add e-signature</span></a>
+                            <!--<a href="javascript:void(0);" class="list-group-item list-group-item-action">Upload POD</a>
+                            <a href="javascript:void(0);" id="btnCamera" class="list-group-item list-group-item-action">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Camera</a>
+                            <a href="javascript:void(0);" id="btnAlbum" class="list-group-item list-group-item-action">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Album</a>
+                            <a href="javascript:void(0);" id="btnSign" class="list-group-item list-group-item-action disabled">Add e-signature</a>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

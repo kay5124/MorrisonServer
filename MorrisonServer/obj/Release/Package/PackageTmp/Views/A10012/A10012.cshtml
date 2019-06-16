@@ -1,0 +1,241 @@
+﻿
+@{
+    Layout = null;
+    var title = "群組設定";
+
+    var selItem_lbl_cmb1 = (List<SelectListItem>)ViewBag.selItem_lbl_cmb1;
+    var selItem_lbl_cmb2 = (List<SelectListItem>)ViewBag.selItem_lbl_cmb2;
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    <link href="~/Scripts/SB_Admin2/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/dist/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/morrisjs/morris.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Scripts/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.css" rel="stylesheet" />
+    <link href="~/Content/ZhCss2.css" rel="stylesheet" />
+
+    <script src="~/Scripts/SB_Admin2/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/raphael/raphael.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/morrisjs/morris.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/data/morris-data.js"></script>
+    <script src="~/Scripts/SB_Admin2/js/sb-admin-2.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-TW.js"></script>
+    <script src="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.min.js"></script>
+    <script src="~/Vender/zhScript/zhTable_angus.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#zhTb1').zhTable({
+                '_rows': 20,
+                '_columns': [
+                    { 'id': 'appGroupId', 'text': 'Group Id', 'sort': true },
+                    { 'id': 'appGroupName', 'text': 'Group Name', 'sort': true },
+                    { 'id': 'userCount', 'text': 'Number of group', 'sort': true },
+                    { 'id': 'statusName', 'text': 'Status', 'sort': true },
+                    { 'id': 'memo', 'text': 'Memo', 'sort': true },
+                    { 'id': 'creatUser', 'text': 'CreatUser', 'sort': true },
+                    { 'id': 'creatTime', 'text': 'CreatTime', 'sort': true },
+                    { 'id': 'actUser', 'text': 'ActUser', 'sort': true },
+                    { 'id': 'actUser', 'text': 'ActUser', 'sort': true },
+                    { 'id': 'btnEdit', 'text': 'Edit' }
+                ],
+                'url': '@ViewBag.ServerName' + '/A10012/GetGridJSON'
+            });
+
+            $('#zhTb2').zhTable({
+                '_rows': 20,
+                '_columns': [
+                    { 'id': 'isExist', 'text': '<input type="checkbox" id="chkAll"/>', 'type': 'checkbox', 'valueKey': 'sysUserId' },
+                    { 'id': 'sysUserId', 'text': 'sysUserId', 'sort': true },
+                    { 'id': 'userId', 'text': 'User Id', 'sort': true },
+                    { 'id': 'userName', 'text': 'User Name', 'sort': true }
+                ],
+                'url': '@ViewBag.ServerName' + '/A10012/GetGridJSONDetail'
+            });
+        });
+
+
+        function btnQuery() {
+            $('#zhTb1').zhTable('loadData',{
+                "lbl_cmb1": $("#lbl_cmb1").val(),
+                "value_cmb1": $("#value_cmb1").val()
+            });
+        }
+
+        function btnEdit(pk) {
+            if (pk == '' || pk == null || pk == undefined) {
+                return;
+            }
+
+            $('#appGroupId').val(pk);
+
+            //開啟dlg
+            $('#dlg').modal();
+
+
+            $('#zhTb2').zhTable('loadData', {
+                "appGroupId": pk,
+                "lbl_cmb2": $("#lbl_cmb2").val(),
+                "value_cmb2": $("#value_cmb2").val(),
+            }, false);
+        }
+
+        function btnSave() {
+            var objCheck=$('input[name="isExist_d"]');
+            var chkAll = '';
+            var chk = '';
+            for (var i = 0 ; i < objCheck.length; i++) {
+                if (objCheck[i].checked) {
+                    chkAll += objCheck[i].value + ',';
+                    chk += objCheck[i].value + ',';
+                } else {
+                    chkAll += objCheck[i].value + ',';
+                }
+            }
+
+            if (chkAll != '') chkAll = chkAll.substr(0, chkAll.length - 1);
+            if (chk != '') chk = chk.substr(0, chk.length - 1);
+
+            var actRow = {
+                'appGroupId': $('#appGroupId').val(),
+                'chkAll': chkAll,
+                'chk': chk
+            }
+
+            $.ajax({
+                type: "POST",
+                url: '/A10012/ActSingle',
+
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({ "actRow": actRow }),
+
+                success: function (data) {
+                    if (data.resultCode == '10') {
+                        RowStatus = "Q";
+                        swal("Successful", 'Successful saving', 'success');
+                        //swal("訊息", '儲存成功', 'info');
+                        $('#zhTb1').zhTable('reload');
+                        $('#dlg').modal('toggle');
+                    }
+                    else {
+                        swal("Error", data.error, "warning");
+                    }
+                }
+            });
+        }
+
+        function btnQuery2() {
+            $('#zhTb2').zhTable('loadData', {
+                "appGroupId": $('#appGroupId').val(),
+                "lbl_cmb2": $("#lbl_cmb2").val(),
+                "value_cmb2": $("#value_cmb2").val(),
+            });
+        }
+
+    </script>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei';
+            background-color: white;
+        }
+
+        .datagrid-cell {
+            font-size: 14px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body style="font-family:'Microsoft JhengHei';">
+    <div id="page-wrapper" style="padding:30px;margin:0px;">
+        <div class="panel panel-default">
+            <div class="panel-heading">Condition</div>
+            <div class="panel-body">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        @Html.DropDownList("lbl_cmb1", selItem_lbl_cmb1, null, new { id = "lbl_cmb1", Class = "form-control" })
+                        <input id="value_cmb1" name="value_cmb1" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <button id="btnQuery" onclick="btnQuery()" class="btn btn-default">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Result</div>
+            <div class="panel-body">
+                <div id="zhTb1">
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="dlg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="dlgTitle">Set group pushers</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Condition</div>
+                            <div class="panel-body">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.DropDownList("lbl_cmb2", selItem_lbl_cmb2, null, new { id = "lbl_cmb2", Class = "form-control" })
+                                        <input id="value_cmb2" name="value_cmb2" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <button id="btnQuery2" onclick="btnQuery2('Y')" class="btn btn-default">Seatch</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Result</div>
+                            <div class="panel-body">
+                                <input type="hidden" id="appGroupId" />
+                                <div id="zhTb2">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="btnSave" onclick="btnSave()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Modal-->
+    </div>
+</body>
+</html>

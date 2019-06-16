@@ -1,0 +1,2150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{52BE9F76-C7B8-452C-BA65-8D7CEEE22066}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MorrisonServer</RootNamespace>
+    <AssemblyName>MorrisonServer</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+    <TypeScriptToolsVersion>2.6</TypeScriptToolsVersion>
+    <Use64BitIISExpress />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AWSSDK, Version=2.3.55.2, Culture=neutral, PublicKeyToken=9f476d3089b52be3, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.2.3.55.2\lib\net45\AWSSDK.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Ghostscript.NET, Version=1.2.1.0, Culture=neutral, PublicKeyToken=f85051de34525b59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ghostscript.NET.1.2.1\lib\net40\Ghostscript.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.13\lib\itextsharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.0.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.0.6\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.DependencyCollector, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.2.0\lib\net45\Microsoft.AI.DependencyCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.PerfCounterCollector, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.2.2.0\lib\net45\Microsoft.AI.PerfCounterCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.ServerTelemetryChannel, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.2.2.0\lib\net45\Microsoft.AI.ServerTelemetryChannel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.Web, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Web.2.2.0\lib\net45\Microsoft.AI.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.WindowsServer, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.2.2.0\lib\net45\Microsoft.AI.WindowsServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.2.2.0\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NPOI, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="TimeZoneConverter, Version=2.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TimeZoneConverter.2.4.1\lib\net45\TimeZoneConverter.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="ZhClass">
+      <HintPath>RunDlls\ZhClass.dll</HintPath>
+    </Reference>
+    <Reference Include="ZhConfig">
+      <HintPath>RunDlls\ZhConfig.dll</HintPath>
+    </Reference>
+    <Reference Include="ZhWebClass, Version=2.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>RunDlls\ZhWebClass.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="PDF\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\HelpPage\ApiDescriptionExtensions.cs" />
+    <Compile Include="Areas\HelpPage\App_Start\HelpPageConfig.cs" />
+    <Compile Include="Areas\HelpPage\Controllers\HelpController.cs" />
+    <Compile Include="Areas\HelpPage\HelpPageAreaRegistration.cs" />
+    <Compile Include="Areas\HelpPage\HelpPageConfigurationExtensions.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\CollectionModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ComplexTypeModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\DictionaryModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\EnumTypeModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\EnumValueDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\IModelDocumentationProvider.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\KeyValuePairModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelDescriptionGenerator.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelNameAttribute.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelNameHelper.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ParameterAnnotation.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ParameterDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\SimpleTypeModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\Models\HelpPageApiModel.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\HelpPageSampleGenerator.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\HelpPageSampleKey.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\ImageSample.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\InvalidSample.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\ObjectGenerator.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
+    <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Controllers\A10012controller.cs" />
+    <Compile Include="Controllers\A20030Controller.cs" />
+    <Compile Include="Controllers\A20020Controller.cs" />
+    <Compile Include="Controllers\A20040Controller.cs" />
+    <Compile Include="Controllers\A30020Controller.cs" />
+    <Compile Include="Controllers\A30010Controller.cs" />
+    <Compile Include="Controllers\A20010Controller.cs" />
+    <Compile Include="Controllers\api\DeliveryController.cs" />
+    <Compile Include="Controllers\old\A10060_oldController.cs" />
+    <Compile Include="Controllers\old\A10050_oldController.cs" />
+    <Compile Include="Controllers\old\A10030_oldController.cs" />
+    <Compile Include="Controllers\old\A10013_oldController.cs" />
+    <Compile Include="Controllers\old\A10011_oldcontroller.cs" />
+    <Compile Include="Controllers\old\A10012_oldcontroller.cs" />
+    <Compile Include="Controllers\A10030Controller.cs" />
+    <Compile Include="Controllers\A10060Controller.cs" />
+    <Compile Include="Controllers\api\NotificationController.cs" />
+    <Compile Include="Controllers\api\AngusController.cs" />
+    <Compile Include="Controllers\api\SampleController.cs" />
+    <Compile Include="Controllers\api\ZhSysController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\A10011controller.cs" />
+    <Compile Include="Controllers\old\S01020_oldController.cs" />
+    <Compile Include="Controllers\old\S02010_oldController.cs" />
+    <Compile Include="Controllers\old\S02020_oldController.cs" />
+    <Compile Include="Controllers\old\S01030_oldController.cs" />
+    <Compile Include="Controllers\old\S01050_oldController.cs" />
+    <Compile Include="Controllers\MorrisonWEBController.cs" />
+    <Compile Include="Controllers\T00010Controller.cs" />
+    <Compile Include="Controllers\S01020Controller.cs" />
+    <Compile Include="Controllers\S01030Controller.cs" />
+    <Compile Include="Controllers\old\A10040_oldController.cs" />
+    <Compile Include="Controllers\A10013Controller.cs" />
+    <Compile Include="Controllers\S01050Controller.cs" />
+    <Compile Include="Controllers\A10050Controller.cs" />
+    <Compile Include="Controllers\S02010Controller.cs" />
+    <Compile Include="Controllers\S02020Controller.cs" />
+    <Compile Include="Controllers\SystemController.cs" />
+    <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Angus.cs" />
+    <Compile Include="Models\api_Delivery.cs" />
+    <Compile Include="Models\Base.cs" />
+    <Compile Include="Models\CmbObjMD.cs" />
+    <Compile Include="Models\MEC_MethodMD.cs" />
+    <Compile Include="Models\NotiFactoryMD.cs" />
+    <Compile Include="Models\ZhWebClass_AngusV1.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\HelpPage\HelpPage.css" />
+    <Content Include="Content\bootstrap-social\bootstrap-social.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\bootstrap_css\bootstrap-responsive.min.css" />
+    <Content Include="Content\bootstrap_css\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap_css\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap_css\bootstrap.css" />
+    <Content Include="Content\bootstrap_css\bootstrap.min.css" />
+    <Content Include="Content\bs_grid-master\.gitignore" />
+    <Content Include="Content\bs_grid-master\jquery.bs_grid.bs2.css" />
+    <Content Include="Content\bs_grid-master\jquery.bs_grid.css" />
+    <Content Include="Content\bs_grid-master\jquery.bs_grid.js" />
+    <Content Include="Content\bs_grid-master\localization\el.bs2.js" />
+    <Content Include="Content\bs_grid-master\localization\el.js" />
+    <Content Include="Content\bs_grid-master\localization\en.bs2.js" />
+    <Content Include="Content\bs_grid-master\localization\en.js" />
+    <Content Include="Content\bs_grid-master\localization\ru.bs2.js" />
+    <Content Include="Content\bs_grid-master\localization\ru.js" />
+    <Content Include="Content\bs_grid-master\minified\jquery.bs_grid.bs2.min.css" />
+    <Content Include="Content\bs_grid-master\minified\jquery.bs_grid.min.css" />
+    <Content Include="Content\bs_grid-master\minified\jquery.bs_grid.min.js" />
+    <Content Include="Content\bs_grid-master\minified\localization\el.bs2.min.js" />
+    <Content Include="Content\bs_grid-master\minified\localization\el.min.js" />
+    <Content Include="Content\bs_grid-master\minified\localization\en.bs2.min.js" />
+    <Content Include="Content\bs_grid-master\minified\localization\en.min.js" />
+    <Content Include="Content\bs_grid-master\screenshots\sample1.png" />
+    <Content Include="Content\font-awesome\css\font-awesome.css" />
+    <Content Include="Content\font-awesome\css\font-awesome.min.css" />
+    <Content Include="Content\font-awesome\fonts\fontawesome-webfont.svg" />
+    <Content Include="Content\font-awesome\HELP-US-OUT.txt" />
+    <Content Include="Content\metisMenu\metisMenu.css" />
+    <Content Include="Content\metisMenu\metisMenu.min.css" />
+    <Content Include="Content\sb-admin\sb-admin-2.css" />
+    <Content Include="Content\sb-admin\sb-admin-2.min.css" />
+    <Content Include="Content\themes\black\accordion.css" />
+    <Content Include="Content\themes\black\calendar.css" />
+    <Content Include="Content\themes\black\combo.css" />
+    <Content Include="Content\themes\black\combobox.css" />
+    <Content Include="Content\themes\black\datagrid.css" />
+    <Content Include="Content\themes\black\datalist.css" />
+    <Content Include="Content\themes\black\datebox.css" />
+    <Content Include="Content\themes\black\dialog.css" />
+    <Content Include="Content\themes\black\easyui.css" />
+    <Content Include="Content\themes\black\filebox.css" />
+    <Content Include="Content\themes\black\images\accordion_arrows.png" />
+    <Content Include="Content\themes\black\images\blank.gif" />
+    <Content Include="Content\themes\black\images\calendar_arrows.png" />
+    <Content Include="Content\themes\black\images\combo_arrow.png" />
+    <Content Include="Content\themes\black\images\datagrid_icons.png" />
+    <Content Include="Content\themes\black\images\datebox_arrow.png" />
+    <Content Include="Content\themes\black\images\layout_arrows.png" />
+    <Content Include="Content\themes\black\images\linkbutton_bg.png" />
+    <Content Include="Content\themes\black\images\loading.gif" />
+    <Content Include="Content\themes\black\images\menu_arrows.png" />
+    <Content Include="Content\themes\black\images\messager_icons.png" />
+    <Content Include="Content\themes\black\images\pagination_icons.png" />
+    <Content Include="Content\themes\black\images\panel_tools.png" />
+    <Content Include="Content\themes\black\images\searchbox_button.png" />
+    <Content Include="Content\themes\black\images\slider_handle.png" />
+    <Content Include="Content\themes\black\images\spinner_arrows.png" />
+    <Content Include="Content\themes\black\images\tabs_icons.png" />
+    <Content Include="Content\themes\black\images\tree_icons.png" />
+    <Content Include="Content\themes\black\images\validatebox_warning.png" />
+    <Content Include="Content\themes\black\layout.css" />
+    <Content Include="Content\themes\black\linkbutton.css" />
+    <Content Include="Content\themes\black\menu.css" />
+    <Content Include="Content\themes\black\menubutton.css" />
+    <Content Include="Content\themes\black\messager.css" />
+    <Content Include="Content\themes\black\numberbox.css" />
+    <Content Include="Content\themes\black\pagination.css" />
+    <Content Include="Content\themes\black\panel.css" />
+    <Content Include="Content\themes\black\progressbar.css" />
+    <Content Include="Content\themes\black\propertygrid.css" />
+    <Content Include="Content\themes\black\searchbox.css" />
+    <Content Include="Content\themes\black\slider.css" />
+    <Content Include="Content\themes\black\spinner.css" />
+    <Content Include="Content\themes\black\splitbutton.css" />
+    <Content Include="Content\themes\black\switchbutton.css" />
+    <Content Include="Content\themes\black\tabs.css" />
+    <Content Include="Content\themes\black\textbox.css" />
+    <Content Include="Content\themes\black\tooltip.css" />
+    <Content Include="Content\themes\black\tree.css" />
+    <Content Include="Content\themes\black\validatebox.css" />
+    <Content Include="Content\themes\black\window.css" />
+    <Content Include="Content\themes\bootstrap\accordion.css" />
+    <Content Include="Content\themes\bootstrap\calendar.css" />
+    <Content Include="Content\themes\bootstrap\combo.css" />
+    <Content Include="Content\themes\bootstrap\combobox.css" />
+    <Content Include="Content\themes\bootstrap\datagrid.css" />
+    <Content Include="Content\themes\bootstrap\datalist.css" />
+    <Content Include="Content\themes\bootstrap\datebox.css" />
+    <Content Include="Content\themes\bootstrap\dialog.css" />
+    <Content Include="Content\themes\bootstrap\easyui.css" />
+    <Content Include="Content\themes\bootstrap\filebox.css" />
+    <Content Include="Content\themes\bootstrap\images\accordion_arrows.png" />
+    <Content Include="Content\themes\bootstrap\images\blank.gif" />
+    <Content Include="Content\themes\bootstrap\images\calendar_arrows.png" />
+    <Content Include="Content\themes\bootstrap\images\combo_arrow.png" />
+    <Content Include="Content\themes\bootstrap\images\datagrid_icons.png" />
+    <Content Include="Content\themes\bootstrap\images\datebox_arrow.png" />
+    <Content Include="Content\themes\bootstrap\images\layout_arrows.png" />
+    <Content Include="Content\themes\bootstrap\images\linkbutton_bg.png" />
+    <Content Include="Content\themes\bootstrap\images\loading.gif" />
+    <Content Include="Content\themes\bootstrap\images\menu_arrows.png" />
+    <Content Include="Content\themes\bootstrap\images\messager_icons.png" />
+    <Content Include="Content\themes\bootstrap\images\pagination_icons.png" />
+    <Content Include="Content\themes\bootstrap\images\panel_tools.png" />
+    <Content Include="Content\themes\bootstrap\images\searchbox_button.png" />
+    <Content Include="Content\themes\bootstrap\images\slider_handle.png" />
+    <Content Include="Content\themes\bootstrap\images\spinner_arrows.png" />
+    <Content Include="Content\themes\bootstrap\images\tabs_icons.png" />
+    <Content Include="Content\themes\bootstrap\images\tree_icons.png" />
+    <Content Include="Content\themes\bootstrap\images\validatebox_warning.png" />
+    <Content Include="Content\themes\bootstrap\layout.css" />
+    <Content Include="Content\themes\bootstrap\linkbutton.css" />
+    <Content Include="Content\themes\bootstrap\menu.css" />
+    <Content Include="Content\themes\bootstrap\menubutton.css" />
+    <Content Include="Content\themes\bootstrap\messager.css" />
+    <Content Include="Content\themes\bootstrap\numberbox.css" />
+    <Content Include="Content\themes\bootstrap\pagination.css" />
+    <Content Include="Content\themes\bootstrap\panel.css" />
+    <Content Include="Content\themes\bootstrap\progressbar.css" />
+    <Content Include="Content\themes\bootstrap\propertygrid.css" />
+    <Content Include="Content\themes\bootstrap\searchbox.css" />
+    <Content Include="Content\themes\bootstrap\slider.css" />
+    <Content Include="Content\themes\bootstrap\spinner.css" />
+    <Content Include="Content\themes\bootstrap\splitbutton.css" />
+    <Content Include="Content\themes\bootstrap\switchbutton.css" />
+    <Content Include="Content\themes\bootstrap\tabs.css" />
+    <Content Include="Content\themes\bootstrap\textbox.css" />
+    <Content Include="Content\themes\bootstrap\tooltip.css" />
+    <Content Include="Content\themes\bootstrap\tree.css" />
+    <Content Include="Content\themes\bootstrap\validatebox.css" />
+    <Content Include="Content\themes\bootstrap\window.css" />
+    <Content Include="Content\themes\color.css" />
+    <Content Include="Content\themes\default\accordion.css" />
+    <Content Include="Content\themes\default\calendar.css" />
+    <Content Include="Content\themes\default\combo.css" />
+    <Content Include="Content\themes\default\combobox.css" />
+    <Content Include="Content\themes\default\datagrid.css" />
+    <Content Include="Content\themes\default\datalist.css" />
+    <Content Include="Content\themes\default\datebox.css" />
+    <Content Include="Content\themes\default\dialog.css" />
+    <Content Include="Content\themes\default\easyui.css" />
+    <Content Include="Content\themes\default\filebox.css" />
+    <Content Include="Content\themes\default\images\accordion_arrows.png" />
+    <Content Include="Content\themes\default\images\blank.gif" />
+    <Content Include="Content\themes\default\images\calendar_arrows.png" />
+    <Content Include="Content\themes\default\images\combo_arrow.png" />
+    <Content Include="Content\themes\default\images\datagrid_icons.png" />
+    <Content Include="Content\themes\default\images\datebox_arrow.png" />
+    <Content Include="Content\themes\default\images\layout_arrows.png" />
+    <Content Include="Content\themes\default\images\linkbutton_bg.png" />
+    <Content Include="Content\themes\default\images\loading.gif" />
+    <Content Include="Content\themes\default\images\menu_arrows.png" />
+    <Content Include="Content\themes\default\images\messager_icons.png" />
+    <Content Include="Content\themes\default\images\pagination_icons.png" />
+    <Content Include="Content\themes\default\images\panel_tools.png" />
+    <Content Include="Content\themes\default\images\searchbox_button.png" />
+    <Content Include="Content\themes\default\images\slider_handle.png" />
+    <Content Include="Content\themes\default\images\spinner_arrows.png" />
+    <Content Include="Content\themes\default\images\tabs_icons.png" />
+    <Content Include="Content\themes\default\images\tree_icons.png" />
+    <Content Include="Content\themes\default\images\validatebox_warning.png" />
+    <Content Include="Content\themes\default\layout.css" />
+    <Content Include="Content\themes\default\linkbutton.css" />
+    <Content Include="Content\themes\default\menu.css" />
+    <Content Include="Content\themes\default\menubutton.css" />
+    <Content Include="Content\themes\default\messager.css" />
+    <Content Include="Content\themes\default\numberbox.css" />
+    <Content Include="Content\themes\default\pagination.css" />
+    <Content Include="Content\themes\default\panel.css" />
+    <Content Include="Content\themes\default\progressbar.css" />
+    <Content Include="Content\themes\default\propertygrid.css" />
+    <Content Include="Content\themes\default\searchbox.css" />
+    <Content Include="Content\themes\default\slider.css" />
+    <Content Include="Content\themes\default\spinner.css" />
+    <Content Include="Content\themes\default\splitbutton.css" />
+    <Content Include="Content\themes\default\switchbutton.css" />
+    <Content Include="Content\themes\default\tabs.css" />
+    <Content Include="Content\themes\default\textbox.css" />
+    <Content Include="Content\themes\default\tooltip.css" />
+    <Content Include="Content\themes\default\tree.css" />
+    <Content Include="Content\themes\default\validatebox.css" />
+    <Content Include="Content\themes\default\window.css" />
+    <Content Include="Content\themes\gray\accordion.css" />
+    <Content Include="Content\themes\gray\calendar.css" />
+    <Content Include="Content\themes\gray\combo.css" />
+    <Content Include="Content\themes\gray\combobox.css" />
+    <Content Include="Content\themes\gray\datagrid.css" />
+    <Content Include="Content\themes\gray\datalist.css" />
+    <Content Include="Content\themes\gray\datebox.css" />
+    <Content Include="Content\themes\gray\dialog.css" />
+    <Content Include="Content\themes\gray\easyui.css" />
+    <Content Include="Content\themes\gray\filebox.css" />
+    <Content Include="Content\themes\gray\images\accordion_arrows.png" />
+    <Content Include="Content\themes\gray\images\blank.gif" />
+    <Content Include="Content\themes\gray\images\calendar_arrows.png" />
+    <Content Include="Content\themes\gray\images\combo_arrow.png" />
+    <Content Include="Content\themes\gray\images\datagrid_icons.png" />
+    <Content Include="Content\themes\gray\images\datebox_arrow.png" />
+    <Content Include="Content\themes\gray\images\layout_arrows.png" />
+    <Content Include="Content\themes\gray\images\linkbutton_bg.png" />
+    <Content Include="Content\themes\gray\images\loading.gif" />
+    <Content Include="Content\themes\gray\images\menu_arrows.png" />
+    <Content Include="Content\themes\gray\images\messager_icons.png" />
+    <Content Include="Content\themes\gray\images\pagination_icons.png" />
+    <Content Include="Content\themes\gray\images\panel_tools.png" />
+    <Content Include="Content\themes\gray\images\searchbox_button.png" />
+    <Content Include="Content\themes\gray\images\slider_handle.png" />
+    <Content Include="Content\themes\gray\images\spinner_arrows.png" />
+    <Content Include="Content\themes\gray\images\tabs_icons.png" />
+    <Content Include="Content\themes\gray\images\tree_icons.png" />
+    <Content Include="Content\themes\gray\images\validatebox_warning.png" />
+    <Content Include="Content\themes\gray\layout.css" />
+    <Content Include="Content\themes\gray\linkbutton.css" />
+    <Content Include="Content\themes\gray\menu.css" />
+    <Content Include="Content\themes\gray\menubutton.css" />
+    <Content Include="Content\themes\gray\messager.css" />
+    <Content Include="Content\themes\gray\numberbox.css" />
+    <Content Include="Content\themes\gray\pagination.css" />
+    <Content Include="Content\themes\gray\panel.css" />
+    <Content Include="Content\themes\gray\progressbar.css" />
+    <Content Include="Content\themes\gray\propertygrid.css" />
+    <Content Include="Content\themes\gray\searchbox.css" />
+    <Content Include="Content\themes\gray\slider.css" />
+    <Content Include="Content\themes\gray\spinner.css" />
+    <Content Include="Content\themes\gray\splitbutton.css" />
+    <Content Include="Content\themes\gray\switchbutton.css" />
+    <Content Include="Content\themes\gray\tabs.css" />
+    <Content Include="Content\themes\gray\textbox.css" />
+    <Content Include="Content\themes\gray\tooltip.css" />
+    <Content Include="Content\themes\gray\tree.css" />
+    <Content Include="Content\themes\gray\validatebox.css" />
+    <Content Include="Content\themes\gray\window.css" />
+    <Content Include="Content\themes\icon.css" />
+    <Content Include="Content\themes\icons\back.png" />
+    <Content Include="Content\themes\icons\blank.gif" />
+    <Content Include="Content\themes\icons\cancel.png" />
+    <Content Include="Content\themes\icons\clear.png" />
+    <Content Include="Content\themes\icons\cut.png" />
+    <Content Include="Content\themes\icons\edit_add.png" />
+    <Content Include="Content\themes\icons\edit_remove.png" />
+    <Content Include="Content\themes\icons\filesave.png" />
+    <Content Include="Content\themes\icons\filter.png" />
+    <Content Include="Content\themes\icons\help.png" />
+    <Content Include="Content\themes\icons\large_chart.png" />
+    <Content Include="Content\themes\icons\large_clipart.png" />
+    <Content Include="Content\themes\icons\large_picture.png" />
+    <Content Include="Content\themes\icons\large_shapes.png" />
+    <Content Include="Content\themes\icons\large_smartart.png" />
+    <Content Include="Content\themes\icons\lock.png" />
+    <Content Include="Content\themes\icons\man.png" />
+    <Content Include="Content\themes\icons\mini_add.png" />
+    <Content Include="Content\themes\icons\mini_edit.png" />
+    <Content Include="Content\themes\icons\mini_refresh.png" />
+    <Content Include="Content\themes\icons\more.png" />
+    <Content Include="Content\themes\icons\no.png" />
+    <Content Include="Content\themes\icons\ok.png" />
+    <Content Include="Content\themes\icons\pencil.png" />
+    <Content Include="Content\themes\icons\print.png" />
+    <Content Include="Content\themes\icons\redo.png" />
+    <Content Include="Content\themes\icons\reload.png" />
+    <Content Include="Content\themes\icons\search.png" />
+    <Content Include="Content\themes\icons\sum.png" />
+    <Content Include="Content\themes\icons\tip.png" />
+    <Content Include="Content\themes\icons\undo.png" />
+    <Content Include="Content\themes\material\accordion.css" />
+    <Content Include="Content\themes\material\calendar.css" />
+    <Content Include="Content\themes\material\combo.css" />
+    <Content Include="Content\themes\material\combobox.css" />
+    <Content Include="Content\themes\material\datagrid.css" />
+    <Content Include="Content\themes\material\datalist.css" />
+    <Content Include="Content\themes\material\datebox.css" />
+    <Content Include="Content\themes\material\dialog.css" />
+    <Content Include="Content\themes\material\easyui.css" />
+    <Content Include="Content\themes\material\filebox.css" />
+    <Content Include="Content\themes\material\images\accordion_arrows.png" />
+    <Content Include="Content\themes\material\images\blank.gif" />
+    <Content Include="Content\themes\material\images\calendar_arrows.png" />
+    <Content Include="Content\themes\material\images\combo_arrow.png" />
+    <Content Include="Content\themes\material\images\datagrid_icons.png" />
+    <Content Include="Content\themes\material\images\datebox_arrow.png" />
+    <Content Include="Content\themes\material\images\layout_arrows.png" />
+    <Content Include="Content\themes\material\images\linkbutton_bg.png" />
+    <Content Include="Content\themes\material\images\loading.gif" />
+    <Content Include="Content\themes\material\images\menu_arrows.png" />
+    <Content Include="Content\themes\material\images\messager_icons.png" />
+    <Content Include="Content\themes\material\images\pagination_icons.png" />
+    <Content Include="Content\themes\material\images\panel_tools.png" />
+    <Content Include="Content\themes\material\images\searchbox_button.png" />
+    <Content Include="Content\themes\material\images\slider_handle.png" />
+    <Content Include="Content\themes\material\images\spinner_arrows.png" />
+    <Content Include="Content\themes\material\images\tabs_icons.png" />
+    <Content Include="Content\themes\material\images\tree_icons.png" />
+    <Content Include="Content\themes\material\images\validatebox_warning.png" />
+    <Content Include="Content\themes\material\layout.css" />
+    <Content Include="Content\themes\material\linkbutton.css" />
+    <Content Include="Content\themes\material\menu.css" />
+    <Content Include="Content\themes\material\menubutton.css" />
+    <Content Include="Content\themes\material\messager.css" />
+    <Content Include="Content\themes\material\numberbox.css" />
+    <Content Include="Content\themes\material\pagination.css" />
+    <Content Include="Content\themes\material\panel.css" />
+    <Content Include="Content\themes\material\progressbar.css" />
+    <Content Include="Content\themes\material\propertygrid.css" />
+    <Content Include="Content\themes\material\searchbox.css" />
+    <Content Include="Content\themes\material\slider.css" />
+    <Content Include="Content\themes\material\spinner.css" />
+    <Content Include="Content\themes\material\splitbutton.css" />
+    <Content Include="Content\themes\material\switchbutton.css" />
+    <Content Include="Content\themes\material\tabs.css" />
+    <Content Include="Content\themes\material\textbox.css" />
+    <Content Include="Content\themes\material\tooltip.css" />
+    <Content Include="Content\themes\material\tree.css" />
+    <Content Include="Content\themes\material\validatebox.css" />
+    <Content Include="Content\themes\material\window.css" />
+    <Content Include="Content\themes\metro\accordion.css" />
+    <Content Include="Content\themes\metro\calendar.css" />
+    <Content Include="Content\themes\metro\combo.css" />
+    <Content Include="Content\themes\metro\combobox.css" />
+    <Content Include="Content\themes\metro\datagrid.css" />
+    <Content Include="Content\themes\metro\datalist.css" />
+    <Content Include="Content\themes\metro\datebox.css" />
+    <Content Include="Content\themes\metro\dialog.css" />
+    <Content Include="Content\themes\metro\easyui.css" />
+    <Content Include="Content\themes\metro\filebox.css" />
+    <Content Include="Content\themes\metro\images\accordion_arrows.png" />
+    <Content Include="Content\themes\metro\images\blank.gif" />
+    <Content Include="Content\themes\metro\images\calendar_arrows.png" />
+    <Content Include="Content\themes\metro\images\combo_arrow.png" />
+    <Content Include="Content\themes\metro\images\datagrid_icons.png" />
+    <Content Include="Content\themes\metro\images\datebox_arrow.png" />
+    <Content Include="Content\themes\metro\images\layout_arrows.png" />
+    <Content Include="Content\themes\metro\images\linkbutton_bg.png" />
+    <Content Include="Content\themes\metro\images\loading.gif" />
+    <Content Include="Content\themes\metro\images\menu_arrows.png" />
+    <Content Include="Content\themes\metro\images\messager_icons.png" />
+    <Content Include="Content\themes\metro\images\pagination_icons.png" />
+    <Content Include="Content\themes\metro\images\panel_tools.png" />
+    <Content Include="Content\themes\metro\images\searchbox_button.png" />
+    <Content Include="Content\themes\metro\images\slider_handle.png" />
+    <Content Include="Content\themes\metro\images\spinner_arrows.png" />
+    <Content Include="Content\themes\metro\images\tabs_icons.png" />
+    <Content Include="Content\themes\metro\images\tree_icons.png" />
+    <Content Include="Content\themes\metro\images\validatebox_warning.png" />
+    <Content Include="Content\themes\metro\layout.css" />
+    <Content Include="Content\themes\metro\linkbutton.css" />
+    <Content Include="Content\themes\metro\menu.css" />
+    <Content Include="Content\themes\metro\menubutton.css" />
+    <Content Include="Content\themes\metro\messager.css" />
+    <Content Include="Content\themes\metro\numberbox.css" />
+    <Content Include="Content\themes\metro\pagination.css" />
+    <Content Include="Content\themes\metro\panel.css" />
+    <Content Include="Content\themes\metro\progressbar.css" />
+    <Content Include="Content\themes\metro\propertygrid.css" />
+    <Content Include="Content\themes\metro\searchbox.css" />
+    <Content Include="Content\themes\metro\slider.css" />
+    <Content Include="Content\themes\metro\spinner.css" />
+    <Content Include="Content\themes\metro\splitbutton.css" />
+    <Content Include="Content\themes\metro\switchbutton.css" />
+    <Content Include="Content\themes\metro\tabs.css" />
+    <Content Include="Content\themes\metro\textbox.css" />
+    <Content Include="Content\themes\metro\tooltip.css" />
+    <Content Include="Content\themes\metro\tree.css" />
+    <Content Include="Content\themes\metro\validatebox.css" />
+    <Content Include="Content\themes\metro\window.css" />
+    <Content Include="Content\themes\mobile.css" />
+    <Content Include="Content\ZhCss1.css" />
+    <Content Include="Content\ZhCss2.css" />
+    <Content Include="favicon.ico" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="images\cordova.png" />
+    <Content Include="images\homeimg.png" />
+    <Content Include="images\icon_add.png" />
+    <Content Include="images\icon_agree.png" />
+    <Content Include="images\icon_cancel.png" />
+    <Content Include="images\icon_check.png" />
+    <Content Include="images\M10_me.png" />
+    <Content Include="images\M10_truck.png" />
+    <Content Include="images\M10_warehouse.png" />
+    <Content Include="images\SignIn.png" />
+    <Content Include="images\s_backPage.png" />
+    <Content Include="images\T15_changeSeq.png" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\.gitattributes" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\.gitignore" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\css\bootstrap-datetimepicker.css" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\css\bootstrap-datetimepicker.min.css" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\Gruntfile.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\bootstrap-datetimepicker.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\bootstrap-datetimepicker.min.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.ar.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.az.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.bg.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.bn.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.ca.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.cs.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.da.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.de.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.ee.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.el.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.es.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.fi.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.fr.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.he.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.hr.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.hu.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.hy.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.id.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.is.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.it.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.ja.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.ka.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.ko.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.lt.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.lv.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.ms.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.nb.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.nl.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.no.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.pl.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.pt-BR.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.pt.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.ro.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.rs-latin.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.rs.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.ru.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.sk.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.sl.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.sv.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.sw.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.th.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.tr.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.ua.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.uk.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.zh-CN.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\js\locales\bootstrap-datetimepicker.zh-TW.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v2\bootstrap\css\bootstrap.css" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v2\bootstrap\css\bootstrap.min.css" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v2\bootstrap\img\glyphicons-halflings-white.png" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v2\bootstrap\img\glyphicons-halflings.png" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v2\bootstrap\js\bootstrap.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v2\bootstrap\js\bootstrap.min.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v2\index.html" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v2\jquery\jquery-1.8.3.min.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v3\bootstrap\css\bootstrap-theme.css" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v3\bootstrap\css\bootstrap-theme.min.css" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v3\bootstrap\css\bootstrap.css" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v3\bootstrap\css\bootstrap.min.css" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v3\bootstrap\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v3\bootstrap\js\bootstrap.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v3\bootstrap\js\bootstrap.min.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v3\index.html" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v3\jquery\jquery-1.8.3.min.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\screenshot\standard_day.png" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\screenshot\standard_day_meridian.png" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\screenshot\standard_decade.png" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\screenshot\standard_full.png" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\screenshot\standard_hour.png" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\screenshot\standard_hour_meridian.png" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\screenshot\standard_month.png" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\screenshot\standard_year.png" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\assets\coverage.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\assets\jquery-1.7.1.min.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\assets\mock.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\assets\qunit-logging.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\assets\qunit.css" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\assets\qunit.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\assets\utils.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\run-qunit.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\suites\component.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\suites\events.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\suites\formats.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\suites\inline.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\suites\keyboard_navigation\2011.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\suites\keyboard_navigation\2012.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\suites\keyboard_navigation\all.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\suites\mouse_navigation\2011.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\suites\mouse_navigation\2012.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\suites\mouse_navigation\all.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\suites\options.js" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\tests.html" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\tests.min.html" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\_coverage.html" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Areas\HelpPage\Views\Web.config" />
+    <Content Include="Areas\HelpPage\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\ResourceModel.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\Index.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\TextSample.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\SimpleTypeModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\Samples.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\Parameters.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ModelDescriptionLink.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\KeyValuePairModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\InvalidSample.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ImageSample.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\HelpPageApiModel.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\EnumTypeModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\DictionaryModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ComplexTypeModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\themes\material\images\Thumbs.db" />
+    <Content Include="Content\bs_grid-master\bs_grid.jquery.json" />
+    <Content Include="Content\bs_grid-master\CHANGELOG.md" />
+    <Content Include="Content\bs_grid-master\MIT_LICENSE" />
+    <Content Include="Content\bs_grid-master\README.md" />
+    <Content Include="Content\bs_grid-master\server_side\php\ajax_page_data.dist.php" />
+    <Content Include="Content\bs_grid-master\server_side\php\bs_grid.php" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\.jshintrc" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\.npmignore" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\.travis.yml" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\bower.json" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\build\build.less" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\build\build_standalone.less" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\less\datetimepicker.less" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\LICENSE" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\minify.sh" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\package.json" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\README.md" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v3\bootstrap\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v3\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\sample in bootstrap v3\bootstrap\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Scripts\bootstrap-datetimepicker-master\tests\README.md" />
+    <Content Include="Content\bootstrap-social\bootstrap-social.less" />
+    <Content Include="Content\bootstrap-social\bootstrap-social.scss" />
+    <Content Include="Content\bootstrap_css\bootstrap-theme.css.map" />
+    <Content Include="Content\bootstrap_css\bootstrap-theme.min.css.map" />
+    <Content Include="Content\bootstrap_css\bootstrap.css.map" />
+    <Content Include="Content\bootstrap_css\bootstrap.min.css.map" />
+    <Content Include="Content\font-awesome\css\font-awesome.css.map" />
+    <Content Include="Content\font-awesome\fonts\fontawesome-webfont.eot" />
+    <Content Include="Content\font-awesome\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Content\font-awesome\fonts\fontawesome-webfont.woff" />
+    <Content Include="Content\font-awesome\fonts\fontawesome-webfont.woff2" />
+    <Content Include="Content\font-awesome\fonts\FontAwesome.otf" />
+    <Content Include="Content\font-awesome\less\animated.less" />
+    <Content Include="Content\font-awesome\less\bordered-pulled.less" />
+    <Content Include="Content\font-awesome\less\core.less" />
+    <Content Include="Content\font-awesome\less\extras.less" />
+    <Content Include="Content\font-awesome\less\fixed-width.less" />
+    <Content Include="Content\font-awesome\less\font-awesome.less" />
+    <Content Include="Content\font-awesome\less\icons.less" />
+    <Content Include="Content\font-awesome\less\larger.less" />
+    <Content Include="Content\font-awesome\less\list.less" />
+    <Content Include="Content\font-awesome\less\mixins.less" />
+    <Content Include="Content\font-awesome\less\path.less" />
+    <Content Include="Content\font-awesome\less\rotated-flipped.less" />
+    <Content Include="Content\font-awesome\less\screen-reader.less" />
+    <Content Include="Content\font-awesome\less\spinning.less" />
+    <Content Include="Content\font-awesome\less\stacked.less" />
+    <Content Include="Content\font-awesome\less\variables.less" />
+    <Content Include="Content\font-awesome\scss\font-awesome.scss" />
+    <Content Include="Content\font-awesome\scss\_animated.scss" />
+    <Content Include="Content\font-awesome\scss\_bordered-pulled.scss" />
+    <Content Include="Content\font-awesome\scss\_core.scss" />
+    <Content Include="Content\font-awesome\scss\_extras.scss" />
+    <Content Include="Content\font-awesome\scss\_fixed-width.scss" />
+    <Content Include="Content\font-awesome\scss\_icons.scss" />
+    <Content Include="Content\font-awesome\scss\_larger.scss" />
+    <Content Include="Content\font-awesome\scss\_list.scss" />
+    <Content Include="Content\font-awesome\scss\_mixins.scss" />
+    <Content Include="Content\font-awesome\scss\_path.scss" />
+    <Content Include="Content\font-awesome\scss\_rotated-flipped.scss" />
+    <Content Include="Content\font-awesome\scss\_screen-reader.scss" />
+    <Content Include="Content\font-awesome\scss\_spinning.scss" />
+    <Content Include="Content\font-awesome\scss\_stacked.scss" />
+    <Content Include="Content\font-awesome\scss\_variables.scss" />
+    <None Include="Properties\PublishProfiles\MorrisonServer.pubxml" />
+    <None Include="Scripts\jquery-1.11.3.intellisense.js" />
+    <Content Include="Scripts\bootstrap_js\bootstrap.js" />
+    <Content Include="Scripts\bootstrap_js\bootstrap.min.js" />
+    <Content Include="Scripts\bootstrap_js\npm.js" />
+    <Content Include="Scripts\easyloader.js" />
+    <Content Include="Scripts\jquery-1.11.3.js" />
+    <Content Include="Scripts\jquery-1.11.3.min.js" />
+    <Content Include="Scripts\jquery.easyui-1.4.5.js" />
+    <Content Include="Scripts\jquery.easyui-1.4.5.min.js" />
+    <Content Include="Scripts\jquery.easyui.mobile-1.4.5.js" />
+    <Content Include="Scripts\jquery.easyui.mobile-1.4.5.min.js" />
+    <Content Include="Scripts\locale\easyui-lang-af.js" />
+    <Content Include="Scripts\locale\easyui-lang-am.js" />
+    <Content Include="Scripts\locale\easyui-lang-ar.js" />
+    <Content Include="Scripts\locale\easyui-lang-bg.js" />
+    <Content Include="Scripts\locale\easyui-lang-ca.js" />
+    <Content Include="Scripts\locale\easyui-lang-cs.js" />
+    <Content Include="Scripts\locale\easyui-lang-cz.js" />
+    <Content Include="Scripts\locale\easyui-lang-da.js" />
+    <Content Include="Scripts\locale\easyui-lang-de.js" />
+    <Content Include="Scripts\locale\easyui-lang-el.js" />
+    <Content Include="Scripts\locale\easyui-lang-en.js" />
+    <Content Include="Scripts\locale\easyui-lang-es.js" />
+    <Content Include="Scripts\locale\easyui-lang-fr.js" />
+    <Content Include="Scripts\locale\easyui-lang-it.js" />
+    <Content Include="Scripts\locale\easyui-lang-jp.js" />
+    <Content Include="Scripts\locale\easyui-lang-ko.js" />
+    <Content Include="Scripts\locale\easyui-lang-nl.js" />
+    <Content Include="Scripts\locale\easyui-lang-pl.js" />
+    <Content Include="Scripts\locale\easyui-lang-pt_BR.js" />
+    <Content Include="Scripts\locale\easyui-lang-ru.js" />
+    <Content Include="Scripts\locale\easyui-lang-sv_SE.js" />
+    <Content Include="Scripts\locale\easyui-lang-tr.js" />
+    <Content Include="Scripts\locale\easyui-lang-zh_CN.js" />
+    <Content Include="Scripts\locale\easyui-lang-zh_TW.js" />
+    <Content Include="Scripts\metisMenu\metisMenu.js" />
+    <Content Include="Scripts\metisMenu\metisMenu.min.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\sb-admin\sb-admin-2.js" />
+    <Content Include="Scripts\sb-admin\sb-admin-2.min.js" />
+    <Content Include="Scripts\SB_Admin2\.gitignore" />
+    <Content Include="Scripts\SB_Admin2\data\flot-data.js" />
+    <Content Include="Scripts\SB_Admin2\data\morris-data.js" />
+    <Content Include="Scripts\SB_Admin2\dist\css\sb-admin-2.css" />
+    <Content Include="Scripts\SB_Admin2\dist\css\sb-admin-2.min.css" />
+    <Content Include="Scripts\SB_Admin2\dist\js\sb-admin-2.js" />
+    <Content Include="Scripts\SB_Admin2\dist\js\sb-admin-2.min.js" />
+    <Content Include="Scripts\SB_Admin2\gulpfile.js" />
+    <Content Include="Scripts\SB_Admin2\index.html" />
+    <Content Include="Scripts\SB_Admin2\js\sb-admin-2.js" />
+    <Content Include="Scripts\SB_Admin2\pages\blank.html" />
+    <Content Include="Scripts\SB_Admin2\pages\buttons.html" />
+    <Content Include="Scripts\SB_Admin2\pages\flot.html" />
+    <Content Include="Scripts\SB_Admin2\pages\forms.html" />
+    <Content Include="Scripts\SB_Admin2\pages\grid.html" />
+    <Content Include="Scripts\SB_Admin2\pages\icons.html" />
+    <Content Include="Scripts\SB_Admin2\pages\index.html" />
+    <Content Include="Scripts\SB_Admin2\pages\login.html" />
+    <Content Include="Scripts\SB_Admin2\pages\morris.html" />
+    <Content Include="Scripts\SB_Admin2\pages\notifications.html" />
+    <Content Include="Scripts\SB_Admin2\pages\panels-wells.html" />
+    <Content Include="Scripts\SB_Admin2\pages\tables.html" />
+    <Content Include="Scripts\SB_Admin2\pages\typography.html" />
+    <Content Include="Scripts\SB_Admin2\vendor\bootstrap-social\bootstrap-social.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\bootstrap\css\bootstrap.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\bootstrap\css\bootstrap.min.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\bootstrap\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Scripts\SB_Admin2\vendor\bootstrap\js\bootstrap.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\bootstrap\js\bootstrap.min.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables-plugins\dataTables.bootstrap.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables-plugins\dataTables.bootstrap.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables-plugins\dataTables.bootstrap.min.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables-plugins\index.html" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables-responsive\dataTables.responsive.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables-responsive\dataTables.responsive.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\dataTables.bootstrap.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\dataTables.bootstrap.min.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\dataTables.bootstrap4.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\dataTables.bootstrap4.min.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\dataTables.foundation.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\dataTables.foundation.min.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\dataTables.jqueryui.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\dataTables.jqueryui.min.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\dataTables.material.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\dataTables.material.min.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\dataTables.semanticui.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\dataTables.semanticui.min.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\dataTables.uikit.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\dataTables.uikit.min.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\jquery.dataTables.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\jquery.dataTables.min.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\css\jquery.dataTables_themeroller.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\images\favicon.ico" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\images\sort_asc.png" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\images\sort_asc_disabled.png" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\images\sort_both.png" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\images\sort_desc.png" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\images\sort_desc_disabled.png" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\dataTables.bootstrap.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\dataTables.bootstrap.min.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\dataTables.bootstrap4.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\dataTables.bootstrap4.min.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\dataTables.foundation.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\dataTables.foundation.min.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\dataTables.jqueryui.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\dataTables.jqueryui.min.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\dataTables.material.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\dataTables.material.min.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\dataTables.semanticui.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\dataTables.semanticui.min.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\dataTables.uikit.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\dataTables.uikit.min.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\jquery.dataTables.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\jquery.dataTables.min.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\js\jquery.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot-tooltip\jquery.flot.tooltip.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot-tooltip\jquery.flot.tooltip.min.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot-tooltip\jquery.flot.tooltip.source.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\excanvas.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\excanvas.min.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.colorhelpers.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.flot.canvas.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.flot.categories.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.flot.crosshair.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.flot.errorbars.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.flot.fillbetween.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.flot.image.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.flot.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.flot.navigate.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.flot.pie.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.flot.resize.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.flot.selection.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.flot.stack.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.flot.symbol.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.flot.threshold.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.flot.time.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\flot\jquery.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\css\font-awesome.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\css\font-awesome.min.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\fonts\fontawesome-webfont.svg" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\HELP-US-OUT.txt" />
+    <Content Include="Scripts\SB_Admin2\vendor\jquery\jquery.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\jquery\jquery.min.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\metisMenu\metisMenu.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\metisMenu\metisMenu.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\metisMenu\metisMenu.min.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\metisMenu\metisMenu.min.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\morrisjs\morris.css" />
+    <Content Include="Scripts\SB_Admin2\vendor\morrisjs\morris.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\morrisjs\morris.min.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\raphael\raphael.js" />
+    <Content Include="Scripts\SB_Admin2\vendor\raphael\raphael.min.js" />
+    <Content Include="Scripts\ZhEeasyUI-01.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\.babelrc" />
+    <Content Include="Vender\amazon-cognito-identity-js\.editorconfig" />
+    <Content Include="Vender\amazon-cognito-identity-js\.eslintignore" />
+    <Content Include="Vender\amazon-cognito-identity-js\.eslintrc.yaml" />
+    <Content Include="Vender\amazon-cognito-identity-js\.gitignore" />
+    <Content Include="Vender\amazon-cognito-identity-js\.npmignore" />
+    <Content Include="Vender\amazon-cognito-identity-js\android\build.gradle" />
+    <Content Include="Vender\amazon-cognito-identity-js\android\src\main\AndroidManifest.xml" />
+    <Content Include="Vender\amazon-cognito-identity-js\android\src\main\java\com\amazonaws\RNAWSCognitoModule.java" />
+    <Content Include="Vender\amazon-cognito-identity-js\android\src\main\java\com\amazonaws\RNAWSCognitoPackage.java" />
+    <Content Include="Vender\amazon-cognito-identity-js\CHANGELOG.md" />
+    <Content Include="Vender\amazon-cognito-identity-js\dist\amazon-cognito-identity.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\dist\amazon-cognito-identity.min.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\dist\amazon-cognito-identity.min.js.map" />
+    <Content Include="Vender\amazon-cognito-identity-js\enhance-rn.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\AuthenticationDetails.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\AuthenticationHelper.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\BigInteger.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\Client.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\CognitoAccessToken.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\CognitoIdToken.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\CognitoJwtToken.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\CognitoRefreshToken.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\CognitoUser.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\CognitoUserAttribute.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\CognitoUserPool.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\CognitoUserSession.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\CookieStorage.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\DateHelper.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\index.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\StorageHelper-rn.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\StorageHelper.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\es\UserAgent.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\ios\JKBigInteger\JKBigDecimal.h" />
+    <Content Include="Vender\amazon-cognito-identity-js\ios\JKBigInteger\JKBigDecimal.m" />
+    <Content Include="Vender\amazon-cognito-identity-js\ios\JKBigInteger\JKBigInteger.h" />
+    <Content Include="Vender\amazon-cognito-identity-js\ios\JKBigInteger\JKBigInteger.m" />
+    <Content Include="Vender\amazon-cognito-identity-js\ios\JKBigInteger\LibTomMath\tommath.c" />
+    <Content Include="Vender\amazon-cognito-identity-js\ios\JKBigInteger\LibTomMath\tommath.h" />
+    <Content Include="Vender\amazon-cognito-identity-js\ios\JKBigInteger\LibTomMath\tommath_class.h" />
+    <Content Include="Vender\amazon-cognito-identity-js\ios\JKBigInteger\LibTomMath\tommath_superclass.h" />
+    <Content Include="Vender\amazon-cognito-identity-js\ios\RNAWSCognito.h" />
+    <Content Include="Vender\amazon-cognito-identity-js\ios\RNAWSCognito.m" />
+    <Content Include="Vender\amazon-cognito-identity-js\ios\RNAWSCognito.xcodeproj\project.pbxproj" />
+    <Content Include="Vender\amazon-cognito-identity-js\ios\RNAWSCognito.xcodeproj\project.xcworkspace\contents.xcworkspacedata" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\AuthenticationDetails.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\AuthenticationHelper.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\BigInteger.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\Client.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\CognitoAccessToken.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\CognitoIdToken.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\CognitoJwtToken.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\CognitoRefreshToken.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\CognitoUser.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\CognitoUserAttribute.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\CognitoUserPool.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\CognitoUserSession.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\CookieStorage.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\DateHelper.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\index.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\StorageHelper-rn.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\StorageHelper.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\lib\UserAgent.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\LICENSE.txt" />
+    <Content Include="Vender\amazon-cognito-identity-js\NOTICE.txt" />
+    <Content Include="Vender\amazon-cognito-identity-js\package-lock.json" />
+    <Content Include="Vender\amazon-cognito-identity-js\package.json" />
+    <Content Include="Vender\amazon-cognito-identity-js\README.md" />
+    <Content Include="Vender\amazon-cognito-identity-js\RNAWSCognito.podspec" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\AuthenticationDetails.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\AuthenticationHelper.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\BigInteger.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\Client.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\CognitoAccessToken.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\CognitoIdToken.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\CognitoJwtToken.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\CognitoRefreshToken.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\CognitoUser.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\CognitoUserAttribute.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\CognitoUserPool.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\CognitoUserSession.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\CookieStorage.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\DateHelper.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\index.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\StorageHelper-rn.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\StorageHelper.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\src\UserAgent.js" />
+    <Content Include="Vender\amazon-cognito-identity-js\webpack.config.js" />
+    <Content Include="Vender\bootstrap-sweetalert-master\.gitignore" />
+    <Content Include="Vender\bootstrap-sweetalert-master\assets\bootstrap-sweetalert.png" />
+    <Content Include="Vender\bootstrap-sweetalert-master\assets\docs.css" />
+    <Content Include="Vender\bootstrap-sweetalert-master\assets\thumbs-up.jpg" />
+    <Content Include="Vender\bootstrap-sweetalert-master\dev\gulpfile-wrap-template.js" />
+    <Content Include="Vender\bootstrap-sweetalert-master\dev\ie9.css" />
+    <Content Include="Vender\bootstrap-sweetalert-master\dev\loader-animation.css" />
+    <Content Include="Vender\bootstrap-sweetalert-master\dev\modules\default-params.js" />
+    <Content Include="Vender\bootstrap-sweetalert-master\dev\modules\handle-click.js" />
+    <Content Include="Vender\bootstrap-sweetalert-master\dev\modules\handle-dom.js" />
+    <Content Include="Vender\bootstrap-sweetalert-master\dev\modules\handle-key.js" />
+    <Content Include="Vender\bootstrap-sweetalert-master\dev\modules\handle-swal-dom.js" />
+    <Content Include="Vender\bootstrap-sweetalert-master\dev\modules\injected-html.js" />
+    <Content Include="Vender\bootstrap-sweetalert-master\dev\modules\set-params.js" />
+    <Content Include="Vender\bootstrap-sweetalert-master\dev\modules\utils.js" />
+    <Content Include="Vender\bootstrap-sweetalert-master\dev\sweetalert.es6.js" />
+    <Content Include="Vender\bootstrap-sweetalert-master\dist\sweetalert.css" />
+    <Content Include="Vender\bootstrap-sweetalert-master\dist\sweetalert.js" />
+    <Content Include="Vender\bootstrap-sweetalert-master\dist\sweetalert.min.js" />
+    <Content Include="Vender\bootstrap-sweetalert-master\index.html" />
+    <Content Include="Vender\bootstrap-sweetalert-master\test\index.html" />
+    <Content Include="Vender\bootstrap-sweetalert-master\test\tests.js" />
+    <Content Include="Vender\bootstrapV4.0.0\css\bootstrap-grid.css" />
+    <Content Include="Vender\bootstrapV4.0.0\css\bootstrap-grid.min.css" />
+    <Content Include="Vender\bootstrapV4.0.0\css\bootstrap-reboot.css" />
+    <Content Include="Vender\bootstrapV4.0.0\css\bootstrap-reboot.min.css" />
+    <Content Include="Vender\bootstrapV4.0.0\css\bootstrap.css" />
+    <Content Include="Vender\bootstrapV4.0.0\css\bootstrap.min.css" />
+    <Content Include="Vender\bootstrapV4.0.0\js\bootstrap.bundle.js" />
+    <Content Include="Vender\bootstrapV4.0.0\js\bootstrap.bundle.min.js" />
+    <Content Include="Vender\bootstrapV4.0.0\js\bootstrap.js" />
+    <Content Include="Vender\bootstrapV4.0.0\js\bootstrap.min.js" />
+    <Content Include="Vender\filebox\jasny-bootstrap.css" />
+    <Content Include="Vender\filebox\jasny-bootstrap.js" />
+    <Content Include="Vender\Font-Awesome-fa-4\css\font-awesome.css" />
+    <Content Include="Vender\Font-Awesome-fa-4\css\font-awesome.min.css" />
+    <Content Include="Vender\Font-Awesome-fa-4\fonts\fontawesome-webfont.svg" />
+    <Content Include="Vender\Font-Awesome-fa-4\HELP-US-OUT.txt" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\css\prettify.css" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\css\pygments.css" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\css\site.css" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\css\font-awesome-ie7.css" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\css\font-awesome-ie7.min.css" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\css\font-awesome.css" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\css\font-awesome.min.css" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\font\fontawesome-webfont.svg" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\ico\favicon.ico" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\img\contribution-sample.png" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\img\fort_awesome.jpg" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\img\glyphicons-halflings-white.png" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\img\glyphicons-halflings.png" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\js\backbone.min.js" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\js\bootstrap-2.3.1.min.js" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\js\bootstrap-222.min.js" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\js\jquery-1.7.1.min.js" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\js\prettify.min.js" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\js\site.js" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\js\underscore.min.js" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\js\ZeroClipboard-1.1.7.min.js" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\js\ZeroClipboard-1.1.7.swf" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\cheatsheet\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\community\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\design.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\examples\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\get-started\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icons\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\adjust\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\adn\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\align-center\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\align-justify\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\align-left\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\align-right\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\ambulance\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\anchor\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\android\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\angle-down\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\angle-left\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\angle-right\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\angle-up\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\apple\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\archive\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\arrow-down\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\arrow-left\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\arrow-right\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\arrow-up\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\asterisk\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\backward\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\ban-circle\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\bar-chart\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\barcode\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\beaker\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\beer\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\bell-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\bell\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\bitbucket-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\bitbucket\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\bold\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\bolt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\bookmark-empty\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\bookmark\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\book\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\briefcase\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\btc\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\bug\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\building\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\bullhorn\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\bullseye\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\calendar-empty\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\calendar\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\camera-retro\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\camera\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\caret-down\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\caret-left\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\caret-right\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\caret-up\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\certificate\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\check-empty\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\check-minus\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\check-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\check\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\chevron-down\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\chevron-left\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\chevron-right\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\chevron-sign-down\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\chevron-sign-left\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\chevron-sign-right\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\chevron-sign-up\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\chevron-up\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\circle-arrow-down\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\circle-arrow-left\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\circle-arrow-right\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\circle-arrow-up\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\circle-blank\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\circle\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\cloud-download\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\cloud-upload\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\cloud\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\cny\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\code-fork\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\code\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\coffee\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\cogs\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\cog\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\collapse-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\collapse-top\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\collapse\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\columns\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\comment-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\comments-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\comments\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\comment\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\compass\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\copy\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\credit-card\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\crop\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\css3\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\cut\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\dashboard\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\desktop\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\double-angle-down\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\double-angle-left\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\double-angle-right\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\double-angle-up\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\download-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\download\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\dribbble\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\dropbox\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\edit-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\edit\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\eject\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\ellipsis-horizontal\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\ellipsis-vertical\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\envelope-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\envelope\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\eraser\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\eur\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\exchange\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\exclamation-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\exclamation\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\expand-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\expand\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\external-link-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\external-link\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\eye-close\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\eye-open\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\facebook-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\facebook\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\facetime-video\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\fast-backward\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\fast-forward\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\female\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\fighter-jet\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\file-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\file-text-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\file-text\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\file\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\film\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\filter\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\fire-extinguisher\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\fire\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\flag-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\flag-checkered\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\flag\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\flickr\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\folder-close-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\folder-close\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\folder-open-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\folder-open\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\font\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\food\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\forward\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\foursquare\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\frown\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\fullscreen\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\gamepad\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\gbp\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\gift\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\github-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\github-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\github\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\gittip\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\glass\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\globe\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\google-plus-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\google-plus\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\group\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\h-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\hand-down\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\hand-left\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\hand-right\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\hand-up\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\hdd\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\headphones\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\heart-empty\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\heart\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\home\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\hospital\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\html5\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\inbox\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\indent-left\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\indent-right\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\info-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\info\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\inr\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\instagram\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\italic\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\jpy\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\keyboard\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\key\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\krw\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\laptop\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\leaf\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\legal\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\lemon\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\level-down\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\level-up\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\lightbulb\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\linkedin-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\linkedin\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\link\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\linux\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\list-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\list-ol\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\list-ul\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\list\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\location-arrow\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\lock\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\long-arrow-down\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\long-arrow-left\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\long-arrow-right\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\long-arrow-up\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\magic\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\magnet\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\mail-reply-all\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\male\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\map-marker\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\maxcdn\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\medkit\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\meh\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\microphone-off\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\microphone\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\minus-sign-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\minus-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\minus\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\mobile-phone\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\money\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\moon\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\move\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\music\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\off\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\ok-circle\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\ok-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\ok\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\paper-clip\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\paste\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\pause\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\pencil\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\phone-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\phone\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\picture\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\pinterest-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\pinterest\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\plane\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\play-circle\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\play-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\play\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\plus-sign-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\plus-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\plus\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\print\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\pushpin\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\puzzle-piece\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\qrcode\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\question-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\question\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\quote-left\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\quote-right\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\random\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\refresh\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\remove-circle\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\remove-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\remove\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\renren\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\reorder\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\repeat\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\reply-all\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\reply\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\resize-full\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\resize-horizontal\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\resize-small\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\resize-vertical\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\retweet\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\road\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\rocket\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\rss-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\rss\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\save\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\screenshot\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\search\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\share-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\share-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\share\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\shield\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\shopping-cart\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\sign-blank\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\signal\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\signin\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\signout\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\sitemap\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\skype\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\smile\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\sort-by-alphabet-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\sort-by-alphabet\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\sort-by-attributes-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\sort-by-attributes\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\sort-by-order-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\sort-by-order\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\sort-down\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\sort-up\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\sort\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\spinner\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\stackexchange\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\star-empty\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\star-half-empty\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\star-half\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\star\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\step-backward\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\step-forward\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\stethoscope\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\stop\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\strikethrough\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\subscript\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\suitcase\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\sun\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\superscript\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\tablet\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\table\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\tags\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\tag\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\tasks\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\terminal\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\text-height\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\text-width\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\th-large\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\th-list\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\thumbs-down-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\thumbs-down\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\thumbs-up-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\thumbs-up\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\th\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\ticket\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\time\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\tint\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\trash\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\trello\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\trophy\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\truck\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\tumblr-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\tumblr\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\twitter-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\twitter\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\umbrella\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\underline\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\undo\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\unlink\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\unlock-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\unlock\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\upload-alt\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\upload\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\usd\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\user-md\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\user\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\vk\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\volume-down\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\volume-off\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\volume-up\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\warning-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\weibo\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\windows\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\wrench\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\xing-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\xing\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\youtube-play\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\youtube-sign\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\youtube\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\zoom-in\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icon\zoom-out\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\license\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\test\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\whats-new\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\accessibility.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\css\prettify.css" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\css\pygments.css" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\fonts\fontawesome-webfont.svg" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\HELP-US-OUT.txt" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\ico\favicon.ico" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\img\algolia.png" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\img\logo-themeisle.png" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\img\logo-wpbeginner.png" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\js\html5shiv.js" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\js\monetization.js" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\js\prettify.min.js" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\js\respond.min.js" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\js\search.js" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\js\site.js" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\js\ZeroClipboard-1.1.7.min.js" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\js\ZeroClipboard-1.1.7.swf" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\cdn\error.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\cdn\success.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\cheatsheet.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\community.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\design.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\examples.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\get-started.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\icons.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\license.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\store.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\survey.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\test\2.3.2.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\test\all.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\test\glyphicons.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\test\height\4.4.0.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\test\height\4.5.0.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\test\height\current.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\test\index.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\thanks.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\whats-new.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\accessibility\accessibility-facdn.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\accessibility\accessibility-manual.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\accessibility\background.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\accessibility\cta-cdn-ally.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\accessibility\other.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\ads\carbon.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\brand-adblock-warning.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\brand-license.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\code\license.css" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\community\getting-support.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\community\project-milestones.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\community\reporting-bugs.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\community\requesting-new-icons.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\community\submitting-pull-requests.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\examples\accessible.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\examples\animated.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\examples\basic.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\examples\bootstrap.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\examples\bordered-pulled.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\examples\custom.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\examples\fixed-width.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\examples\larger.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\examples\list.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\examples\rotated-flipped.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\examples\stacked.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\footer.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\accessibility.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\brand.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\chart.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\currency.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\directional.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\file-type.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\form-control.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\gender.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\hand.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\medical.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\new.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\payment.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\spinner.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\text-editor.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\transportation.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\video-player.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\icons\web-application.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\jumbotron-carousel.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\jumbotron.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\modals\download.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\modals\fa5.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\navbar.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\new-features.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\new-naming.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\new-upgrading.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\newsletter-subscribe.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\products\camera-retro-tee.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\products\classics-tee.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\products\cta-suggestions.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\products\fa-ther-tee.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\products\green-logo-tee.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\products\old-skool-tee.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\products\rock-paper-scissors-lizard-spock-tee.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\products\space-shuttle-tee.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\products\white-logo-tee.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\stripe-ad.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\stripe-social.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\tell-me-thanks.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\tests\rotated-flipped-inside-anchor.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\tests\rotated-flipped-inside-btn.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\tests\rotated-flipped.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\tests\stacked-inside-anchor.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\tests\stacked-with-text.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\tests\stacked.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\thanks-to.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\why.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_layouts\base.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_layouts\icon.html" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_layouts\survey.html" />
+    <Content Include="Vender\language\language.js" />
+    <Content Include="Vender\loginScreen\animate.css" />
+    <Content Include="Vender\loginScreen\animsition.min.css" />
+    <Content Include="Vender\loginScreen\background.png" />
+    <Content Include="Vender\loginScreen\daterangepicker.css" />
+    <Content Include="Vender\loginScreen\font-awesome.min.css" />
+    <Content Include="Vender\loginScreen\hamburgers.min.css" />
+    <Content Include="Vender\loginScreen\icon-font.min.css" />
+    <Content Include="Vender\loginScreen\logo.png" />
+    <Content Include="Vender\loginScreen\main.css" />
+    <Content Include="Vender\loginScreen\MEC-Logo-ALLwhite-noTag.png" />
+    <Content Include="Vender\loginScreen\select2.min.css" />
+    <Content Include="Vender\loginScreen\util.css" />
+    <Content Include="Vender\other\jquery-3.2.1.min.js" />
+    <Content Include="Vender\other\jquery-3.2.1.slim.min.js" />
+    <Content Include="Vender\other\popper.min.js" />
+    <Content Include="Vender\other\signature_pad.min.js" />
+    <Content Include="Vender\T15\Carline.css" />
+    <Content Include="Vender\T15\CarlineV2.css" />
+    <Content Include="Vender\zhScript\zhSys.js" />
+    <Content Include="Vender\zhScript\zhTable_angus_old.js" />
+    <Content Include="Vender\zhScript\zhTable_angus.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Areas\HelpPage\Views\_ViewStart.cshtml" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Scripts\_references.js" />
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Home\IndexV2.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\System\Index.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\S01020\S01020.cshtml" />
+    <Content Include="Views\S01030\S01030.cshtml" />
+    <Content Include="Views\S01050\S01050.cshtml" />
+    <Content Include="Views\S02010\S02010_old.cshtml" />
+    <Content Include="Views\S02020\S02020.cshtml" />
+    <Content Include="Views\A10030\A10030.cshtml" />
+    <Content Include="Views\A10040\A10040.cshtml" />
+    <Content Include="Views\A10050\A10050.cshtml" />
+    <Content Include="Views\A10060\A10060.cshtml" />
+    <Content Include="Views\A10011\A10011.cshtml" />
+    <Content Include="Views\A10012\A10012.cshtml" />
+    <Content Include="Views\A10013\A10013.cshtml" />
+    <Content Include="Views\T00010\T00010.cshtml" />
+    <Content Include="Views\S02010\S02010.cshtml" />
+    <Content Include="Scripts\SB_Admin2\bower.json" />
+    <Content Include="Scripts\SB_Admin2\less\mixins.less" />
+    <Content Include="Scripts\SB_Admin2\less\sb-admin-2.less" />
+    <Content Include="Scripts\SB_Admin2\less\variables.less" />
+    <Content Include="Scripts\SB_Admin2\LICENSE" />
+    <Content Include="Scripts\SB_Admin2\package.json" />
+    <Content Include="Scripts\SB_Admin2\README.md" />
+    <Content Include="Scripts\SB_Admin2\vendor\bootstrap-social\bootstrap-social.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\bootstrap-social\bootstrap-social.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\bootstrap\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Scripts\SB_Admin2\vendor\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Scripts\SB_Admin2\vendor\bootstrap\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Scripts\SB_Admin2\vendor\bootstrap\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables-responsive\dataTables.responsive.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\datatables\images\Sorting icons.psd" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\css\font-awesome.css.map" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\fonts\fontawesome-webfont.eot" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\fonts\fontawesome-webfont.woff" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\fonts\fontawesome-webfont.woff2" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\fonts\FontAwesome.otf" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\less\animated.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\less\bordered-pulled.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\less\core.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\less\extras.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\less\fixed-width.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\less\font-awesome.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\less\icons.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\less\larger.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\less\list.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\less\mixins.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\less\path.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\less\rotated-flipped.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\less\screen-reader.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\less\spinning.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\less\stacked.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\less\variables.less" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\scss\font-awesome.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\scss\_animated.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\scss\_bordered-pulled.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\scss\_core.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\scss\_extras.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\scss\_fixed-width.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\scss\_icons.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\scss\_larger.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\scss\_list.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\scss\_mixins.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\scss\_path.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\scss\_rotated-flipped.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\scss\_screen-reader.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\scss\_spinning.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\scss\_stacked.scss" />
+    <Content Include="Scripts\SB_Admin2\vendor\font-awesome\scss\_variables.scss" />
+    <Content Include="Views\S02020\S02020_old.cshtml" />
+    <Content Include="Views\S01020\S01020_old.cshtml" />
+    <Content Include="Vender\bootstrap-sweetalert-master\.editorconfig" />
+    <Content Include="Vender\bootstrap-sweetalert-master\.jshintrc" />
+    <Content Include="Vender\bootstrap-sweetalert-master\.travis.yml" />
+    <Content Include="Vender\bootstrap-sweetalert-master\bootstrap\mixins.less" />
+    <Content Include="Vender\bootstrap-sweetalert-master\bootstrap\variables.less" />
+    <Content Include="Vender\bootstrap-sweetalert-master\bower.json" />
+    <Content Include="Vender\bootstrap-sweetalert-master\Gruntfile.coffee" />
+    <Content Include="Vender\bootstrap-sweetalert-master\lib\sweet-alert-animations.less" />
+    <Content Include="Vender\bootstrap-sweetalert-master\lib\sweet-alert-combine.less" />
+    <Content Include="Vender\bootstrap-sweetalert-master\lib\sweet-alert.less" />
+    <Content Include="Vender\bootstrap-sweetalert-master\LICENSE" />
+    <Content Include="Vender\bootstrap-sweetalert-master\package.json" />
+    <Content Include="Vender\bootstrap-sweetalert-master\README.md" />
+    <Content Include="Views\S01030\S01030_old.cshtml" />
+    <Content Include="Views\S01050\S01050_old.cshtml" />
+    <Content Include="Views\A10011\A10011_old.cshtml" />
+    <Content Include="Views\A10012\A10012_old.cshtml" />
+    <Content Include="Views\A10013\A10013_old.cshtml" />
+    <Content Include="Views\A10030\A10030_old.cshtml" />
+    <Content Include="Views\A10050\A10050_old.cshtml" />
+    <Content Include="Views\A10060\A10060_old.cshtml" />
+    <Content Include="Views\A20010\A20010.cshtml" />
+    <Content Include="Views\A30010\A30010.cshtml" />
+    <Content Include="Views\A30020\A30020.cshtml" />
+    <Content Include="Views\Home\Index_old.cshtml" />
+    <Content Include="Views\A20040\A20040.cshtml" />
+    <Content Include="Views\MorrisonWEB\M10.cshtml" />
+    <Content Include="Views\MorrisonWEB\Index.cshtml" />
+    <Content Include="Views\MorrisonWEB\T10.cshtml" />
+    <Content Include="Vender\bootstrapV4.0.0\css\bootstrap-grid.css.map" />
+    <Content Include="Vender\bootstrapV4.0.0\css\bootstrap-grid.min.css.map" />
+    <Content Include="Vender\bootstrapV4.0.0\css\bootstrap-reboot.css.map" />
+    <Content Include="Vender\bootstrapV4.0.0\css\bootstrap-reboot.min.css.map" />
+    <Content Include="Vender\bootstrapV4.0.0\css\bootstrap.css.map" />
+    <Content Include="Vender\bootstrapV4.0.0\css\bootstrap.min.css.map" />
+    <Content Include="Vender\bootstrapV4.0.0\js\bootstrap.bundle.js.map" />
+    <Content Include="Vender\bootstrapV4.0.0\js\bootstrap.bundle.min.js.map" />
+    <Content Include="Vender\bootstrapV4.0.0\js\bootstrap.js.map" />
+    <Content Include="Vender\bootstrapV4.0.0\js\bootstrap.min.js.map" />
+    <Content Include="Vender\Font-Awesome-fa-4\.gitignore" />
+    <Content Include="Vender\Font-Awesome-fa-4\.npmignore" />
+    <Content Include="Vender\Font-Awesome-fa-4\bower.json" />
+    <Content Include="Vender\Font-Awesome-fa-4\component.json" />
+    <Content Include="Vender\Font-Awesome-fa-4\composer.json" />
+    <Content Include="Vender\Font-Awesome-fa-4\CONTRIBUTING.md" />
+    <Content Include="Vender\Font-Awesome-fa-4\css\font-awesome.css.map" />
+    <Content Include="Vender\Font-Awesome-fa-4\fonts\fontawesome-webfont.eot" />
+    <Content Include="Vender\Font-Awesome-fa-4\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Vender\Font-Awesome-fa-4\fonts\fontawesome-webfont.woff" />
+    <Content Include="Vender\Font-Awesome-fa-4\fonts\fontawesome-webfont.woff2" />
+    <Content Include="Vender\Font-Awesome-fa-4\fonts\FontAwesome.otf" />
+    <Content Include="Vender\Font-Awesome-fa-4\Gemfile" />
+    <Content Include="Vender\Font-Awesome-fa-4\Gemfile.lock" />
+    <Content Include="Vender\Font-Awesome-fa-4\less\animated.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\less\bordered-pulled.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\less\core.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\less\fixed-width.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\less\font-awesome.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\less\icons.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\less\larger.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\less\list.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\less\mixins.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\less\path.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\less\rotated-flipped.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\less\screen-reader.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\less\stacked.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\less\variables.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\package.json" />
+    <Content Include="Vender\Font-Awesome-fa-4\README.md" />
+    <Content Include="Vender\Font-Awesome-fa-4\scss\font-awesome.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\scss\_animated.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\scss\_bordered-pulled.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\scss\_core.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\scss\_fixed-width.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\scss\_icons.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\scss\_larger.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\scss\_list.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\scss\_mixins.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\scss\_path.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\scss\_rotated-flipped.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\scss\_screen-reader.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\scss\_stacked.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\scss\_variables.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome.zip" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\font\fontawesome-webfont.eot" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\font\fontawesome-webfont.ttf" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\font\fontawesome-webfont.woff" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\font\FontAwesome.otf" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\less\bootstrap.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\less\core.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\less\extras.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\less\font-awesome-ie7.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\less\font-awesome.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\less\icons.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\less\mixins.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\less\path.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\less\variables.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\scss\font-awesome-ie7.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\scss\font-awesome.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\scss\_bootstrap.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\scss\_core.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\scss\_extras.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\scss\_icons.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\scss\_mixins.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\scss\_path.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\font-awesome\scss\_variables.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\img\icon-flag.pdf" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\accordion.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\alerts.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\bootstrap.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\breadcrumbs.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\button-groups.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\buttons.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\carousel.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\close.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\code.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\component-animations.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\dropdowns.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\forms.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\grid.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\hero-unit.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\labels-badges.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\layouts.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\media.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\mixins.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\modals.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\navbar.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\navs.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\pager.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\pagination.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\popovers.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\progress-bars.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\reset.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\responsive-1200px-min.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\responsive-767px-max.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\responsive-768px-979px.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\responsive-navbar.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\responsive-utilities.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\responsive.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\scaffolding.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\sprites.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\tables.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\thumbnails.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\tooltip.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\type.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\utilities.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\variables.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\bootstrap-2.3.2\wells.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\lazy.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\mixins.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\responsive-1200px-min.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\responsive-767px-max.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\responsive-768px-979px.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\responsive-navbar.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\responsive.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\site.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\sticky-footer.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\assets\less\variables.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\CNAME" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\icons.yml" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\3.2.1\Makefile" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\fonts\fontawesome-webfont.eot" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\fonts\fontawesome-webfont.woff" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\fonts\fontawesome-webfont.woff2" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\fonts\FontAwesome.otf" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\less\animated.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\less\bordered-pulled.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\less\core.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\less\fixed-width.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\less\font-awesome.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\less\icons.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\less\larger.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\less\list.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\less\mixins.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\less\path.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\less\rotated-flipped.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\less\screen-reader.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\less\stacked.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\less\variables.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\scss\font-awesome.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\scss\_animated.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\scss\_bordered-pulled.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\scss\_core.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\scss\_fixed-width.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\scss\_icons.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\scss\_larger.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\scss\_list.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\scss\_mixins.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\scss\_path.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\scss\_rotated-flipped.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\scss\_screen-reader.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\scss\_stacked.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\font-awesome\scss\_variables.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\.csscomb.json" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\.csslintrc" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\alerts.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\badges.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\bootstrap.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\breadcrumbs.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\button-groups.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\buttons.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\carousel.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\close.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\code.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\component-animations.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\dropdowns.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\forms.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\glyphicons.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\grid.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\input-groups.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\jumbotron.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\labels.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\list-group.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\media.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\alerts.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\background-variant.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\border-radius.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\buttons.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\center-block.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\clearfix.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\forms.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\gradients.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\grid-framework.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\grid.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\hide-text.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\image.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\labels.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\list-group.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\nav-divider.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\nav-vertical-align.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\opacity.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\pagination.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\panels.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\progress-bar.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\reset-filter.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\reset-text.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\resize.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\responsive-visibility.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\size.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\tab-focus.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\table-row.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\text-emphasis.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\text-overflow.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\mixins\vendor-prefixes.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\modals.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\navbar.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\navs.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\normalize.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\pager.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\pagination.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\panels.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\popovers.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\print.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\progress-bars.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\responsive-embed.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\responsive-utilities.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\scaffolding.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\tables.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\theme.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\thumbnails.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\tooltip.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\type.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\utilities.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\variables.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\bootstrap-3.3.5\wells.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\gandy-grid\grid.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\gandy-grid\mixins.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\algolia.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\banner-ad.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\bootstrap\alerts.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\bootstrap\buttons.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\bootstrap\jumbotron.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\bootstrap\labels.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\bootstrap\modals.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\bootstrap\navbar.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\bootstrap\panels.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\bootstrap\tooltip.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\bootstrap\type.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\bootstrap\variables.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\bootstrap\wells.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\bsap-ad.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\carbon-ad.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\example-rating.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\fa5.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\feature-list.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\fontawesome-icon-list.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\footer.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\jumbotron-carousel.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\layout.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\lazy.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\newsletter.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\print.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\responsive\screen-lg.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\responsive\screen-md.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\responsive\screen-sm-up.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\responsive\screen-sm.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\responsive\screen-xs.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\search.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\social-buttons.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\store.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\stripe-ad.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\sumome.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\textured-bg.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\assets\less\site\views.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\CNAME" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\icons.yml" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\Makefile" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\README.md-nobuild" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\code\core.less" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_includes\code\core.scss" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_plugins\flatten_icon_filters.rb" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_plugins\icon_page_generator.rb" />
+    <Content Include="Vender\Font-Awesome-fa-4\src\_plugins\site.rb" />
+    <Content Include="Vender\Font-Awesome-fa-4\_config.yml" />
+    <Content Include="Views\MorrisonWEB\T15.cshtml" />
+    <Content Include="Views\MorrisonWEB\T30.cshtml" />
+    <Content Include="Views\MorrisonWEB\T16.cshtml" />
+    <Content Include="Views\MorrisonWEB\T20.cshtml" />
+    <Content Include="Views\MorrisonWEB\T19.cshtml" />
+    <Content Include="Views\MorrisonWEB\T21.cshtml" />
+    <Content Include="Views\MorrisonWEB\T17.cshtml" />
+    <Content Include="Views\Home\webLogin.cshtml" />
+    <Content Include="Vender\language\en-US.json" />
+    <Content Include="Vender\language\zh-TW.json" />
+    <Content Include="Views\A20020\A20020.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="packages.config" />
+    <None Include="Project_Readme.html" />
+    <Content Include="Scripts\jquery-1.11.3.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="Vender\amazon-cognito-identity-js\index.d.ts" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>53138</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:53138/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>此專案參考這部電腦上所缺少的 NuGet 封裝。請啟用 NuGet 封裝還原，以下載該封裝。如需詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的檔案是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

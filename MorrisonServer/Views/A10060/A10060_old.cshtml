@@ -1,0 +1,285 @@
+﻿
+@{
+    Layout = null;
+
+    var title = "人員帳號維護";
+
+    var selItem_lbl_cmb1 = (List<SelectListItem>)ViewBag.selItem_lbl_cmb1;
+    var selItem_lbl_cmb2 = (List<SelectListItem>)ViewBag.selItem_lbl_cmb2;
+    var selItem_lbl_cmb3 = (List<SelectListItem>)ViewBag.selItem_lbl_cmb3;
+    var selItem_lbl_cmb4 = (List<SelectListItem>)ViewBag.selItem_lbl_cmb4;
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    @*<link href="~/Content/themes/default/easyui.css" rel="stylesheet" />*@
+    @*<link href="~/Content/themes/bootstrap/easyui.css" rel="stylesheet" />*@
+    <link href="~/Content/themes/gray/easyui.css" rel="stylesheet" />
+    <link href="~/Content/themes/icon.css" rel="stylesheet" />
+
+    <link href="~/Content/ZhCss1.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-1.11.3.min.js"></script>
+    <script src="~/Scripts/jquery.easyui-1.4.5.min.js"></script>
+    <script src="~/Scripts/locale/easyui-lang-zh_TW.js"></script>
+    <script src="~/Scripts/ZhEeasyUI-01.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#dg').datagrid('options').url = "/A10060/GetGridJSON";
+        });
+
+        function btnQuery() {
+
+            $('#dg').datagrid('load', {
+                "lbl_cmb1": $('#lbl_cmb1').combobox('getValue'),
+                "value_cmb1": $('#value_cmb1').textbox('getValue'),
+                'value_isNotice': $('#value_isNotice').combobox('getValue'),
+                'value_isUse': $('#value_isUse').combobox('getValue'),
+                'value_platform': $('#value_platform').combobox('getValue')
+            });
+
+            RowStatus = 'Q';
+
+            $('#chkUnSavePW').change(function () {
+                chkUnSavePW();
+            })
+        }
+
+        function btnEdit() {
+            if ($('#btnEdit').linkbutton('options').disabled == true) {
+                return;
+            }
+
+            $('#fm').form('clear');
+
+            Row = $('#dg').datagrid('getSelected');
+            RowIndex = $("#dg").datagrid("getRowIndex", Row);
+
+            if (Row) {
+                $('#dlg').dialog('center').dialog('open').dialog('setTitle', '修改資料 :');
+                RowStatus = 'M';
+
+                $('#fm').form('load', {
+                    sysUserId: Row.sysUserId,
+                    UUID: Row.UUID,
+                    userName: Row.userName,
+                    userId: Row.userId,
+                    isUse: Row.isUse,
+                    isNotice: Row.isNotice
+                });
+
+            }
+        }
+
+        function btnSave() {
+
+            var row = $('#dg').datagrid('getSelected');
+
+            $('#fm').form('submit', {
+                onSubmit: function () {
+                    return $(this).form('validate');
+                },
+                success: function (data) {
+
+                    var actRow = {
+                        RowStatus: RowStatus,
+                        sysUserId: document.getElementById("sysUserId").value,
+                        UUID: document.getElementById("UUID").value,
+                        isUse: $('#isUse').combobox('getValue'),
+                        isNotice: $('#isNotice').combobox('getValue')
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        url: '/A10060/ActSingle',
+
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: JSON.stringify({ "actRow": actRow }),
+
+                        success: function (data) {
+                            if (data.resultCode == '10') {
+                                actRow.actUser = data.row[0].actUser;
+                                actRow.actTime = data.row[0].actTime;
+
+                                $('#dg').datagrid('updateRow', {
+                                    index: RowIndex,
+                                    row: actRow
+                                });
+
+                                $('#dg').datagrid('resize');
+
+                                RowStatus = "Q";
+                                $('#dlg').dialog('close');        // close the dialog
+                            }
+                            else {
+                                $.messager.alert('錯誤', data.error, 'error');
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        function btnCancel() {
+            $('#dlg').dialog('close');
+            RowStatus = "Q";
+
+        }
+
+        function btnDelete() {
+
+            if ($('#btnDelete').linkbutton('options').disabled == true) {
+                return;
+            }
+
+            Row = $('#dg').datagrid('getSelected');
+            RowIndex = $("#dg").datagrid("getRowIndex", Row);
+
+            if (Row) {
+                $.messager.confirm('確認', '你確定要刪除這筆資料嗎?', function (r) {
+                    if (r) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/A10060/DeleteSingle",
+                            data: "sysUserId=" + Row.sysUserId + "&UUID=" + Row.UUID,
+
+                            success: function (data) {
+                                if (data.resultCode == "10") {
+                                    $('#dg').datagrid('deleteRow', RowIndex);
+                                }
+                                else {
+                                    $.messager.alert('錯誤', data.error, 'error');
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    </script>
+
+
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei';
+            background-color: white;
+        }
+
+        .datagrid-cell {
+            font-size: 14px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body id="body" class="easyui-layout">
+    <!-- #region Create Query section -->
+
+    <div id="divQuery" data-options="region:'north',title:'Condition',split:true" style="height:90px;padding:10px;">
+        <table>
+            <tr>
+                <td width="250">
+                    @Html.DropDownList("lbl_cmb1", selItem_lbl_cmb1, null, new { @class = "easyui-combobox", editable = "false", style = "width: 130px;height:30px;" })
+                    <input id="value_cmb1" name="value_cmb1" class="easyui-textbox" style="height:30px;width:80px;" />
+                </td>
+                <td width="250">
+                    裝置平台:
+                    @Html.DropDownList("value_platform", selItem_lbl_cmb4, null, new { @class = "easyui-combobox", editable = "false", style = "width: 150px;height:30px;" })
+                </td>
+                <td width="250">
+                    使用狀態:
+                    @Html.DropDownList("value_isUse", selItem_lbl_cmb2, null, new { @class = "easyui-combobox", editable = "false", style = "width: 150px;height:30px;" })
+                </td>
+                <td width="250">
+                    接收推播:
+                    @Html.DropDownList("value_isNotice", selItem_lbl_cmb2, null, new { @class = "easyui-combobox", editable = "false", style = "width: 150px;height:30px;" })
+                </td>
+                <td width="250">
+                    <a href="javascript:void(0)" class="easyui-linkbutton" plain="false" onclick="btnQuery()" style="height:30px;" iconCls="icon-search">Search</a>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    <!-- #endregion -->
+    <!-- #region Create DataGrid to display -->
+
+    <div id="divGrid" data-options="region:'center',title:'Result'" style="background:#eee;">
+        <div id="toolbar">
+            <a href="#" id="btnEdit" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="btnEdit()">修改</a>
+            <a href="#" id="btnDelete" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="btnDelete()">Delete</a>
+        </div>
+
+        <table id="dg" class="easyui-datagrid" toolbar="#toolbar" style="width:auto;" method="post" fit="true"
+               pagination="true" pagesize="50" rownumbers="true" singleselect="true">
+            <thead frozen="true">
+                <tr>
+                    <th field="sysUserId" frozen="true" sortable="true" editor="text">使用者系統代碼</th>
+                    <th field="userId" frozen="true" sortable="true" editor="text">User Id</th>
+                    <th field="userName" frozen="true" sortable="true" editor="text">User Name</th>
+                </tr>
+            </thead>
+            <thead>
+                <tr>
+                    <th field="platform" sortable="true" editor="text">裝置平台</th>
+                    <th field="model" sortable="true" editor="text">裝置版本</th>
+                    <th field="UUID" sortable="true" editor="text">UUID</th>
+                    <th field="appVer" sortable="true" editor="text">登入App版本</th>
+                    <th field="RegId" sortable="true" editor="text">RegId</th>
+                    <th field="TokenId" sortable="true" editor="text">TokenId</th>
+                    <th field="isUse" sortable="true" editor="text">Use Status</th>
+                    <th field="isNotice" sortable="true" editor="text">Push Status</th>
+                    <th field="creatUser" sortable="true" editor="text">建立人員</th>
+                    <th field="creatTime" sortable="true" editor="text">建立時間</th>
+                    <th field="actUser" sortable="true" editor="text">異動人員</th>
+                    <th field="actTime" sortable="true" editor="text">異動時間</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <!-- #endregion -->
+    <!-- #region Form dialog for Action -->
+
+    <div id="dlg" class="easyui-dialog" style="width: 500px; height: 320px; padding: 10px 20px; " closed="true" buttons="#dlg-buttons" modal="true">
+
+        <div class="ftitle">@title</div>
+
+        <form id="fm" method="post">
+            <input id="sysUserId" name="sysUserId" type="hidden" style="background-color: silver;">
+            <input id="UUID" name="UUID" type="hidden" style="background-color: silver;">
+            <div class="fitem">
+                <label>使用者姓名 : </label>
+                <input id="userName" name="userName" class="easyui-textbox" style="width:200px;height:30px;" required>
+            </div>
+            <div class="fitem">
+                <label>使用者代號 : </label>
+                <input id="userId" name="userId" class="easyui-textbox" style="width:200px;height:30px;" disabled>
+            </div>
+            
+            <div class="fitem">
+                <label>使用狀態 : </label>
+                @Html.DropDownList("isUse", selItem_lbl_cmb3, null, new { id = "isUse", @class = "easyui-combobox", validtype = "selectOneValueCheck['isUse']", required = "required", style = "width:200px;height:30px;" })
+            </div>
+
+            <div class="fitem">
+                <label>推播狀態 : </label>
+                @Html.DropDownList("isNotice", selItem_lbl_cmb3, null, new { id = "isNotice", @class = "easyui-combobox", validtype = "selectOneValueCheck['isUse']", required = "required", style = "width:200px;height:30px;" })
+            </div>
+
+        </form>
+    </div>
+
+    <div id="dlg-buttons">
+        <a href="javascript:void(0)" id="btnSave" class="easyui-linkbutton" iconcls="icon-ok" onclick="btnSave()" style="height:30px;">Save</a>
+        <a href="javascript:void(0)" id="btnCancel" class="easyui-linkbutton" iconcls="icon-cancel" onclick="btnCancel()" style="height:30px;">Cancel</a>
+    </div>
+    <!-- #endregion -->
+
+</body>
+</html>

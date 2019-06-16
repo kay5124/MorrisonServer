@@ -1,0 +1,134 @@
+﻿
+@{
+    Layout = null;
+    var title = "User device record";
+
+    var selItem_lbl_cmb1 = (List<SelectListItem>)ViewBag.selItem_lbl_cmb1;
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    <link href="~/Scripts/SB_Admin2/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/dist/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/morrisjs/morris.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Scripts/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.css" rel="stylesheet" />
+    <link href="~/Content/ZhCss2.css" rel="stylesheet" />
+
+    <script src="~/Scripts/SB_Admin2/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/raphael/raphael.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/morrisjs/morris.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/data/morris-data.js"></script>
+    <script src="~/Scripts/SB_Admin2/js/sb-admin-2.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-TW.js"></script>
+    <script src="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.min.js"></script>
+    <script src="~/Vender/zhScript/zhTable_angus.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#zhTb1').zhTable({
+                '_rows': 20,
+                '_columns': [
+                    { 'id': 'actSerial', 'text': 'actSerial', 'sort': true },
+                    { 'id': 'userId', 'text': 'User Id', 'sort': true },
+                    { 'id': 'userName', 'text': 'User Name', 'sort': true },
+                    { 'id': 'userTitle', 'text': 'Job title', 'sort': true },
+                    { 'id': 'clientIp', 'text': 'IP', 'sort': true },
+                    { 'id': 'creatTime', 'text': 'Login time', 'sort': true },
+                    { 'id': 'statusName', 'text': 'System', 'sort': true },
+                    { 'id': 'platform', 'text': 'Platform', 'sort': true },
+                    { 'id': 'model', 'text': 'Version model', 'sort': true },
+                    { 'id': 'UUID', 'text': 'UUID', 'sort': true },
+                  
+                ],
+                'url': '@ViewBag.ServerName' + '/A10050/GetGridJSON'
+            });
+
+            //使用bootstrap 日期，必須用特定的方法將日期功能激活
+            //下方為日期激活的語法
+            $('#value_date1').datetimepicker();
+            $('#value_date2').datetimepicker();
+        });
+
+        function btnQuery() {
+            RowStatus = 'Q';
+
+            $('#zhTb1').zhTable('loadData', {
+                "lbl_cmb1": $("#lbl_cmb1").val(),
+                "value_cmb1": $("#value_cmb1").val(),
+                "value_date1": $("#value_date1").find("input").val(),
+                "value_date2": $("#value_date2").find("input").val()
+            });
+        }
+
+    </script>
+</head>
+<body style="font-family:'Microsoft JhengHei';">
+    <div id="page-wrapper" style="padding:30px;margin:0px;">
+        <div class="panel panel-default">
+            <div class="panel-heading">Condition</div>
+            <div class="panel-body">
+                
+                <div class="col-md-2">
+                    <div class="form-group">
+                       @Html.DropDownList("lbl_cmb1", selItem_lbl_cmb1, null, new { id = "lbl_cmb1", Class = "form-control" })
+                        <input id="value_cmb1" name="value_cmb1" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="value_date1">Start Time</label>
+                        <div class='input-group date' id='value_date1'>
+                            <input type='text' class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd 00:00:00")" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="value_date2">End Time</label>
+                        <div class='input-group date' id='value_date2'>
+                            <input type='text' class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd 23:59:59")" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <button id="btnQuery" onclick="btnQuery()" class="btn btn-default">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Result</div>
+            <div class="panel-body">
+                <div id="zhTb1">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

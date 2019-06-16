@@ -1,0 +1,191 @@
+﻿
+@{
+    Layout = null;
+    var title = "群組設定";
+
+    var selItem_lbl_cm1 = (List<SelectListItem>)ViewBag.selItem_lbl_cm1;
+    var selItem_lbl_cm2 = (List<SelectListItem>)ViewBag.selItem_lbl_cm2;
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    <link href="~/Content/themes/gray/easyui.css" rel="stylesheet" />
+    <link href="~/Content/themes/icon.css" rel="stylesheet" />
+
+    <link href="~/Content/ZhCss1.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-1.11.3.min.js"></script>
+    <script src="~/Scripts/jquery.easyui-1.4.5.min.js"></script>
+    <script src="~/Scripts/locale/easyui-lang-zh_TW.js"></script>
+    <script src="~/Scripts/ZhEeasyUI-01.js"></script>
+    <script>
+        var RowStatus = "Q";
+
+        $(document).ready(function () {
+            $('#dg').datagrid('options').url = "/A10012/GetGridJSON";
+            $('#dg2').datagrid('options').url = "/A10012/GetGridJSONDetail";
+
+        });
+
+        function btnQuery() {
+            $("#dg").datagrid("load", {
+                "lbl_cmb1": $("#lbl_cmb1").combobox("getValue"),
+                "value_cmb1": $("#value_cmb1").textbox("getValue")
+            })
+        }
+
+        function btnEdit() {
+
+            var row = $('#dg').datagrid('getSelected');
+
+            $('#value_cmb2').textbox('setValue', '');
+
+            rowIndex = $("#dg").datagrid("getRowIndex", row);
+
+            if (row) {
+                RowStatus = 'M';
+                $('#dlg').dialog('center').dialog('open').dialog('setTitle', '修改資料 :');
+                btnQuery2();
+            }
+        }
+
+        function btnSave() {
+
+            var row = $('#dg').datagrid('getSelected');
+
+            var dg2Data = $('#dg2').datagrid('getRows');
+            var chkAll = '';
+            for (var i = 0 ; i < dg2Data.length; i++) {
+                chkAll += dg2Data[i].sysUserId + ',';
+            }
+
+            if (chkAll != '') chkAll = chkAll.substr(0, chkAll.length - 1);
+
+            var dg2DataChk = $('#dg2').datagrid('getChecked');
+            var chk = '';
+            for (var i = 0 ; i < dg2DataChk.length; i++) {
+                chk += dg2DataChk[i].sysUserId + ',';
+            }
+
+            if (chk != '') chk = chk.substr(0, chk.length - 1);
+
+            var actRow = {
+                'appGroupId': row.appGroupId,
+                'chkAll': chkAll,
+                'chk': chk
+            }
+
+            $.ajax({
+                type: "POST",
+                url: '/A10012/ActSingle',
+
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({ "actRow": actRow }),
+
+                success: function (data) {
+                    if (data.resultCode == '10') {
+                        RowStatus = "Q";
+                        $('#dlg').dialog('close');        // close the dialog
+                        $('#dg').datagrid('reload');
+                    }
+                    else {
+                        $.messager.alert('錯誤', data.error, 'error');
+                    }
+                }
+            });
+        }
+
+        function btnQuery2() {
+            var row = $('#dg').datagrid('getSelected');
+
+            if (!row) return;
+
+            $("#dg2").datagrid("load", {
+                "appGroupId": row.appGroupId,
+                "lbl_cmb2": $("#lbl_cmb2").combobox("getValue"),
+                "value_cmb2": $("#value_cmb2").textbox("getValue")
+            })
+        }
+
+    </script>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei';
+            background-color: white;
+        }
+
+        .datagrid-cell {
+            font-size: 14px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body id="body" class="easyui-layout">
+    <div id="divQuery" style="height: 80px; padding:10px;" data-options="region:'north',title:'Condition',split:true">
+        @Html.DropDownList("lbl_cmb1", selItem_lbl_cm1, null, new { id = "lbl_cmb1", @class = "easyui-combobox", editable = "false", style = "width:80px; height:30px;" })
+        <input id="value_cmb1" name="value_cmb1" class="easyui-textbox" style="height:30px;" />
+        <a href="javascript:void(0)" id="btnQuery" name="btnQuery" class="easyui-linkbutton" iconCls="icon-search" style="height:30px;" onclick="btnQuery()">Search</a>
+    </div>
+    <div data-options="region:'center',title:'@title',split:true">
+
+        <div id="toolbar">
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="btnEdit()">編輯群組人數</a>
+        </div>
+
+        <table id="dg" class="easyui-datagrid" toolbar="#toolbar" style="width:auto;" method="post" fit="true"
+               pagination="true" pagesize="50" rownumbers="true" singleselect="true">
+            <thead>
+                <tr>
+                    <th field="appGroupId" sortable="true" editor="text" align="center">Group Id</th>
+                    <th field="appGroupName" sortable="true" editor="text">Group Name</th>
+                    <th field="userCount" sortable="true" editor="text">群組人數</th>
+                    <th field="statusName" sortable="true" editor="text">Use Status</th>
+                    <th field="memo" sortable="true" editor="text">Memo</th>
+                    <th field="creatUser" sortable="true" editor="text">建立人員</th>
+                    <th field="creatTime" sortable="true" editor="text">建立時間</th>
+                    <th field="actUser" sortable="true" editor="text">異動人員</th>
+                    <th field="actTime" sortable="true" editor="text">異動時間</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+    <div id="dlg" class="easyui-dialog" style="width: 650px; height: 660px; padding: 10px 20px; " closed="true" buttons="#dlg-buttons" modal="true">
+        <div class="ftitle">@title</div>
+
+        <div id="divQuery2" class="easyui-panel" style="width: 600px; height: 80px; padding: 5px;"
+             data-options="title:'Condition',iconCls:'icon-search',collapsible:true,maximizable:true">
+            @Html.DropDownList("lbl_cmb2", selItem_lbl_cm2, null, new { id = "lbl_cmb2", @class = "easyui-combobox", editable = "false", style = "width:120px; height:30px;" })
+            <input id="value_cmb2" name="value_cmb2" class="easyui-textbox" style="width:80px;height:30px;" />
+            <a href="javascript:void(0)" id="btnQuery2" name="btnQuery2" class="easyui-linkbutton" iconCls="icon-search" style="height:30px;" onclick="btnQuery2()">Search</a>
+        </div>
+        <div id="divGrid2" class="easyui-panel" style="width: 600px; height: 410px; padding: 10px;  margin: 0;padding: 0;"
+             data-options="title:'Result',iconCls:'icon-large-smartart',maximizable:true">
+            <table id="dg2" class="easyui-datagrid" style="width:598px;height:381px"
+                   toolbar="#toolbar2" pagination="true" pagesize="20" method="post"
+                   rownumbers="true" singleselect="false">
+                <thead>
+                    <tr>
+                        <th field="isExist" checkbox="true"></th>
+                        <th field="sysUserId" editor="text"><span id="thType">使用者代碼</span></th>
+                        <th field="userId" editor="text">User Id</th>
+                        <th field="userName" editor="text">使用者名稱</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+        <div id="dlg-buttons">
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-ok" onclick="btnSave()">Save</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">Cancel</a>
+        </div>
+
+    </div>
+</body>
+</html>

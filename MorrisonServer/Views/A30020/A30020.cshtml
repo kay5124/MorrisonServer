@@ -1,0 +1,500 @@
+﻿
+@{
+    Layout = null;
+    var title = "Dispatch and BOL Info.";
+
+    var selItem_dcId = (List<SelectListItem>)ViewBag.selItem_dcId;
+    var selItem_statusId = (List<SelectListItem>)ViewBag.selItem_statusId;
+    var selItem_tranCompId = (List<SelectListItem>)ViewBag.selItem_tranCompId;
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    <link href="~/Scripts/SB_Admin2/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/dist/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/morrisjs/morris.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Scripts/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.css" rel="stylesheet" />
+    <link href="~/Content/ZhCss2.css" rel="stylesheet" />
+
+    <script src="~/Scripts/SB_Admin2/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/raphael/raphael.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/morrisjs/morris.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/data/morris-data.js"></script>
+    <script src="~/Scripts/SB_Admin2/js/sb-admin-2.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-TW.js"></script>
+    <script src="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.min.js"></script>
+    <script src="~/Vender/zhScript/zhTable_angus.js"></script>
+
+    <script type="text/javascript">
+        var RowStatus = 'Q';
+
+        $(document).ready(function () {
+            $('#zhTb1').zhTable({
+                '_rows': 20,
+                '_columns': [
+                    { 'id': 'dispatch_id', 'text': 'Dispatch Id', 'sort': true },
+                    //{ 'id': 'dcName', 'text': 'DC Name', 'sort': true },
+                    { 'id': 'bindDelTime', 'text': 'Truck loading/OFD', 'sort': true },
+                    { 'id': 'realFinishTime', 'text': 'Last POD', 'sort': true },
+                    { 'id': 'tranCompName', 'text': 'Company', 'sort': true },
+                    { 'id': 'driverId', 'text': 'Driver Id', 'sort': true },
+                    { 'id': 'driverName', 'text': 'Driver Name', 'sort': true },
+                    { 'id': 'carId', 'text': 'Car No.', 'sort': true },
+                    { 'id': 'trailerId', 'text': 'Trailer Number', 'sort': true },
+                    { 'id': 'driverId2', 'text': 'Two Driver Id', 'sort': true },
+                    { 'id': 'driverName2', 'text': 'Two Driver Name', 'sort': true },
+                    { 'id': 'detailCount', 'text': 'BOL count', 'sort': true },
+                    { 'id': 'statusName', 'text': 'Status', 'sort': true },
+                    //{ 'id': 'actUser', 'text': 'ActUser', 'sort': true },
+                    //{ 'id': 'actUser', 'text': 'ActUser', 'sort': true },
+                    { 'id': 'btnView', 'text': 'View' }
+                ],
+                'url': '@ViewBag.ServerName' + '/A30020/GetGridJSON'
+            });
+
+            $('#value_dcId').on('change', function () {
+                onchange_dcId(this.value);
+            })
+
+            $('.modal').on('shown.bs.modal', function () {
+                var margin_vertical = parseInt($(this).find('.modal-dialog').css('margin-top')) + parseInt($(this).find('.modal-dialog').css('margin-bottom')) || 0;
+                var height_header = parseInt($(this).find('.modal-header').css('height')) || 0;
+                var height_footer = parseInt($(this).find('.modal-footer').css('height')) || 0;
+                var height_body = (window.innerHeight - height_header - height_footer - margin_vertical - 10) + 'px';
+                $(this).find('.modal-body').css('max-height', height_body).css('overflow', 'auto');
+
+                $(this).trigger('focus');
+            });
+
+            btnQuery();
+        });
+
+
+        function onchange_dcId(pk) {
+            if (pk == "") {
+                $('#tranCompIds').html('');
+                $('#tranCompIds').attr('disabled', true);
+            }
+            else {
+                $.ajax({
+                    url: '@ViewBag.ServerName' + '/A20010/GetTranCompData_NotExist',
+                    data: 'pk=' + pk,
+                    type: 'POST',
+                    success: function (data) {
+                        if (data.resultCode == '10') {
+                            $('#tranCompIds').attr('disabled', false);
+                            if (data.rows.length > 0) {
+                                var dg = '';
+                                for (var i = 0 ; i < data.rows.length ; i++) {
+                                    var row = data.rows[i];
+                                    dg += '<option value="' + row.value + '">' + row.text + '</option>';
+                                }
+                                $('#tranCompIds').html(dg);
+
+                            } else {
+                                $('#tranCompIds').html('');
+                                $('#tranCompIds').attr('disabled', true);
+                                swal("Info", "No transportation company can add", "info");
+                                //swal("Info", "已無貨運公司可以新增", "info");
+                            }
+                        } else {
+                            $('#tranCompIds').html('');
+                            $('#tranCompIds').attr('disabled', true);
+                            //swal("Error",  data.error, "warning");
+                        }
+                    }
+                })
+            }
+        }
+
+        function btnQuery() {
+            RowStatus = 'Q';
+
+            $('#zhTb1').zhTable('loadData', {
+                "value_dcId": $("#value_dcId").val(),
+                "dicpatch_Id": $("#value_dicpatch_Id").val(),
+                "tranCompId": $("#tranCompIds").val(),
+                "taskStatusId": $("#taskStatusId").val()
+            });
+        }
+
+        function btnView(pk) {
+            $.ajax({
+                url: '@ViewBag.ServerName' + '/A30020/GetBolData',
+                type: 'POST',
+                data: 'pk=' + pk,
+                success: function (data) {
+                    if (data.resultCode = '10') {
+                        $('#dlg').modal();
+
+                        var dg = '';
+                        //$('#dispatch_id').html(data.dispatch_id);
+                        //$('#dcName').html(data.dcName);
+                        //$('#userName').html(data.userName);
+                        //$('#userId').html(data.userId);
+                        //$('#tranCompName').html(data.tranCompName);
+                        //$('#carId').html(data.carId);
+                        //$('#trailerId').html(data.trailerId);
+
+                        var dispatchData = data;
+                        for (var val in dispatchData) {
+                            $("#" + val).html(dispatchData[val]);
+                        }
+                        //$("#viewDiv").append(dg);
+
+
+
+                        if (data.rows.length > 0) {
+
+                            for (var i = 0; i < data.rows.length; i++) {
+                                var row = data.rows[i];
+                                dg += '<table class="customers" width="100%" frame="box" rules="all">';
+                                dg += '    <tr>';
+                                dg += '        <td width="20%">BOL</td>';
+                                if (row.FileId_02 != '') {
+                                    dg += '        <td colspan="2"><a href="javascript:void(0);" onclick="btnGetFile(\'' + row.FileId_02 + '\',\'' + data.dispatch_id + '\')">' + row.bol_no + '</a></td>';
+                                } else {
+                                    dg += '        <td colspan="2">' + row.bol_no + '</td>';
+                                }
+                                dg += '    </tr>';
+                                dg += '    <tr>';
+                                dg += '        <td width="20%">Ship Order</td>';
+                                dg += '        <td colspan="2">' + row.arriveSeqD + '</td>';
+                                dg += '    </tr>';
+                                dg += '    <tr>';
+                                dg += '        <td width="20%">Dest Name</td>';
+                                dg += '        <td colspan="2">' + row.shipName + " " + row.shipName2 + '</td>';
+                                dg += '    </tr>';
+                                dg += '    <tr>';
+                                dg += '        <td width="20%">Address</td>';
+                                dg += '        <td colspan="2">' + row.shipAddr +"<br/>"+ row.shipAddr2 + '</td>';
+                                dg += '    </tr>';
+                                dg += '    <tr>';
+                                dg += '        <td width="20%">City/State/Zip</td>';
+                                dg += '        <td colspan="2">' + row.shipCity + '/ ' + row.shipState + '/ ' + row.shipZip + '</td>';
+                                dg += '    </tr>';
+
+                                var scheduledDeliveryDate = '';
+                                scheduledDeliveryDate += row.schddeliv_d != '' ? row.schddeliv_d.substr(4, 2) + '/' + row.schddeliv_d.substr(6, 2) + '/' + row.schddeliv_d.substr(0, 4) + "&nbsp;@@&nbsp;" : '';
+                                scheduledDeliveryDate += row.schddeliv_t_from != '' ? row.schddeliv_t_from.substr(0, 2) + ':' + row.schddeliv_t_from.substr(2, 2) : '';
+                                scheduledDeliveryDate += row.schddeliv_t_to != '' ? '~' + row.schddeliv_t_to.substr(0, 2) + ':' + row.schddeliv_t_to.substr(2, 2) : '';
+
+                                dg += '    <tr>';
+                                dg += '        <td width="20%">DELIVER ONLY ON</td>';
+                                dg += '        <td colspan="2">' + scheduledDeliveryDate + '</td>';
+                                dg += '    </tr>';
+                                //20180830 Add By.Ray
+                                dg += '    <tr>';
+                                dg += '        <td width="20%">POD Date</td>';
+                                dg += '        <td colspan="2">' + row.realArriveTime2 + '</td>';
+                                dg += '    </tr>';
+                                dg += '    <tr>';
+                                dg += '        <td width="20%">POD Name</td>';
+                                dg += '        <td colspan="2">' + row.POD_name + '</td>';
+                                dg += '    </tr>';
+                                dg += '    <tr>';
+                                dg += '        <td width="20%">Status</td>';
+                                dg += '        <td colspan="2">' + dispatchData["statusName"] + '</td>';
+                                dg += '    </tr>';
+                                //20180830 Add By.Ray
+                                dg += '    <tr>';
+                                dg += '        <td colspan="3">';
+                                dg += '        <a href="javascript:void(0);" onclick="btnShowDn(\'' + row.bol_no + '\')">';
+                                dg += '            <table width="100%" frame="box" rules="all">';
+                                dg += '                <tr name="tbl_dn_' + row.bol_no + '" style="display:none;">';
+                                dg += '                    <td width="25%">HAWB#</td>';
+                                dg += '                    <td width="25%">DN</td>';
+                                dg += '                    <td width="15%">PLTS</td>';
+                                dg += '                    <td width="15%">CTNS</td>';
+                                dg += '                    <td width="20%">WEIGHT KG</td>';
+                                dg += '                </tr>';
+                                for (var j = 0; j < row.dn.length; j++) {
+                                    var d_row = row.dn[j];
+                                    dg += '                <tr name="tbl_dn_' + row.bol_no + '" style="display:none;">';
+                                    dg += '                    <td>' + d_row.hawb + '</td>';
+                                    dg += '                    <td>' + d_row.dn + '</td>';
+                                    dg += '                    <td>' + d_row.dnplt + '</td>';
+                                    dg += '                    <td>' + d_row.dnqty + '</td>';
+                                    dg += '                    <td>' + d_row.aw + '</td>';
+                                    dg += '                </tr>';
+                                }
+                                dg += '                <tr>';
+                                dg += '                    <td colspan="2">GRAND TOTAL</td>';
+                                dg += '                    <td>' + row.plts + '</td>';
+                                dg += '                    <td>' + row.totalBoxesQty + '</td>';
+                                dg += '                    <td>' + row.wgt + '</td>';
+                                dg += '                </tr>';
+                                dg += '            </table>';
+                                dg += '        </a>';
+                                dg += '        </td>';
+                                dg += '    </tr>';
+                                dg += '</table>';
+                                dg += '<br/>';
+                            }
+                        }
+
+                        $('#dg').html(dg);
+                    }
+                }
+            })
+            RowStatus = 'Q';
+        }
+
+        function btnShowDn(pk) {
+            var tr_dn = document.getElementsByName('tbl_dn_' + pk);
+
+            if (tr_dn[0].style.display != "") {
+                $('tr[name="tbl_dn_' + pk + '"]').show();
+            } else {
+                $('tr[name="tbl_dn_' + pk + '"]').hide();
+            }
+        }
+
+        function btnGetFile(pk, pk2) {
+            $.ajax({
+                url: '@ViewBag.ServerName' + '/A30020/GetFile',
+                type: 'POST',
+                data: 'pk=' + pk + '&pk2=' + pk2,
+                success: function (data) {
+                    if (data.resultCode == '10') {
+                        window.open(data.url);
+                    }
+                }
+            })
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei';
+            background-color: white;
+        }
+
+        .datagrid-cell {
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        .customers {
+            margin-left: 5px;
+            margin-right: 1px;
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            /*height: auto;*/
+            /*margin-top: 5px;*/
+        }
+
+            .customers .th, .customers .td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                height: 50px;
+            }
+
+            .customers .td {
+                /*border: 1px solid #ddd;
+                padding: 8px;
+                height: 66px;*/
+            }
+
+            .customers div:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+
+            .customers div:hover {
+                background-color: #ddd;
+            }
+
+            .customers .th {
+                font-weight: bold;
+                /*padding-top: 2px;*/
+                padding-left: 12px;
+                padding-top: 12px;
+                padding-bottom: 12px;
+                text-align: left;
+                /*background-color: #4CAF50;*/
+                color: #2377C1;
+            }
+
+            .customers td, .customers th {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+
+            .customers tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+
+            .customers tr:hover {
+                background-color: #ddd;
+            }
+
+            .customers th {
+                padding-top: 12px;
+                padding-bottom: 12px;
+                text-align: left;
+                /*background-color: #4CAF50;*/
+                color: #2377C1;
+            }
+    </style>
+</head>
+<body style="font-family:'Microsoft JhengHei';">
+    <div id="page-wrapper" style="padding:30px;margin:0px;">
+        <div class="panel panel-default">
+            <div class="panel-heading">Condition</div>
+            <div class="panel-body">
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="value_dcId">Station</label>
+                        @Html.DropDownList("value_dcId", selItem_dcId, null, new { id = "value_dcId", Class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="tranCompIds">Company</label>
+                        @Html.DropDownList("tranCompIds", selItem_tranCompId, null, new { id = "tranCompIds", Class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="value_dispatch_Id">Dispatch Id</label>
+                        <input id="value_dispatch_Id" name="value_dispatch_Id" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="taskStatusId">Status</label>
+                        @Html.DropDownList("taskStatusId", selItem_statusId, null, new { id = "taskStatusId", Class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <button id="btnQuery" onclick="btnQuery()" class="btn btn-default">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Result</div>
+            <div class="panel-body">
+                <div id="zhTb1">
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="dlg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="dlgTitle">Detail</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="viewDIv">
+                        @*<div class="row">
+                                <div class="col-md-12">
+                                    <table class="customers">
+                                        <tr>
+                                            <th><div class="row col-md-1">Station</div></th>
+                                            <td><div class="row col-md-1" id="dcId"></div></td>
+                                            <th><div class="row col-md-2">Dispatch Id</div></th>
+                                            <td><div class="row col-md-2" id="dispatch_id"></div></td>
+                                            <th><div class="row col-md-2">Truck loading</div></th>
+                                            <td><div class="row col-md-2" id="bindTime"></div></td>
+                                            <th><div class="row col-md-1">OFD</div></th>
+                                            <td><div class="row col-md-1" id="realDelDate"></div></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Company</th>
+                                            <td id="tranCompName"></td>
+                                            <th>Driver Id</th>
+                                            <td id="driverId"></td>
+                                            <th>Driver Name</th>
+                                            <td id="driverName"></td>
+                                            <th>Car No.</th>
+                                            <td id="carId"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Trailer Number</th>
+                                            <td id="trailerId"></td>
+                                            <th>Two Driver Id</th>
+                                            <td id="driverId2"></td>
+                                            <th>Two Driver Name</th>
+                                            <td id="driverName2"></td>
+                                            <th>Status</th>
+                                            <td id="statusName"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>*@
+
+
+                        <div class="row customers">
+                            <div class="col-md-2 th">Station</div>
+                            <div class="col-md-2 td" id="dcId"></div>
+                            <div class="col-md-2 th">Dispatch Id</div>
+                            <div class="col-md-2 td" id="dispatch_id"></div>
+                            <div class="col-md-2 th">Truck loading</div>
+                            <div class="col-md-2 td" id="bindTime"></div>
+                        </div>
+                        <div class="row customers">
+                            <div class="col-md-2 th">OFD</div>
+                            <div class="col-md-2 td" id="realDelDate"></div>
+                            <div class="col-md-2 th">Company</div>
+                            <div class="col-md-2 td" id="tranCompName"></div>
+                            <div class="col-md-2 th">Driver Id</div>
+                            <div class="col-md-2 td" id="driverId"></div>
+                        </div>
+                        <div class="row customers">
+                            <div class="col-md-2 th">Driver Name</div>
+                            <div class="col-md-2 td" id="driverName"></div>
+                            <div class="col-md-2 th">Car No.</div>
+                            <div class="col-md-2 td" id="carId"></div>
+                            <div class="col-md-2 th">Trailer Number</div>
+                            <div class="col-md-2 td" id="trailerId"></div>
+                        </div>
+                        <div class="row customers">
+                            <div class="col-md-2 th">Two Driver Id</div>
+                            <div class="col-md-2 td" id="driverId2"></div>
+                            <div class="col-md-2 th">Two Driver Name</div>
+                            <div class="col-md-2 td" id="driverName2"></div>
+                            <div class="col-md-2 th">Status</div>
+                            <div class="col-md-2 td" id="statusName"></div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12" id="dg">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Modal-->
+    </div>
+
+</body>
+</html>

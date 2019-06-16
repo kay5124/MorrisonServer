@@ -1,0 +1,360 @@
+﻿
+@{
+    Layout = null;
+    var title = "功能權限設定";
+
+    var selItem_groupId = (List<SelectListItem>)ViewBag.selItem_groupId;
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    @*<link href="~/Content/themes/default/easyui.css" rel="stylesheet" />*@
+    @*<link href="~/Content/themes/bootstrap/easyui.css" rel="stylesheet" />*@
+    <link href="~/Content/themes/gray/easyui.css" rel="stylesheet" />
+    <link href="~/Content/themes/icon.css" rel="stylesheet" />
+
+    <link href="~/Content/ZhCss1.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-1.11.3.min.js"></script>
+    <script src="~/Scripts/jquery.easyui-1.4.5.min.js"></script>
+    <script src="~/Scripts/locale/easyui-lang-zh_TW.js"></script>
+    <script src="~/Scripts/ZhEeasyUI-01.js"></script>
+    <script>
+
+        var $dg;
+        var RowStatus = 'Q';
+
+        var Row, RowIndex;
+        var Rows;
+
+        var CurrRowIndex;
+        var CurrRow;
+
+
+        $(document).ready(function () {
+            $dg = $("#dg");
+
+            $('#dg').datagrid('options').url = "/S01030/GetGridJSON";
+
+        });
+
+        function btnQuery() {
+            //debugger;
+            if ($('#value_groupId').val().trim() == "") {
+                $.messager.alert('警示', '請下拉選擇 使用者群組', 'info');
+                return;
+            }
+
+            $("#dg").datagrid("load", {
+                "value_groupId": $("#value_groupId").combobox("getValue")
+            })
+        }
+
+        function btnAdd() {
+            if ($('#btnAdd').linkbutton('options').disabled == true) {
+                return;
+            }
+
+            $dg.datagrid('appendRow', {
+                RowStatus: "A"
+            });
+
+            Rows = $dg.datagrid('getRows'); //已經被刪除的資料 用 getRows 取不出來
+            $dg.datagrid('beginEdit', Rows.length - 1);
+            $dg.datagrid('selectRow', Rows.length - 1);
+
+            RowStatus = "A"
+            Row = $dg.datagrid('getSelected');
+            RowIndex = Rows.length - 1;
+        }
+
+        function btnEdit() {
+            if ($('#btnEdit').linkbutton('options').disabled == true) {
+                return;
+            }
+            RowStatus = "M";
+        }
+
+        function btnDelete() {
+
+            debugger;
+
+            if (RowStatus != "Q") return;
+            if ($('#btnDelete').linkbutton('options').disabled == true) {
+                return;
+            }
+
+            Row = $dg.datagrid('getSelected');
+
+            if (Row) {
+
+                RowIndex = $dg.datagrid('getRowIndex', Row);
+                $dg.datagrid('deleteRow', RowIndex);
+
+            }
+
+        }
+
+        function btnCancel() {
+
+            btnQuery();
+            RowStatus = "Q";
+        }
+
+        function btnSave() {
+            $dg.datagrid('endEdit', CurrRowIndex);
+
+
+            Rows = $dg.datagrid('getRows');
+            var actRows = new Array();
+
+            for (var i = 0; i < Rows.length; i++) {
+                if (Rows[i].RowStatus != "") {
+                    actRows[actRows.length] = {
+                        groupId: $('#value_groupId').combobox('getValue'),
+                        funcId: Rows[i].funcId,
+                        limitId: Rows[i].limitId,
+                        realRow: Rows[i].realRow,
+                        creatUser: Rows[i].creatUser,
+                        creatTime: Rows[i].creatTime,
+                        actUser: Rows[i].actUser,
+                        actTime: Rows[i].actTime
+                    }
+                }
+            }
+
+            if (actRows.length == 0) return; //沒有異動到不需儲存
+
+            //debugger;
+            $.ajax({
+                type: "POST",
+                url: '/S01030/ActRows',
+
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(actRows),
+
+                success: function (data) {
+                    if (data.resultCode == '10') {
+
+                        for (var i in data.rows) {
+                            var row = Rows[i];
+                            var rowIndex = $dg.datagrid('getRowIndex', row);
+                            $('#dg').datagrid('updateRow', {
+                                index: rowIndex,
+                                row: {
+                                    realRow: row.realRow,
+                                    creatUser: data.rows[i].creatUser,
+                                    creatTime: data.rows[i].creatTime,
+                                    actUser: data.rows[i].actUser,
+                                    actTime: data.rows[i].actTime
+                                }
+                            });
+                        }
+                        $.messager.alert('成功', '資料異動-成功！');
+                        $dg.datagrid('acceptChanges');
+                    }
+                    else {
+                        $.messager.alert('錯誤', data.error, 'error');
+                    }
+                }
+            });
+
+
+
+            RowStatus = "";
+
+        }
+
+        function onSelect() {
+            //debugger;
+
+            if (RowStatus == "Q") return;
+
+            Row = $dg.datagrid('getSelected');
+            if (Row) {
+                RowIndex = $dg.datagrid('getRowIndex', Row);
+
+                if (RowIndex != CurrRowIndex) {
+                    $dg.datagrid('endEdit', CurrRowIndex);
+                    CurrRowIndex = RowIndex;
+                    CurrRow = Row;
+                    $dg.datagrid('beginEdit', CurrRowIndex);
+                }
+
+            }
+
+        }
+
+        function onEndEdit(index, row, changes) {
+
+            //debugger;
+            if (Object.getOwnPropertyNames(changes).length == 0) {
+                return;
+            }
+
+            changes.limitName = row.limitName;
+
+
+            $('#dg').datagrid('updateRow', {
+                index: index,
+                row: {
+                    //limitName: changes.limitName,
+                    RowStatus: (row.RowStatus == "A") ? "A" : "M"
+                }
+            });
+
+            var rows = $dg.datagrid('getRows');
+            //1.往上的 parent node 都設為true
+            //2.往下的 childen node 都設為 true
+            //往下的 子樹 都設為true
+            //debugger
+
+            changeChildLimit(row.funcId, changes.limitId, changes.limitName, rows)
+            if (changes.limitId != '0') {
+                changeParentLimit(row.parentFuncId, changes.limitId, changes.limitName, rows)
+            }
+
+        }
+
+        function changeChildLimit(funcId, limitId, limitName, rows) {
+
+            for (var i = 0; i < rows.length; i++) {
+
+                if (rows[i].RowStatus == "D") continue;
+
+                if (rows[i].parentFuncId == funcId) {
+
+                    if (rows[i].limitId != limitId) {
+
+                        rows[i].limitId = limitId;
+                        rows[i].limitName = limitName;
+
+                        var rowIndex = $dg.datagrid('getRowIndex', rows[i]);
+                        $('#dg').datagrid('updateRow', {
+                            index: rowIndex,
+                            row: {
+                                limitId: limitId,
+                                limitName: limitName,
+                                RowStatus: (rows[i].RowStatus == "A") ? "A" : "M"
+                            }
+                        });
+                    }
+
+                    changeChildLimit(rows[i].funcId, limitId, limitName, rows)
+                }
+            }
+        }
+
+        function changeParentLimit(parentFuncId, limitId, limitName, rows) {
+
+            for (var i = 0; i < rows.length; i++) {
+
+                if (rows[i].RowStatus == "D") continue;
+
+                if (rows[i].funcId == parentFuncId) {
+
+                    if (rows[i].limitId != limitId) {
+
+                        rows[i].limitId = limitId;
+                        rows[i].limitName = limitName;
+
+                        var rowIndex = $dg.datagrid('getRowIndex', rows[i]);
+                        $('#dg').datagrid('updateRow', {
+                            index: rowIndex,
+                            row: {
+                                limitId: limitId,
+                                limitName: limitName,
+                                RowStatus: (rows[i].RowStatus == "A") ? "A" : "M"
+                            }
+                        });
+                    }
+
+                    changeParentLimit(rows[i].parentFuncId, limitId, limitName, rows)
+                }
+            }
+        }
+
+
+        function cmb_onSelect(rec) {
+            CurrRow.limitName = rec.text;
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei';
+            background-color: white;
+        }
+
+        .datagrid-cell {
+            font-size: 14px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body id="body" class="easyui-layout">
+    <div id="divQuery" style="height: 100px; padding:10px;" data-options="region:'north',title:'Condition',split:true">
+        <table>
+            <tr>
+                <td width="250">
+                    使用者群組&nbsp;&nbsp;@Html.DropDownList("groupId", selItem_groupId, null, new { id = "value_groupId", @class = "easyui-combobox", editable = "false", style = "width:180px; height:30px;" })
+                </td>
+                <td width="250"><a href="javascript:void(0)" id="btnQuery" name="btnQuery" class="easyui-linkbutton" iconCls="icon-search" style="height:30px;" onclick="btnQuery()">Search</a></td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="divGrid" data-options="region:'center',title:'Result'" style="background:#eee;">
+        <div id="toolbar">
+            <a href="#" id="btnEdit" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="btnEdit()">修改</a>
+            <a href="#" id="btnCancel" class="easyui-linkbutton" iconcls="icon-cancel" plain="true" onclick="btnCancel()">Cancel</a>
+            <a href="#" id="btnSave" class="easyui-linkbutton" iconcls="icon-save" plain="true" onclick="btnSave()">Save</a>
+        </div>
+
+
+        <table id="dg" class="easyui-datagrid" toolbar="#toolbar" style="width:auto;" method="post" fit="true" idfield="funcId" pagelist="[10,100,400]"
+               pagination="true" pagesize="400" rownumbers="true" singleselect="true" data-options="onSelect:onSelect,onEndEdit:onEndEdit">
+            <thead frozen="true">
+                <tr style="height:30px">
+                    <th field="parentFuncId" frozen="true">父選單代號</th>
+                    <th field="funcId" frozen="true">選單代號</th>
+                </tr>
+            </thead>
+            <thead>
+                <tr style="height:30px">
+                    <th field="parentFuncName">父選單功能</th>
+                    <th field="funcName">選單功能</th>
+                    <th data-options="field:'limitId',width:60,
+                    formatter:function(value,row){
+                        return row.limitName;
+                    },
+                    editor:{
+                        type:'combobox',
+                        options:{
+                            valueField:'id',
+                            textField:'text',
+                            method:'get',editable:false,
+                            url:'/S01030/Get_Cmb_strJson?cmbId=limitId',
+                            onSelect:cmb_onSelect,
+                            required:true
+                        }
+                    }
+                    ">
+                        選單權限
+                    </th>
+
+                    <th field="creatUser">建立人員</th>
+                    <th field="creatTime">建立時間</th>
+                    <th field="actUser">異動人員</th>
+                    <th field="actTime">異動時間</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</body>
+</html>

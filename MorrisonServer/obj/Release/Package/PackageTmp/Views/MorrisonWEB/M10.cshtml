@@ -1,0 +1,234 @@
+﻿
+@{
+    Layout = null;
+    var title = "Web Morrison ePOD App";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    <link href="~/Scripts/SB_Admin2/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/dist/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/morrisjs/morris.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Scripts/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.css" rel="stylesheet" />
+    <link href="~/Content/ZhCss2.css" rel="stylesheet" />
+
+    <script src="~/Scripts/SB_Admin2/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/raphael/raphael.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/morrisjs/morris.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/data/morris-data.js"></script>
+    <script src="~/Scripts/SB_Admin2/js/sb-admin-2.js"></script>
+    <script src="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.min.js"></script>
+
+    <script src="~/Vender/language/language.js"></script>
+
+    <script>
+        var webTicket = '@ViewBag.webTicket';
+
+        $(document).ready(function () {
+            $('#dg').html('');
+            initData();
+            initButton();
+            initEvent();
+            $('body').fadeIn('slow');
+        })
+
+        function initData() {
+            $('#M10_lbl_title').html('@ViewBag.userName');
+            $('#M10_lbl_dcId1').html('@ViewBag.dcId');
+            $('#M10_lbl_carId1').html('@ViewBag.carId');
+            $('#M10_lbl_tranCompName1').html('@ViewBag.tranCompName');
+
+        }
+
+        function initButton() {
+
+            //#region button event
+            $('#btnSetting').on('click', btnLogout);
+            $('#btnChangeTruck').on('click', function () { btnChangeTruck(); });
+            //#endregion
+        }
+
+        function btnLogout() {
+            window.location.href = "/Home/webLogin";
+            //window.location.href = "/Home/Logout";
+        }
+
+        function initEvent() {
+            GetDeliveryTask();
+        }
+
+        function btnChangeTruck() {
+            if ($("#dg").html() == "") window.location.href = '/MorrisonWEB/T10';
+            else {
+                swal("Error", "You can't change truck.", "warning");
+            }
+        }
+
+        function GetDeliveryTask() {
+            var actRow = {
+                'ticket': '@ViewBag.webTicket',
+                'clientIp': '0123456789'
+            }
+
+            GetAjaxV3('Delivery/M10_GetDeliveryTask', actRow, true, function (data) {
+                if (data != "connError") {
+                    $('#dg').html('');
+                    if (data.resultCode == "10") {
+                        for (var i = 0; i < data.rows.length; i++) {
+                            var dg = '';
+                            var row = data.rows[i];
+                            dg += '<a href="javascript:void(0);" class="list-group-item list-group-item-action" style="background-color: #0c4da2;color:white;border-color:white;" dcShip="' + row.dcShip + '" dispatch_id="' + row.dispatch_id + '" onclick="btnDispatch(\'' + row.dispatch_id + '\')">';
+                            dg += '    <div class="row" style="padding:10px;">';
+                            dg += '        <div class="col-8" style="font-size:18px;">' + row.dispatch_id + '</div>';
+                            dg += '        <div class="col-4">';
+                            if (row.taskStatus == '20') {
+                                dg += '<button class="btn btn-block btn-sm" style="border:1px solid white;background-color:#0c4da2;color:white;" name="btnOFD" dcShip="' + row.dcShip + '" dispatch_id="' + row.dispatch_id + '" onclick="btnOFD(\'' + row.dcShip + '\',\'' + row.dispatch_id + '\')">OFD</button>'
+                            }
+                            dg += '        </div>';
+                            dg += '        <div class="col-12" style="font-size:12px;">';
+                            dg += '            <span id="M10_lbl_Status">Status</span>：' + row.statusName + '<br />';
+                            dg += '            <span id="M10_lbl_Lastupdate">Lastupdate</span>：' + row.actTime;
+                            dg += '        </div>';
+                            dg += '    </div>';
+                            dg += '</a>';
+
+                            $('#dg').append(dg);
+
+                        }
+                        //languageInit();
+                    } else {
+                        swal("Error", data.error, "warning");
+                    }
+                }
+            });
+        }
+
+        function btnDispatch(dispatch_id) {
+            //var dispatch_id = $(this).attr('dispatch_id');
+            window.location.href = '/MorrisonWEB/T15?dispatch_id=' + dispatch_id;
+        }
+
+        function btnOFD(dcShip, dispatch_id) {
+            event.stopPropagation();
+
+            swal({
+                title: "Asking",
+                text: "Have you already picked up the goods, are you ready to go to the delivery?",
+                //text: "您已揀完貨品，要準備前往配送了嗎？",
+                type: "info",
+                showCancelButton: true,
+                confirmButtonClass: "btn-info",
+                confirmButtonText: "Yes",
+                cancelButtonText: 'No',
+                closeOnConfirm: false
+            }, function () {
+
+                var actRow = {
+                    'appSysId': "00",
+                    'dcShip': dcShip,
+                    'dispatch_id': dispatch_id,
+                    'carId': '@ViewBag.carId',
+                    'trailerId': '@ViewBag.trailerId',
+                    'ticket': webTicket,
+                    'clientIp': '0123456789'
+                }
+
+                GetAjaxV3('Delivery/M10_ActOFD', actRow, true, function (data) {
+                    if (data != "connError") {
+                        if (data.resultCode == "10") {
+                            btnDispatch(dispatch_id);
+                        } else {
+                            swal("Error", data.error, "warning");
+                        }
+                    }
+                });
+            })
+        }
+
+        function GetAjaxV3(route, actRow, async, returnData) {
+            /// <summary>
+            /// 一般呼叫API的ajax方法，該方法會出現Loading的dialog，但前提是async必須設定為true
+            /// </summary>
+            /// <param name="route">str，API的路徑，範例：API檔案名稱/API功能名稱</param>
+            /// <param name="actRow">obj，傳給API的參數</param>
+            /// <param name="async">bit，設定是否為非同步</param>
+            /// <param name="returnData">obj，無須寫任何方法</param>
+            /// <returns>執行完畢後回傳API的結果，若resultCode為10，表示API執行成功，若為01表示API執行過程中有誤，若回傳connError表示連線失敗</returns>
+
+            $.ajax({
+                url: "/api/" + route,
+                type: "POST",
+                dataType: "json",
+                data: actRow,
+                async: async,
+                headers: {
+                    'Authorization': 'Basic ' + btoa('zhtech:24369238')
+                },
+                success: function (data) {
+                    returnData(data);
+                },
+                error: function (data) {
+                    returnData("connError");
+                }
+            })
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0c4da2;
+            color: #fff;
+        }
+    </style>
+
+</head>
+
+<body style="font-family:'Microsoft JhengHei';">
+    <div class="container">
+        <div class="row" style="height:60px;margin:0rem;">
+            <div class="col-12" style="height:60px;padding:0px;">
+                <div class="row" style="padding:15px 15px 10px 10px;font-size:18px">
+                    <table width="100%">
+                        <tr>
+                            <td width="10%" align="left">&nbsp;</td>
+                            <td width="80%" align="center"><strong><span id="M10_lbl_title">Name</span></strong></td>
+                            <td width="10%" align="right"><a href="#" id="btnSetting"><img src="~/images/M10_me.png" style="width:25px;" /></a></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <hr style="border-bottom: 2px solid white;margin:0px 0px 10px 0px;">
+        <div class="row" style="padding:15px;">
+            <div class="col-12" style="text-align:center;"><img src="~/images/M10_warehouse.png" style="width:30px;" /></div>
+            <div class="col-12" style="text-align:center;"><span id="M10_lbl_dcId1" style="font-size:20px;"></span></div>
+        </div>
+        <div class="row" style="padding:15px;">
+            <div class="col-12" style="text-align:center;"><img src="~/images/M10_truck.png" style="width:30px;" /></div>
+            <div class="col-12" style="text-align:center;"><span id="M10_lbl_carId1" style="font-size:20px;"></span></div>
+            <div class="col-12" style="text-align:center;"><span id="M10_lbl_tranCompName1" style="font-size:14px;"></span></div>
+        </div>
+        <div class="row" style="padding:15px;">
+            <div class="col-6" style="text-align:right;"><a href="javascript:void(0)" id="btnChangeTruck" class="btn btn-block" style="border:1px solid white;background-color:#0c4da2;color:white;"><span id="M10_btn_btnChangeTruck">Change truck</span></a></div>
+            <div class="col-6"><a href="javascript:window.location='/MorrisonWEB/T30'" id="btnAdd" class="btn btn-block" style="border:1px solid white;background-color:#0c4da2;color:white;"><span id="M10_btn_btnAdd">Add dispatch</span></a></div>
+            <!--<div class="col-6" style="text-align:right;"><a href="javascript:void(0);" id="btnUpload" class="btn btn-block" style="border:1px solid white;background-color:#0c4da2;color:white;" onclick="btnUpload();">UpLoad</a></div>-->
+        </div>
+        <hr style="border:1px solid white;" />
+        <div class="row">
+            <div class="col-12">
+                <div class="list-group list-group-flush" style="border-color:white;padding:15px;" id="dg">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

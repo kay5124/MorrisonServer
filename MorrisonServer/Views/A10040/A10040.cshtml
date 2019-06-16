@@ -1,0 +1,370 @@
+﻿
+@{
+    Layout = null;
+
+    var title = "人員帳號維護";
+
+    var selItem_statusId = (List<SelectListItem>)ViewBag.selItem_statusId;
+    var selItem_lbl_cmb1 = (List<SelectListItem>)ViewBag.selItem_lbl_cmb1;
+    
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    @*<link href="~/Content/themes/default/easyui.css" rel="stylesheet" />*@
+    @*<link href="~/Content/themes/bootstrap/easyui.css" rel="stylesheet" />*@
+    <link href="~/Content/themes/gray/easyui.css" rel="stylesheet" />
+    <link href="~/Content/themes/icon.css" rel="stylesheet" />
+
+    <link href="~/Content/ZhCss1.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-1.11.3.min.js"></script>
+    <script src="~/Scripts/jquery.easyui-1.4.5.min.js"></script>
+    <script src="~/Scripts/locale/easyui-lang-zh_TW.js"></script>
+    <script src="~/Scripts/ZhEeasyUI-01.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#dg').datagrid('options').url = "/A10040/GetGridJSON";
+        });
+
+        function btnQuery() {
+
+            $('#dg').datagrid('load', {
+                "lbl_cmb1": $('#lbl_cmb1').combobox('getValue'),
+                "value_cmb1": $('#value_cmb1').textbox('getValue')
+            });
+
+            RowStatus = 'Q';
+
+            $('#chkUnSavePW').change(function () {
+                chkUnSavePW();
+            })
+        }
+
+        function btnAdd() {
+            if ($('#btnAdd').linkbutton('options').disabled == true) {
+                return;
+            }
+            RowStatus = 'A';
+
+            $("#userId").textbox("enable");
+
+            $('#divUnSavePW').hide();
+
+            $('#chkUnSavePW').prop('checked', false);
+            $('#chkUnSavePW').change();
+
+            $('#fm').form('clear');
+            $('#statusId').combobox('setValue', '10');
+            $('#deviceLimit').numberbox('setValue', '1');
+            $('#dlg').dialog('center').dialog('open').dialog('setTitle', '新增資料 :');
+        }
+
+        function btnEdit() {
+            if ($('#btnEdit').linkbutton('options').disabled == true) {
+                return;
+            }
+
+            $('#divUnSavePW').show();
+
+            $('#chkUnSavePW').prop('checked', false);
+            $('#chkUnSavePW').change();
+
+            $('#fm').form('clear');
+
+            $("#userId").textbox("disable");
+
+            Row = $('#dg').datagrid('getSelected');
+            RowIndex = $("#dg").datagrid("getRowIndex", Row);
+
+            if (Row) {
+                $('#dlg').dialog('center').dialog('open').dialog('setTitle', '修改資料 :');
+                RowStatus = 'M';
+
+                $('#fm').form('load', {
+                    sysUserId: Row.sysUserId,
+                    userName: Row.userName,
+                    userId: Row.userId,
+                    password: Row.password,
+                    email: Row.email,
+                    contactTel: Row.contactTel,
+                    contactTel2: Row.contactTel2,
+                    deviceLimit: Row.deviceLimit,
+                    statusId: Row.statusId,
+                    memo: Row.memo
+
+                });
+
+            }
+        }
+
+        function btnSave() {
+
+            var row = $('#dg').datagrid('getSelected');
+
+            $('#fm').form('submit', {
+                onSubmit: function () {
+                    if (!$('#chkUnSavePW').prop('checked')) {
+                        if ($("#password").textbox('getValue') != $("#rePassword").textbox("getValue")) {
+                            $.messager.alert('提示', '兩次輸入的密碼不一樣');
+                            return false;
+                        }
+                    }
+
+                    return $(this).form('validate');
+                },
+                success: function (data) {
+
+                    var actRow = {
+                        RowStatus: RowStatus,
+                        appSysId: '10',
+                        sysUserId: document.getElementById("sysUserId").value,
+                        userName: document.getElementById("userName").value,
+                        userId: document.getElementById("userId").value,
+                        password: document.getElementById("password").value,
+                        email: document.getElementById("email").value,
+                        contactTel: document.getElementById("contactTel").value,
+                        contactTel2: document.getElementById("contactTel2").value,
+
+                        deviceLimit: $('#deviceLimit').numberbox('getValue'),
+                        statusName: $('#statusId').combobox('getText'),
+
+                        statusId: $('#statusId').combobox('getValue'),
+
+                        chkUnSavePW: $('#chkUnSavePW').prop('checked'),
+                        memo: document.getElementById("memo").value
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        url: '/A10040/ActSingle',
+
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: JSON.stringify({ "actRow": actRow }),
+
+                        success: function (data) {
+                            if (data.resultCode == '10') {
+                                if (RowStatus == 'A') {
+
+                                    actRow.sysUserId = data.row[0].sysUserId;
+                                    actRow.creatUser = data.row[0].creatUser;
+                                    actRow.creatTime = data.row[0].creatTime;
+                                    actRow.appSysName = data.row[0].appSysName;
+                                    $('#dg').datagrid('appendRow', actRow);
+
+                                    RowIndex = $("#dg").datagrid("getRowIndex", actRow);
+                                    $("#dg").datagrid("selectRow", RowIndex);
+                                }
+                                else {
+
+                                    actRow.actUser = data.row[0].actUser;
+                                    actRow.actTime = data.row[0].actTime;
+
+                                    $('#dg').datagrid('updateRow', {
+                                        index: RowIndex,
+                                        row: actRow
+                                    });
+
+                                    $('#dg').datagrid('resize');
+                                }
+                                RowStatus = "Q";
+                                $('#dlg').dialog('close');        // close the dialog
+
+                            }
+                            else {
+                                $.messager.alert('錯誤', data.error, 'error');
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        function btnCancel() {
+            $('#dlg').dialog('close');
+            RowStatus = "Q";
+
+        }
+
+        function btnDelete() {
+
+            if ($('#btnDelete').linkbutton('options').disabled == true) {
+                return;
+            }
+
+            Row = $('#dg').datagrid('getSelected');
+            RowIndex = $("#dg").datagrid("getRowIndex", Row);
+
+            if (Row) {
+                $.messager.confirm('確認', '你確定要刪除這筆資料嗎?', function (r) {
+                    if (r) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/A10040/DeleteSingle",
+                            data: "pks=" + Row.sysUserId,
+
+                            success: function (data) {
+                                if (data.resultCode == "10") {
+                                    $('#dg').datagrid('deleteRow', RowIndex);
+                                }
+                                else {
+                                    $.messager.alert('錯誤', data.error, 'error');
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        function chkUnSavePW() {
+            if ($('#chkUnSavePW').prop('checked')) {
+                $('#password').textbox('disable');
+                $('#rePassword').textbox('disable');
+            } else {
+                $('#password').textbox('enable');
+                $('#rePassword').textbox('enable');
+            }
+        }
+    </script>
+
+
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei';
+            background-color: white;
+        }
+
+        .datagrid-cell {
+            font-size: 14px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body id="body" class="easyui-layout">
+    <!-- #region Create Query section -->
+
+    <div id="divQuery" data-options="region:'north',title:'Condition',split:true" style="height:90px;padding:10px;">
+        <table>
+            <tr>
+                <td width="250">
+                    @Html.DropDownList("lbl_cmb1", selItem_lbl_cmb1, null, new { @class = "easyui-combobox", editable = "false", style = "width: 80px;height:30px;" })
+                    <input id="value_cmb1" name="value_cmb1" class="easyui-textbox" style="height:30px;width:150px;" />
+                </td>
+                <td width="250">
+                    <a href="javascript:void(0)" class="easyui-linkbutton" plain="false" onclick="btnQuery()" style="height:30px;" iconCls="icon-search">Search</a>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    <!-- #endregion -->
+    <!-- #region Create DataGrid to display -->
+
+    <div id="divGrid" data-options="region:'center',title:'Result'" style="background:#eee;">
+        <div id="toolbar">
+            <a href="#" id="btnAdd" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="btnAdd()">Add</a>
+            <a href="#" id="btnEdit" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="btnEdit()">修改</a>
+            <a href="#" id="btnDelete" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="btnDelete()">Delete</a>
+        </div>
+
+        <table id="dg" class="easyui-datagrid" toolbar="#toolbar" style="width:auto;" method="post" fit="true"
+               pagination="true" pagesize="50" rownumbers="true" singleselect="true">
+            <thead frozen="true">
+                <tr>
+                    <th field="userName" frozen="true" sortable="true" editor="text">User Name</th>
+                    <th field="appSysName" frozen="true" sortable="true" editor="text">系統</th>
+                    <th field="userId" frozen="true" sortable="true" editor="text">使用者代號</th>
+                </tr>
+            </thead>
+            <thead>
+                <tr>
+                    <th field="email" sortable="true" editor="text">電子郵件</th>
+                    <th field="contactTel" sortable="true" editor="text">電話</th>
+                    <th field="contactTel2" sortable="true" editor="text">手機</th>
+                    <th field="statusName" sortable="true" editor="text">人員狀態</th>
+                    <th field="deviceLimit" sortable="true" editor="text">裝置上限</th>
+                    <th field="memo" sortable="true" editor="text">Memo</th>
+                    <th field="creatUser" sortable="true" editor="text">建立人員</th>
+                    <th field="creatTime" sortable="true" editor="text">建立時間</th>
+                    <th field="actUser" sortable="true" editor="text">異動人員</th>
+                    <th field="actTime" sortable="true" editor="text">異動時間</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <!-- #endregion -->
+    <!-- #region Form dialog for Action -->
+
+    <div id="dlg" class="easyui-dialog" style="width: 500px; height: 520px; padding: 10px 20px; " closed="true" buttons="#dlg-buttons" modal="true">
+
+        <div class="ftitle">@title</div>
+
+        <form id="fm" method="post">
+            <input id="sysUserId" name="sysUserId" type="hidden" style="background-color: silver;">
+            <div class="fitem">
+                <label>使用者姓名 : </label>
+                <input id="userName" name="userName" class="easyui-textbox" style="width:200px;height:30px;" required>
+            </div>
+            <div class="fitem">
+                <label>使用者代號 : </label>
+                <input id="userId" name="userId" class="easyui-textbox" style="width:200px;height:30px;" required disabled>
+            </div>
+            <div class="fitem">
+                <label>使用者密碼 : </label>
+                <input id="password" name="password" class="easyui-textbox" style="width:200px;height:30px;" type="password" required>
+            </div>
+            <div class="fitem">
+                <label>確認密碼 : </label>
+                <input id="rePassword" name="rePassword" class="easyui-textbox" type="password" validtype="equalTo['#password']" style="width:200px;height:30px;" invalidmessage="兩次輸入的密碼不同!!" required>
+            </div>
+            <div class="fitem">
+                <label>電子郵件 : </label>
+                <input id="email" name="email" class="easyui-textbox" validtype="email" required style="width:200px;height:30px;">
+            </div>
+            <div class="fitem">
+                <label>電話1 : </label>
+                <input id="contactTel" name="contactTel" class="easyui-textbox" style="width:200px;height:30px;">
+            </div>
+            <div class="fitem">
+                <label>電話2 : </label>
+                <input id="contactTel2" name="contactTel2" class="easyui-textbox" style="width:200px;height:30px;">
+            </div>
+
+            <div class="fitem">
+                <label>狀態值 : </label>
+                @Html.DropDownList("statusId", selItem_statusId, null, new { id = "statusId", @class = "easyui-combobox", validtype = "selectOneValueCheck['statusId']", required = "required", style = "width:200px;height:30px;" })
+            </div>
+
+            <div class="fitem">
+                <label>裝置上限 : </label>
+                <input id="deviceLimit" name="deviceLimit" class="easyui-numberbox" style="width:200px;height:30px;" required>
+            </div>
+
+            <div class="fitem">
+                <label>備註 : </label>
+                <input id="memo" name="memo" class="easyui-textbox" style="width:200px;height:30px;">
+            </div>
+
+            <div class="fitem" id="divUnSavePW" style="display:none;">
+                <label>僅修改資料<br/>不異動密碼 : </label>
+                <input type="checkbox" id="chkUnSavePW" name="chkUnSavePW" value="" style="height:20px;width:20px;" />
+            </div>
+
+        </form>
+    </div>
+
+    <div id="dlg-buttons">
+        <a href="javascript:void(0)" id="btnSave" class="easyui-linkbutton" iconcls="icon-ok" onclick="btnSave()" style="height:30px;">Save</a>
+        <a href="javascript:void(0)" id="btnCancel" class="easyui-linkbutton" iconcls="icon-cancel" onclick="btnCancel()" style="height:30px;">Cancel</a>
+    </div>
+    <!-- #endregion -->
+
+</body>
+</html>

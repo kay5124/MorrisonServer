@@ -1,0 +1,435 @@
+﻿
+@{
+    Layout = null;
+    var title = "Web Morrison ePOD App";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    <link href="~/Scripts/SB_Admin2/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.css" rel="stylesheet" />
+    @*<link href="~/Scripts/SB_Admin2/dist/css/sb-admin-2.min.css" rel="stylesheet" />*@
+    <link href="~/Scripts/SB_Admin2/vendor/morrisjs/morris.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Scripts/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.css" rel="stylesheet" />
+    <link href="~/Content/ZhCss2.css" rel="stylesheet" />
+    <link href="~/Vender/T15/Carline.css" rel="stylesheet" />
+    @*<link href="~/Vender/T15/CarlineV2.css" rel="stylesheet" />*@
+
+    <script src="~/Scripts/SB_Admin2/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/raphael/raphael.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/morrisjs/morris.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/data/morris-data.js"></script>
+    <script src="~/Scripts/SB_Admin2/js/sb-admin-2.js"></script>
+    <script src="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.min.js"></script>
+
+    <script src="~/Vender/language/language.js"></script>
+    <script>
+        var webTicket = '@ViewBag.webTicket';
+        var dispatch_id = '';
+
+        $(document).ready(function () {
+            initData();
+            initEvent();
+            //initButton();
+            $('body').fadeIn('slow');
+        })
+
+        function initData() {
+            var urlParam = window.location.href;
+            var paramLength = urlParam.indexOf('dispatch_id=') + 12;
+            dispatch_id = urlParam.substr(paramLength, urlParam.length - paramLength);
+
+            //localStorage.setItem('dispatch_id', dispatch_id);
+
+            $('#T15_lbl_title').html(dispatch_id);
+        }
+
+        function checkDriver() {
+            var actRow = {
+                'dispatch_id': dispatch_id,
+                'ticket': webTicket,
+                'clientIp': '0123456789'
+            }
+            GetAjaxV3('Delivery/T15_GetDriverId', actRow, true, function (data) {
+                if (data != "connError") {
+                    if (data.resultCode == "10") {
+                        if (data.isDriver == "Y") {
+                            if (data.taskStatus == '20' || data.taskStatus == '30') {
+                                $("#changeDiv").hide();
+                            } else {
+                                if (data.driverCnt == '1' && parseInt(data.runCount) == 1) {
+                                    $("#changeDiv").hide();
+                                } else {
+                                    $("#changeDiv").show();
+                                }
+                                //$("#changeDiv").show();
+                            }
+
+                            //若可執行的明細資料剩餘1筆以下，不再開放配送點交換功能
+                            if (parseInt(data.runCount) <= 1) {
+                                $('#btnChangeOrder').hide();
+                            } else {
+                                $('#btnChangeOrder').show();
+                            }
+
+                            if (data.driverCnt == '1') {
+                                $('#btnShiftDriver').hide();
+                            } else {
+                                $('#btnShiftDriver').show();
+                            }
+                        }
+                    } else {
+                        swal("Error", data.error, "warning");
+                    }
+                }
+                else {
+                    sysConnFail();
+                }
+            })
+        }
+
+        function initEvent() {
+            T15_GetDispatchData();
+        }
+
+        function T15_GetDispatchData() {
+            var actRow = {
+                'dispatch_id': dispatch_id,
+                'ticket': webTicket,
+                'clientIp': '0123456789'
+            }
+
+            GetAjaxV3('Delivery/T15_GetDispatchData', actRow, true, function (data) {
+                if (data != "connError") {
+                    $('#timeLine').html('');
+                    if (data.resultCode == "10") {
+
+                        var dg = '';
+                        if (data.rows.length > 0) {
+                            var row = data.rows[0];
+                            var bindTime = row.bindTime.split(' ');
+                            dg += '<li>';
+                            dg += '    <div class="bullet fff"></div>';
+                            dg += '    <div class="time">' + bindTime[0] + '<p>' + bindTime[1] + '</p></div>';
+                            dg += '    <div class="desc">';
+                            dg += '        <h3>' + row.dcName + '</h3>';
+                            dg += '        <h4><span id="T15_lbl_dispatch">Add dispatch</span></h4>';
+                            dg += '    </div>';
+                            dg += '</li>';
+
+                            var realDelDate = row.realDelDate.split(' ');
+                            dg += '<li>';
+                            dg += '    <div class="bullet fff"></div>';
+                            dg += '    <div class="time">' + (realDelDate == '' ? '' : realDelDate[0] + '<p>' + realDelDate[1]) + '</p></div>';
+                            dg += '    <div class="desc">';
+                            dg += '        <h3><span id="T15_lbl_Pickup">Pickup confirm</span></h3>';
+                            dg += '    </div>';
+                            dg += '</li>';
+
+                            for (var i = 0; i < row.details.length; i++) {
+                                var d_row = row.details[i];
+                                switch (d_row.taskStatus) {
+                                    case '20':
+                                        dg += '<li>';
+                                        dg += '    <div class="bullet fff"></div>';
+                                        dg += '    <div class="time"><table width="100%"><tr><td align="right">' + d_row.arriveSeqD + '&nbsp;&nbsp;</td></tr></table></div>';
+                                        dg += '    <div class="desc">';
+                                        dg += '        <h3>' + d_row.bol_no + '</h3>';
+                                        dg += '        <h4>' + d_row.shipName + ' ' + d_row.shipName2 + '<br/>' + d_row.shipAddr + ' ' + d_row.shipAddr2 + '</h4>';
+                                        dg += '        <a href="javascript:void(0);" class="btn btn-sm" style="border:1px solid white;background-color:#0c4da2;color:white;font-size:12px;" onclick="btnView(\'' + d_row.bol_no + '\',\'' + d_row.taskStatus + '\')"><span class="T15_btn_View">View</span></a>';
+                                        dg += '    </div>';
+                                        dg += '</li>';
+                                        break;
+                                    case '22':
+                                        dg += '<li>';
+                                        dg += '    <div class="bullet fff"></div>';
+                                        dg += '    <div class="time"><table width="100%"><tr><td align="right">' + d_row.arriveSeqD + '&nbsp;&nbsp;</td></tr></table></div>';
+                                        dg += '    <div class="desc">';
+                                        dg += '        <h3>' + d_row.bol_no + '</h3>';
+                                        dg += '        <h4>' + d_row.shipName + ' ' + d_row.shipName2 + '<br/>' + d_row.shipAddr + ' ' + d_row.shipAddr2 + '</h4>';
+                                        dg += '        <a href="javascript:void(0);" class="btn btn-sm" style="border:1px solid white;background-color:#0c4da2;color:white;font-size:12px;" onclick="btnView(\'' + d_row.bol_no + '\',\'' + d_row.taskStatus + '\')"><span class="T15_btn_View">View</span></a>';
+                                        dg += '    </div>';
+                                        dg += '</li>';
+                                        break;
+                                    case '25':
+                                        dg += '<li>';
+                                        dg += '    <div class="bullet null"></div>';
+                                        dg += '    <div class="time"><table width="100%"><tr><td><img src="/images/M10_truck.png" alt="" width="15" /></td><td align="right">' + d_row.arriveSeqD + '&nbsp;&nbsp;</td></tr></table></div>';
+                                        dg += '    <div class="desc">';
+                                        dg += '        <h3>' + d_row.bol_no + '</h3>';
+                                        dg += '        <h4>' + d_row.shipName + ' ' + d_row.shipName2 + '<br/>' + d_row.shipAddr + ' ' + d_row.shipAddr2 + '</h4>';
+                                        dg += '        <a href="javascript:void(0);" class="btn btn-sm" style="border:1px solid white;background-color:#0c4da2;color:white;font-size:12px;" onclick="btnView(\'' + d_row.bol_no + '\',\'' + d_row.taskStatus + '\')"><span class="T15_btn_View">View</span></a>';
+                                        dg += '        <a href="javascript:void(0);" class="btn btn-sm btnAction" style="border:1px solid white;background-color:#0c4da2;color:white;font-size:12px;display:none;" onclick="btnAction(\'' + d_row.bol_no + '\')"><span class="T15_btn_Action">Action</span></a>';
+                                        dg += '    </div>';
+                                        dg += '</li>';
+                                        break;
+                                    case '30':
+                                        var realArriveTime2 = d_row.realArriveTime2.split(' ');
+                                        dg += '<li>';
+                                        dg += '    <div class="bullet fff"></div>';
+                                        dg += '    <div class="time"><table width="100%"><tr><td>' + (realArriveTime2 == '' ? '' : realArriveTime2[0] + '<p>' + realArriveTime2[1]) + '</td><td align="right">' + d_row.arriveSeqD + '&nbsp;&nbsp;</td></tr></table></div>';
+                                        dg += '    <div class="desc">';
+                                        dg += '        <h3>' + d_row.bol_no + '</h3>';
+                                        dg += '        <h4>' + d_row.shipName + ' ' + d_row.shipName2 + '<br/>' + d_row.shipAddr + ' ' + d_row.shipAddr2 + '</h4>';
+                                        dg += '        <a href="javascript:void(0);" class="btn btn-sm" style="border:1px solid white;background-color:#0c4da2;color:white;font-size:12px;" onclick="btnView(\'' + d_row.bol_no + '\',\'' + d_row.taskStatus + '\')"><span class="T15_btn_View">View</span></a>';
+                                        dg += '    </div>';
+                                        dg += '</li>';
+                                        break;
+                                }
+                            }
+
+                            $('#timeLine').html(dg);
+                            //確認是否為配送員
+                            checkDriver();
+                        }
+                    } else {
+                        swal("Error", data.error, "warning");
+                    }
+                }
+            });
+        }
+
+        function btnView(bol_no, taskStatus) {
+            //localStorage.setItem('taskStatus', taskStatus);
+            window.location = '/MorrisonWEB/T16?bol_no=' + bol_no + '&taskStatus=' + taskStatus + '&dispatch_id=' + dispatch_id
+        }
+
+        function btnAction(bol_no) {
+            window.location = "/MorrisonWEB/T20?bol_no=" + bol_no + "&type=30";
+
+            //$('#dlg').modal();
+
+            //$('#btnCamera').attr('onclick', 'btnCamera(\'' + bol_no + '\')');
+            //$('#btnAlbum').attr('onclick', 'btnAlbum(\'' + bol_no + '\')');
+            //$('#btnSign').attr('onclick', 'btnSign(\'' + bol_no + '\',\'T15\')');
+        }
+
+        function btnChange() {
+            $('#dlg2').modal();
+            $('#btnChangeOrder').attr('onclick', 'btnChangeOrder()');
+            $('#btnShiftDriver').attr('onclick', 'btnShiftDriver()');
+        }
+
+        function btnChangeOrder() {
+            window.location = '/MorrisonWEB/T17?dispatch_id=' + dispatch_id
+        }
+
+        function btnShiftDriver() {
+            $('#dlg2').modal('toggle');
+
+            var actRow = {
+                dispatch_id: dispatch_id
+            }
+            GetAjaxV3('Delivery/T15_ChkSecDriver', actRow, true, function (data) {
+                if (data != "connError") {
+                    if (data.resultCode = "10") {
+                        if (data.isExist == "Y") {
+                            swal({
+                                title: "<span style='color:black;'>Ask</span>",
+                                text: "Are you sure you want to change the driver？ (Note：Can't change.)",
+                                type: "info",
+                                showCancelButton: true,
+                                confirmButtonClass: "btn-info",
+                                confirmButtonText: "Yes",
+                                cancelButtonText: 'No',
+                                cancelButtonClass: "btn-danger",
+                                html: true,
+                                //closeOnConfirm: true,
+                                //closeOnCancel: true
+                            }, function (type) {
+                                if (type == true) {
+                                    //按下Yes
+                                    var actRow = {
+                                        dispatch_id: dispatch_id,
+                                        changeCode: "10",
+                                        ticket: localStorage.getItem('ticket')
+                                    }
+                                    GetAjaxV3('Delivery/T15_ActChangeDriver', actRow, false, function (data) {
+                                        if (data != "connError") {
+                                            if (data.resultCode == "10") {
+                                                window.location = '/MorrisonWEB/T15?dispatch_id=' + dispatch_id;
+                                            } else {
+                                                swal("Error", data.error, "warning");
+                                            }
+                                        } else {
+                                            sysConnFail();
+                                        }
+                                    })
+                                }
+                            });
+
+                        } else {
+                            $('#dlg3').modal();
+                        }
+                    } else {
+                        swal('error', data.error, 'warning');
+                    }
+                } else {
+                    sysConnFail();
+                }
+            })
+        }
+
+        function btnSave() {
+            var actRow = {
+                dispatch_id: dispatch_id,
+                changeCode: "20",
+                driverId2: $("#secDriverId").val(),
+                ticket: localStorage.getItem('ticket')
+            }
+            GetAjaxV3('Delivery/T15_ActChangeDriver', actRow, false, function (data) {
+                if (data != "connError") {
+                    if (data.resultCode == "10") {
+                        window.location = '/MorrisonWEB/T15?dispatch_id=' + dispatch_id;
+                    } else {
+                        swal("Error", data.error, "warning");
+                    }
+                } else {
+                    sysConnFail();
+                }
+            })
+        }
+
+        function GetAjaxV3(route, actRow, async, returnData) {
+            /// <summary>
+            /// 一般呼叫API的ajax方法，該方法會出現Loading的dialog，但前提是async必須設定為true
+            /// </summary>
+            /// <param name="route">str，API的路徑，範例：API檔案名稱/API功能名稱</param>
+            /// <param name="actRow">obj，傳給API的參數</param>
+            /// <param name="async">bit，設定是否為非同步</param>
+            /// <param name="returnData">obj，無須寫任何方法</param>
+            /// <returns>執行完畢後回傳API的結果，若resultCode為10，表示API執行成功，若為01表示API執行過程中有誤，若回傳connError表示連線失敗</returns>
+
+            $.ajax({
+                url: "/api/" + route,
+                type: "POST",
+                dataType: "json",
+                data: actRow,
+                async: async,
+                headers: {
+                    'Authorization': 'Basic ' + btoa('zhtech:24369238')
+                },
+                success: function (data) {
+                    returnData(data);
+                },
+                error: function (data) {
+                    returnData("connError");
+                }
+            })
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0c4da2;
+            color: #fff;
+        }
+
+        button {
+            margin-top: 1em;
+        }
+
+        .btn-default { /* 按鈕顏色 */
+            background-color: rgba(255, 255, 255,0);
+            color: #FFF;
+            text-align: center;
+        }
+
+        img {
+            width: 30px;
+        }
+    </style>
+
+</head>
+
+<body style="font-family:'Microsoft JhengHei';">
+    <div class="container">
+        <div class="row" style="height:60px;margin:0rem;">
+            <div class="col-12" style="height:60px;padding:0px;">
+
+                <div class="row" style="padding:15px 15px 10px 10px;font-size:18px">
+                    <table width="100%">
+                        <tr>
+                            <td width="10%" align="left">
+                                <a href="/MorrisonWEB/M10"><img src="~/images/s_backPage.png" width="25" /></a>
+                            </td>
+                            <td width="80%" align="center">
+                                <strong><span id="T15_lbl_title"></span></strong>
+                            </td>
+                            <td id="changeDiv" style="display:none;" width="10%" align="right">
+                                <a href="javascript:void(0)" id="btnChange" onclick="btnChange();"><img src="~/images/T15_changeSeq.png" style="width:25px;padding-top:10px;" /></a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <hr style="border-bottom: 2px solid white;margin:10px 0px 10px 0px;">
+        <div class="row" style="padding:0px;">
+            <div class="col-12">
+                <div class="timeline">
+                    <ul id="timeLine"></ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="dlg" tabindex="-1" role="dialog" aria-labelledby="dlgTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="dlgTitle" style="color:black;">Submit POD</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="list-group list-group-flush">
+                            <a href="javascript:void(0);" class="list-group-item list-group-item-action"><span id="T15_btn_UploadPOD">Upload POD</span></a>
+                            <a href="javascript:void(0);" id="btnCamera" class="list-group-item list-group-item-action">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="T15_btn_Camera">Camera</span></a>
+                            <a href="javascript:void(0);" id="btnAlbum" class="list-group-item list-group-item-action">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="T15_btn_Album">Album</span></a>
+                            <a href="javascript:void(0);" id="btnSign" class="list-group-item list-group-item-action">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="T15_btn_sign">Add e-signature</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="dlg2" tabindex="-1" role="dialog" aria-labelledby="dlgTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="dlgTitle2" style="color:black;">Change</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="list-group list-group-flush">
+                            <a href="javascript:void(0);" id="btnChangeOrder" class="list-group-item list-group-item-action"><span id="T15_btn_ChangeOrder">Change Order</span></a>
+                            <a href="javascript:void(0);" id="btnShiftDriver" class="list-group-item list-group-item-action"><span id="T15_btn_ShiftDriver">Shift to another driver</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="dlg3" tabindex="-1" role="dialog" aria-labelledby="dlgTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="dlgTitle3" style="color:black;">Set Second Driver</h5>
+                    </div>
+                    <div class="modal-body">
+                        <label for="secDriverId" style="color:black;" id="T15_lbl_secDriver">Second Driver Id<span style="color:red">*</span></label>
+                        <input class="form-control" id="secDriverId" />
+                        <br />
+                        <a id="btnSave" onclick="btnSave()" class="btn btn-primary" style="width:100%"><span id="T15_btn_Save">Save</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

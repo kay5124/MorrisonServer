@@ -1,0 +1,364 @@
+﻿
+@{
+    Layout = null;
+    var title = "Web Morrison ePOD App";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    <link href="~/Scripts/SB_Admin2/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/dist/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/morrisjs/morris.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Scripts/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.css" rel="stylesheet" />
+    <link href="~/Content/ZhCss2.css" rel="stylesheet" />
+
+    <script src="~/Scripts/SB_Admin2/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/raphael/raphael.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/morrisjs/morris.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/data/morris-data.js"></script>
+    <script src="~/Scripts/SB_Admin2/js/sb-admin-2.js"></script>
+    <script src="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.min.js"></script>
+    <script src="~/Vender/language/language.js"></script>
+
+    <script>
+        var webTicket = '@ViewBag.webTicket';
+        var imageBase64 = '';
+        var dispatch_id = '';
+        var paramPass = new Object();
+
+        $(document).ready(function () {
+            initData();
+            initButton();
+            initEvent();
+            $('body').fadeIn('slow');
+        })
+
+        function initButton() {
+            //$('#btnSave').on('click', chkDispatch);
+        }
+
+        function initData() {
+            var removePosition = window.location.href.lastIndexOf('?') + 1;
+            var paramStr1 = window.location.href.substr(removePosition, window.location.href.length - removePosition);
+            var paramStr2 = paramStr1.split('&');
+            for (var i = 0; i < paramStr2.length; i++) {
+                var param = paramStr2[i].split('=');
+                paramPass[param[0]] = param[1];
+            }
+
+            document.getElementById('POD_Name').focus();
+            //Keyboard.show();
+
+            ////取得圖檔並轉換成 base64
+            //GetImageToBase64(paramPass['imgUri'], function (data) {
+            //    imageBase64 = data;
+            //});
+        }
+
+        function onKeyboardShow() {
+            console.log('onKeyboardShow');
+        }
+
+        function initEvent() {
+            $('#chkError').on('change', function () {
+                if (this.checked == true) {
+                    $('#errorBar').show();
+                } else {
+                    $('#errorBar').hide();
+                }
+            })
+        }
+
+        function chkDispatch() {
+
+            if ($('#POD_Name').val() == '') {
+                swal("info", "POD_Name can't being empty.", "warning");
+                return;
+            }
+
+
+            if ($("input[id=chkError]").prop("checked")) {
+                //if ($('#statusId3').val() == '') {
+                //    swal("info", "OSD type can't being empty.", "warning");
+                //    return;
+                //}
+
+                if ($('#memo').val() == '') {
+                    swal("info", "memo can't being empty.", "warning");
+                    return;
+                }
+            }
+
+            var changeDriver;
+            var isLast;
+            var actRow = {
+                bol_no: paramPass['bol_no'],
+                ticket: localStorage.getItem("ticket")
+            }
+            GetAjaxV3("Delivery/T20_GetDispatchStatus", actRow, false, function (data) {
+                if (data != "connError") {
+                    if (data.resultCode = "10") {
+                        //dispatch_id = data.dispatch_id;
+                        changeDriver = data.changeDriver;
+                        isLast = data.isLast;
+
+                        if (isLast == "Y" || changeDriver == "N") {
+                            btnSave("10");
+                        } else {
+                            swal({
+                                title: "Ask",
+                                text: "Need to finish and shitft second driver or countinue to delivery this dispatch？ (Note：Can't change)",
+                                type: "info",
+                                showCancelButton: true,
+                                confirmButtonClass: "btn-info",
+                                confirmButtonText: "Coutinue",
+                                cancelButtonText: 'Finish and shift'
+                                //closeOnConfirm: true,
+                                //closeOnCancel: true
+                            }, function (type) {
+                                if (type == true) {
+                                    //Contunue
+                                    //10:繼續配送不換司機
+                                    //20:更換司機並且要輸入第二位司機ID
+                                    //30:更換為第一位司機
+                                    btnSave("10");
+                                } else {
+                                    //Finish and shift
+                                    if (changeDriver == "Y") btnSave("20");
+                                    else btnSave("30");
+                                }
+                            });
+                        }
+                    } else {
+                        swal('error', data.error, 'warning');
+                    }
+                } else {
+                    sysConnFail();
+                }
+            })
+        }
+
+        function btnSave(statusCode) {
+
+
+            var actRow = {
+                'appSysId': "00",
+                'type': paramPass['type'],
+                'bol_no': paramPass['bol_no'],
+                'POD_Name': $('#POD_Name').val(),
+                'statusId3': $('#statusId3').val(),
+                'latitudeDev': "",
+                'longitudeDev': "",
+                'Memo': $('#memo').val(),
+                'taskStatus': '30',
+                'ticket': localStorage.getItem('ticket'),
+                'clientIp': '012345678901234567890123456789'
+            }
+
+            var url = "http://" + localStorage.getItem("ipSet") + '/api/Delivery/T20_ActCompleteBol';
+            var filePath = '';
+            if (paramPass['type'] == '10') {
+                filePath = paramPass['imgUri']
+
+                var fileType = filePath.substr(filePath.lastIndexOf('.'), filePath.length - filePath.lastIndexOf('.'));
+                actRow['fileType'] = fileType;
+
+                var options = {
+                    fileKey: 'file',
+                    fileName: paramPass['bol_no'] + fileType,
+                    chunkedMode: false,
+                    mimeType: 'image/png',
+                    params: actRow,
+                    headers: {
+                        'Authorization': 'Basic ' + btoa('zhtech:24369238')
+                    }
+                }
+
+                var ft = new FileTransfer();
+                ft.upload(filePath, url, function (response) {
+                    var data = JSON.parse(response.response);
+                    if (data.resultCode == "10") {
+                        localStorage.removeItem('dispatch_id');
+                        localStorage.removeItem('bol_no');
+                        localStorage.removeItem('taskStatus');
+
+                        if (statusCode == "10") window.location = '/MorrisonWEB/T15?dispatch_id=' + data.dispatch_id;
+                        else if (statusCode == "20") window.location = '/MorrisonWEB/T21?dispatch_id=' + data.dispatch_id;
+                        else if (statusCode == "30") {
+                            //直接做交換動作 因為第二位司機不需要再輸入新的司機ID 直接換回第一位
+                            var actRow = {
+                                dispatch_id: data.dispatch_id,
+                                driverId2: "",
+                                isChange: "N",
+                                ticket: localStorage.getItem('ticket')
+                            }
+                            GetAjaxV3('Delivery/T21_ActChangeDriver', actRow, false, function (reponse) {
+                                if (reponse != "connError") {
+                                    if (reponse.resultCode == "10") {
+                                        window.location = '/MorrisonWEB/T15?dispatch_id=' + data.dispatch_id;
+                                    } else {
+                                        swal("Error", reponse.error, "warning");
+                                    }
+                                } else {
+                                    sysConnFail();
+                                }
+                            })
+                        }
+
+
+                    } else {
+                        swal("Error", data.error, "warning");
+                    }
+                    HideLoading(500);
+                },
+                    function (data) {
+                        swal("Error", data.error, "warning");
+                        HideLoading(500);
+                    },
+                    options);
+
+            } else {
+                actRow['base64img'] = localStorage.getItem('signin_base64');
+                actRow['fileType'] = '.png';
+
+                GetAjaxV3('Delivery/T20_ActCompleteBol', actRow, true, function (data) {
+                    if (data != "connError") {
+                        if (data.resultCode == "10") {
+                            localStorage.removeItem('signin_base64');
+                            localStorage.removeItem('dispatch_id');
+                            localStorage.removeItem('bol_no');
+                            localStorage.removeItem('taskStatus');
+
+                            if (statusCode == "10") window.location = '/MorrisonWEB/T15?dispatch_id=' + data.dispatch_id;
+                            else if (statusCode == "20") window.location = '/MorrisonWEB/T21?dispatch_id=' + data.dispatch_id;
+                            else if (statusCode == "30") {
+                                //直接做交換動作 因為第二位司機不需要再輸入新的司機ID 直接換回第一位
+                                var actRow = {
+                                    dispatch_id: data.dispatch_id,
+                                    driverId2: "",
+                                    isChange: "N",
+                                    ticket: localStorage.getItem('ticket')
+                                }
+                                GetAjaxV3('Delivery/T21_ActChangeDriver', actRow, false, function (reponse) {
+                                    if (reponse != "connError") {
+                                        if (reponse.resultCode == "10") {
+                                            window.location = '/MorrisonWEB/T15?dispatch_id=' + data.dispatch_id;
+                                        } else {
+                                            swal("Error", reponse.error, "warning");
+                                        }
+                                    } else {
+                                        sysConnFail();
+                                    }
+                                })
+                            }
+                        } else {
+                            swal("Error", data.error, "warning");
+                        }
+                    }
+                    HideLoading(500);
+                });
+            }
+        }
+
+        function onBackKeyDown() {
+            //window.location = '/MorrisonWEB/T15?dispatch_id=' + dispatch_id
+            window.history.back();
+        }
+
+        function GetAjaxV3(route, actRow, async, returnData) {
+            /// <summary>
+            /// 一般呼叫API的ajax方法，該方法會出現Loading的dialog，但前提是async必須設定為true
+            /// </summary>
+            /// <param name="route">str，API的路徑，範例：API檔案名稱/API功能名稱</param>
+            /// <param name="actRow">obj，傳給API的參數</param>
+            /// <param name="async">bit，設定是否為非同步</param>
+            /// <param name="returnData">obj，無須寫任何方法</param>
+            /// <returns>執行完畢後回傳API的結果，若resultCode為10，表示API執行成功，若為01表示API執行過程中有誤，若回傳connError表示連線失敗</returns>
+
+            $.ajax({
+                url: "/api/" + route,
+                type: "POST",
+                dataType: "json",
+                data: actRow,
+                async: async,
+                headers: {
+                    'Authorization': 'Basic ' + btoa('zhtech:24369238')
+                },
+                success: function (data) {
+                    returnData(data);
+                },
+                error: function (data) {
+                    returnData("connError");
+                }
+            })
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0c4da2;
+            color: #fff;
+        }
+    </style>
+
+</head>
+
+<body style="font-family:'Microsoft JhengHei';">
+    <div class="container">
+        <div class="row" style="height:60px;margin:0rem;">
+            <div class="col-12" style="height:60px;padding:0px;">
+
+                <div class="row" style="padding:15px 15px 10px 10px;font-size:18px">
+                    <table width="100%">
+                        <tr>
+                            <td width="10%" align="left">
+                                <a href="javascript:void(0)" onclick="onBackKeyDown();"><img src="~/images/s_backPage.png" width="25" /></a>
+                            </td>
+                            <td width="80%" align="center">
+                                <strong><span id="T20_lbl_title">Complete delivery</span></strong>
+                            </td>
+                            <td width="10%" align="right">
+                                <a href="javascript:void(0);" onclick="chkDispatch()"><img src="~/images/icon_check.png" style="width:40px;padding-top:5px;" /></a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <hr style="border-bottom: 2px solid white;margin:10px 0px 10px 0px;">
+        <div class="row" style="padding:15px;">
+            <div class="col-12">
+                <form>
+                    <div class="form-group">
+                        <label for="POD_Name" id="T20_lbl_podName">POD Name*</label>
+                        <input type="text" class="form-control" id="POD_Name">
+                    </div>
+                    <div class="form-group" style="text-align:left;">
+                        <input type="checkbox" id="chkError" style="width:20px;height:20px;margin:10px;">
+                        <label for="chkError" id="T20_lbl_error">Exception Reocrd</label>
+                    </div>
+                    <div id="errorBar" style="display:none;">
+                        <div class="form-group" style="display:none;">
+                            <label for="statusId3" id="T20_lbl_OSD">OSD type*</label>
+                            <select id="statusId3" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="memo" id="T20_lbl_memo">Notes*</label>
+                            <textarea id="memo" rows="5" class="form-control"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

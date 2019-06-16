@@ -1,0 +1,369 @@
+﻿
+@{
+    Layout = null;
+    var title = "Morrison ePOD";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    @*<link href="~/Scripts/SB_Admin2/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />*@
+    @*<link href="~/Content/bootstrap.min.css" rel="stylesheet" />*@
+    <link href="~/Vender/loginScreen/animate.css" rel="stylesheet" />
+    <link href="~/Vender/loginScreen/animsition.min.css" rel="stylesheet" />
+    <link href="~/Vender/loginScreen/daterangepicker.css" rel="stylesheet" />
+    <link href="~/Vender/loginScreen/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Vender/loginScreen/hamburgers.min.css" rel="stylesheet" />
+    <link href="~/Vender/loginScreen/icon-font.min.css" rel="stylesheet" />
+    <link href="~/Vender/loginScreen/main.css" rel="stylesheet" />
+    <link href="~/Vender/loginScreen/select2.min.css" rel="stylesheet" />
+    <link href="~/Vender/loginScreen/util.css" rel="stylesheet" />
+
+
+    <link href="~/Scripts/SB_Admin2/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/dist/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/morrisjs/morris.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Scripts/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.css" rel="stylesheet" />
+    <link href="~/Vender/filebox/jasny-bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/ZhCss2.css" rel="stylesheet" />
+
+    <script src="~/Scripts/SB_Admin2/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/raphael/raphael.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/morrisjs/morris.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/data/morris-data.js"></script>
+    <script src="~/Scripts/SB_Admin2/js/sb-admin-2.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-TW.js"></script>
+    <script src="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.min.js"></script>
+    <script src="~/Vender/filebox/jasny-bootstrap.js"></script>
+
+
+    @*<script src="~/Scripts/jquery-1.11.3.min.js"></script>*@
+    @*<script src="~/Scripts/bootstrap.min.js"></script>*@
+    <script src="~/Vender/amazon-cognito-identity-js/dist/amazon-cognito-identity.min.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#userId").keypress(function (e) {
+                code = (e.keyCode ? e.keyCode : e.which);
+                if (code == 13) btnLogin2();
+            });
+            $("#password").keypress(function (e) {
+                code = (e.keyCode ? e.keyCode : e.which);
+                if (code == 13) btnLogin2();
+            });
+
+            //$(window).resize(function () {
+            //    wdth = $(window).width();
+            //    //移除目前設定的影像長寬
+            //    $("logo").removeAttr('width');
+            //    $("logo").removeAttr('height');
+
+            //    //取得影像實際的長寬
+            //    var imgW = $(this).width();
+            //    var imgH = $(this).height();
+
+            //    //計算縮放比例
+            //    var w = $("logo").attr("_w") / imgW;
+            //    var h = $("logo").attr("_h") / imgH;
+            //    var pre = 1;
+            //    if (w > h) {
+            //        pre = h;
+            //    } else {
+            //        pre = w;
+            //    }
+
+            //    //設定目前的縮放比例
+            //    $(this).width(imgW * pre);
+            //    $(this).height(imgH * pre);
+            //});
+        });
+
+        function btnLogin() {
+
+            if ($('#userId').val() == '' || $('#password').val() == '') {
+                alert("Please enter an account or password.");
+                return;
+            }
+
+            $.ajax({
+                url: '/Home/Login',
+                type: 'POST',
+                data: 'userId=' + $('#userId').val() + '&password=' + $('#password').val(),
+                success: function (data) {
+                    if (data.resultCode == '10') {
+                        window.location.href = data.GoPage;
+                    } else {
+                        alert(data.error);
+                    }
+                }
+            })
+        }
+
+        function btnLogin2() {
+            try {
+
+                if ($('#userId').val() == '' || $('#password').val() == '') {
+                    alert("Please enter an account or password.");
+                    return;
+                }
+
+                var poolData = {
+                    UserPoolId: 'ap-northeast-1_3XxQELuvz',
+                    ClientId: '6vfgukfts8hqnhaisjjrgh0sro'
+                    //UserPoolId: 'us-west-2_ASxnmP6bo',
+                    //ClientId: '5qqovat6tdnbu1glkhts57uj1j'
+                };
+                var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+                var userData = {
+                    Username: $('#userId').val(),
+                    Pool: userPool
+                };
+
+                var authenticationData = {
+                    Username: $('#userId').val(),
+                    Password: $('#password').val(),
+                };
+                var authenticationDetails =
+                    new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+
+                var cognitoUser =
+                    new AmazonCognitoIdentity.CognitoUser(userData);
+                cognitoUser.authenticateUser(authenticationDetails, {
+                    onSuccess: function (result) {
+                        //var accessToken = result.getAccessToken().getJwtToken();
+                        //如果有跑進來代表S3有這個人
+                        $.ajax({
+                            url: '/Home/Login2',
+                            type: 'POST',
+                            data: 'userId=' + $('#userId').val() + '&password=' + $('#password').val() + "&S3=Y",
+                            success: function (data) {
+                                if (data.resultCode == '10') {
+                                    if (data.firstLogin == "Y") {
+                                        $("#userName").val(result.accessToken.payload.username);
+                                        $('#dlg').modal();
+                                    } else window.location.href = data.GoPage;
+                                } else {
+                                    swal("Error", data.error, "warning");
+                                    //alert(data.error);
+                                }
+                            }
+                        })
+                    },
+
+                    onFailure: function (err) {
+                        //alert(err.message);
+                        //這邊則是S3沒這個人再去我們的資料庫看
+                        $.ajax({
+                            url: '/Home/Login2',
+                            type: 'POST',
+                            data: 'userId=' + $('#userId').val() + '&password=' + $('#password').val() + "&S3=N",
+                            success: function (data) {
+                                if (data.resultCode == '10') {
+                                    if (data.GoPage != null && data.GoPage != "" && data.GoPage !== undefined) window.location.href = data.GoPage;
+                                } else {
+                                    swal("Error", data.error, "warning");
+                                    //alert(data.error);
+                                }
+                            }
+                        })
+                    },
+                    mfaRequired: function (codeDeliveryDetails) {
+                        var verificationCode = prompt('Please input verification code', '');
+                        cognitoUser.sendMFACode(verificationCode, this);
+                    }
+                });
+            } catch (e) {
+                alert(e);
+            }
+        }
+
+        function btnSave() {
+
+            if ($("#userName").val() == "") {
+                swal("Error", "Please enter your User Name.", "warning");
+                return;
+            }
+
+            var actRow = {
+                userId: $("#userId").val(),
+                password: $("#password").val(),
+                userName: $("#userName").val(),
+                contactTel: $("#contactTel").val(),
+                email: $("#email").val(),
+                zip: $("#zip").val(),
+                addr: $("#addr").val()
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/Home/ActSingleLogin',
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({ "actRow": actRow }),
+                success: function (data) {
+                    if (data.resultCode == '10') {
+                        //window.location.href = data.GoPage;
+                        $('#dlg').modal('toggle');
+                        swal("Successful", "Successful setting", "success");
+                    } else {
+                        swal("Error", data.error, "warning");
+                        //alert(data.error);
+                    }
+                }
+            })
+
+        }
+
+
+        //function btnRetrieve() {
+
+        //    var data = {
+        //        //UserPoolId: 'us-west-2_99yd4OwwE',
+        //        //ClientId: 'lbg2pt7v6micfu770tgvddql0'
+        //        UserPoolId: 'us-west-2_99yd4OwwE',
+        //        ClientId: 'lbg2pt7v6micfu770tgvddql0'
+        //    };
+        //    var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+        //    var cognitoUser = userPool.getCurrentUser();
+
+        //    if (cognitoUser != null) {
+        //        cognitoUser.getSession(function (err, session) {
+        //            if (err) {
+        //                alert(err);
+        //                return;
+        //            }
+        //            console.log('session validity: ' + session.isValid());
+        //        });
+        //    }
+        //}
+    </script>
+    <style>
+        body {
+            background-color: #0c4da2;
+        }
+    </style>
+</head>
+<body>
+    @*<form class="form-horizontal" style="padding:30px;">
+            <div class="form-group">
+                <div class="form-group">
+                    <label for="userId" class="col-sm-2 control-label">帳號</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="userId" maxlength="50">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-group">
+                    <label for="password" class="col-sm-2 control-label">密碼</label>
+                    <div class="col-sm-3">
+                        <input type="password" class="form-control" id="password" maxlength="20">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <a href="#" id="btnLogin" onclick="btnLogin()" class="btn btn-default">登入</a>
+                    <a href="#" id="btnRetrieve" onclick="btnRetrieve()" class="btn btn-default">檢視</a>
+                </div>
+            </div>
+        </form>*@
+
+    <div style="width:100%">
+        <table width="100%">
+            <tr>
+                <td align="center"><img src="~/Vender/loginScreen/MEC-Logo-ALLwhite-noTag.png" style="margin-top:80px;width:250px;" /></td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-50" style="margin-top:50px;">
+                        <form class="login100-form validate-form">
+                            <span class="login100-form-title p-b-33">
+                                Morrison ePOD
+                            </span>
+
+                            <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+                                <input class="input100" type="text" placeholder="Email" id="userId" maxlength="50">
+                                <span class="focus-input100-1"></span>
+                                <span class="focus-input100-2"></span>
+                            </div>
+
+                            <div class="wrap-input100 rs1 validate-input" data-validate="Password is required">
+                                <input class="input100" type="password" placeholder="Password" id="password" maxlength="20">
+                                <span class="focus-input100-1"></span>
+                                <span class="focus-input100-2"></span>
+                            </div>
+
+                            <div class="container-login100-form-btn m-t-20">
+                                <a href="#" id="btnLogin" onclick="btnLogin2()" class="login100-form-btn">Sign in</a>
+                            </div>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="dlg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="dlgTitle"><strong>First time login setting</strong></h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="fm">
+
+                        <div class="form-group">
+                            <label for="userName">User Name<span style="color:red;">*</span></label>
+                            <input class="form-control" type="text" id="userName">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactTel">ContactTel</label>
+                            <input class="form-control" type="tel" id="contactTel">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input class="form-control" type="email" id="email">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="zip">Zip</label>
+                            <input class="form-control" type="text" id="zip">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="addr">Address</label>
+                            <input class="form-control" type="text" id="addr">
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="btnSave" onclick="btnSave()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Modal-->
+</body>
+</html>

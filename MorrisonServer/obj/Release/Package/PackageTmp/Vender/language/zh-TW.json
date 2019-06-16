@@ -1,0 +1,109 @@
+﻿{
+  "index": {
+    "index_lbl_appTitle_first": "EPOD",
+    "index_lbl_appTitle": "EPOD",
+    "index_lbl_userId": "帳號",
+    "index_lbl_password": "密碼",
+    "index_btn_btnLogin": "登入",
+    "index_btn_btnRegist": "帳號註冊",
+    "index_btn_btnForget": "忘記密碼？",
+    "index_lbl_selLanguage": "語言",
+    "index_lbl_ipSet": "連線參數",
+    "index_btn_btnInSet": "確定"
+  },
+  "M10": {
+    "M10_btn_btnChangeTruck": "更改車號",
+    "M10_btn_btnAdd": "新增Dispatch",
+    "M10_lbl_Status": "目前狀態",
+    "M10_lbl_Lastupdate": "最近更新日期"
+  },
+  "M11": {
+    "M11_lbl_title": "第一次登入初始設定",
+    "M11_lbl_password": "密碼*",
+    "M11_lbl_repassword": "確認密碼*",
+    "M11_lbl_email": "信箱",
+    "M11_lbl_carId": "車牌號碼*",
+    "M11_lbl_trailerId": "拖板車號"
+  },
+  "M12": {
+    "M12_lbl_title": "隱私政策",
+    "M12_btn_deny": "不同意",
+    "M12_btn_agree": "同意"
+  },
+  "T10": {
+    "T10_lbl_title": "更改車號",
+    "T10_lbl_carId": "車牌號碼*",
+    "T10_lbl_trailerId": "拖板車號"
+  },
+  "T30": {
+    "T30_lbl_title": "新增Dispatch",
+    "T30_lbl_dispatch_id": "Dispatch_id",
+    "T30_btn_btnFind": "搜尋",
+    "T30_btn_btnScan": "掃描QR Code",
+    "T30_lbl_Seq": "順序",
+    "T30_lbl_BOL": "Dispatch_id",
+    "T30_lbl_DestName": "目的地名稱",
+    "T30_lbl_Address": "地址",
+    "T30_lbl_City": "縣市/州/區碼",
+    "T30_lbl_pallets": "板",
+    "T30_lbl_cartons": "箱",
+    "T30_lbl_weight": "重量"
+  },
+  "T15": {
+    "T15_btn_UploadPOD": "選擇上傳方式",
+    "T15_btn_Camera": "拍照",
+    "T15_btn_Album": "相簿",
+    "T15_btn_sign": "電子簽核",
+    "T15_lbl_dispatch": "新增Dispatch",
+    "T15_lbl_Pickup": "揀完貨品",
+    "dlgTitle": "配送證明方式",
+    "T15_btn_View": "查看",
+    "T15_btn_Action": "配送完成",
+    "dlgTitle2": "更換",
+    "T15_btn_ChangeOrder": "更換任務順序",
+    "T15_btn_ShiftDriver": "更換司機",
+    "dlgTitle3": "第二位司機ID",
+    "T15_lbl_secDriver": "司機ID<span style=\"color:red\">*</span>",
+    "T15_btn_Save": "儲存"
+  },
+  "T16": {
+    "T16_btn_UploadPOD": "選擇上傳方式",
+    "T16_btn_Camera": "拍照",
+    "T16_btn_Album": "相簿",
+    "T16_btn_sign": "電子簽核",
+    "T16_lbl_destinationName": "目的地名稱",
+    "T16_lbl_address": "地址",
+    "T16_lbl_apptc": "客戶收貨碼",
+    "T16_lbl_scheduledDeliveryDate": "預定抵達日期",
+    "T16_lbl_customerOrderInfo": "* 客戶訂單資訊",
+    "T16_td_tableTitle": "統計",
+    "T16_td_plts": "板",
+    "T16_td_totalBoxesQty": "箱",
+    "T16_td_wgt": "重量",
+    "T16_btn_viewPOD": "查看配送證明",
+    "dlgTitle": "配送證明方式"
+  },
+  "T17": {
+    "T17_lbl_originalShipOrder": "目前配送順序",
+    "T17_lbl_newShipOrder": "調整後配送順序"
+  },
+  "T18": {
+    "T18_btn_Cancel": "取消",
+    "T18_btn_Clear": "清除",
+    "T18_btn_OK": "送出"
+  },
+  "T19": {
+    "Sign": "前往簽核"
+  },
+  "T20": {
+    "T20_lbl_title": "完成配送",
+    "T20_lbl_podName": "配送證明檔案名稱*",
+    "T20_lbl_error": "錯誤回報",
+    "T20_lbl_OSD": "取消配送類型*",
+    "T20_lbl_memo": "備註*"
+  },
+  "T21": {
+    "T21_lbl_title": "設定第二位司機",
+    "T21_lbl_secDriverId": "司機帳號*"
+  }
+}

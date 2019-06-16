@@ -1,0 +1,108 @@
+{
+  "index": {
+    "index_lbl_appTitle_first": "EPOD",
+    "index_lbl_appTitle": "EPOD",
+    "index_lbl_userId": "UserId",
+    "index_lbl_password": "Password",
+    "index_btn_btnLogin": "Log In",
+    "index_btn_btnRegist": "Create a new ID",
+    "index_btn_btnForget": "Forgot",
+    "index_lbl_selLanguage": "Language",
+    "index_lbl_ipSet": "Connection",
+    "index_btn_btnInSet": "OK"
+  },
+  "M10": {
+    "M10_btn_btnChangeTruck": "Change truck",
+    "M10_btn_btnAdd": "Add dispatch",
+    "M10_lbl_Status": "Status",
+    "M10_lbl_Lastupdate": "Lastupdate"
+  },
+  "M11": {
+    "M11_lbl_title": "Log in first setting",
+    "M11_lbl_password": "New Password*",
+    "M11_lbl_repassword": "Retype Password*",
+    "M11_lbl_email": "Email",
+    "M11_lbl_carId": "Truck plate number*",
+    "M11_lbl_trailerId": "Trailer plate number"
+  },
+  "M12": {
+    "M12_lbl_title": "Privacy Policy",
+    "M12_btn_deny": "deny",
+    "M12_btn_agree": "agree"
+  },
+  "T10": {
+    "T10_lbl_title": "Change truck",
+    "T10_lbl_carId": "Truck plate number*",
+    "M11_lbl_trailerId": "Trailer plate number"
+  },
+  "T30": {
+    "T30_lbl_title": "Add dispatch",
+    "T30_lbl_dispatch_id": "Dispatch Order",
+    "T30_btn_btnFind": "Find",
+    "T30_btn_btnScan": "Scan again",
+    "T30_lbl_Seq": "Seq",
+    "T30_lbl_BOL": "BOL",
+    "T30_lbl_DestName": "Dest Name",
+    "T30_lbl_Address": "Address",
+    "T30_lbl_City": "City/State/ZIP",
+    "T30_lbl_pallets": "pallets",
+    "T30_lbl_cartons": "cartons",
+    "T30_lbl_weight": "weight"
+  },
+  "T15": {
+    "T15_btn_UploadPOD": "Upload POD",
+    "T15_btn_Camera": "Camera",
+    "T15_btn_Album": "Album",
+    "T15_btn_sign": "Add e-signature",
+    "T15_lbl_dispatch": "Add dispatch",
+    "T15_lbl_Pickup": "Pickup confirm",
+    "dlgTitle": "Submit POD",
+    "T15_btn_View": "View",
+    "T15_btn_Action": "Aciton",
+    "dlgTitle2": "Change",
+    "T15_btn_ChangeOrder": "Change Order",
+    "T15_btn_ShiftDriver": "Shift to another driver",
+    "dlgTitle3": "Set Second Driver",
+    "T15_lbl_secDriver": "Second Driver Id<span style=\"color:red\">*</span>",
+    "T15_btn_Save": "Save"
+  },
+  "T16": {
+    "T16_btn_UploadPOD": "Upload POD",
+    "T16_btn_Camera": "Camera",
+    "T16_btn_Album": "Album",
+    "T16_lbl_destinationName": "Destination name",
+    "T16_lbl_address": "Address",
+    "T16_lbl_apptc": "APPT/C #",
+    "T16_lbl_scheduledDeliveryDate": "Scheduled delivery date",
+    "T16_lbl_customerOrderInfo": "* Customer Order Info.",
+    "T16_td_tableTitle": "Grand Total",
+    "T16_td_plts": "pallets",
+    "T16_td_totalBoxesQty": "cartons",
+    "T16_td_wgt": "Weight",
+    "T16_btn_viewPOD": "View POD",
+    "dlgTitle": "Submit POD"
+  },
+  "T17": {
+    "T17_lbl_originalShipOrder": "Original ship order",
+    "T17_lbl_newShipOrder": "New ship order"
+  },
+  "T18": {
+    "T18_btn_Cancel": "Cancel",
+    "T18_btn_Clear": "Clear",
+    "T18_btn_OK": "OK"
+  },
+  "T19": {
+    "Sign": "e-signature"
+  },
+  "T20": {
+    "T20_lbl_title": "Complete delivery",
+    "T20_lbl_podName": "POD Name*",
+    "T20_lbl_error": "Error report",
+    "T20_lbl_OSD": "OSD type*",
+    "T20_lbl_memo": "Notes*"
+  },
+  "T21": {
+    "T21_lbl_title": "Set second driver",
+    "T21_lbl_secDriverId": "Second driver account*"
+  }
+}

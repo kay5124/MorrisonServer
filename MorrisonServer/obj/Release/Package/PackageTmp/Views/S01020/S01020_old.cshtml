@@ -1,0 +1,231 @@
+﻿
+@{
+    Layout = null;
+    var title = "群組設定";
+
+    var selItem_lbl_cm1 = (List<SelectListItem>)ViewBag.selItem_lbl_cm1;
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    <link href="~/Content/themes/gray/easyui.css" rel="stylesheet" />
+    <link href="~/Content/themes/icon.css" rel="stylesheet" />
+
+    <link href="~/Content/ZhCss1.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-1.11.3.min.js"></script>
+    <script src="~/Scripts/jquery.easyui-1.4.5.min.js"></script>
+    <script src="~/Scripts/locale/easyui-lang-zh_TW.js"></script>
+    <script src="~/Scripts/ZhEeasyUI-01.js"></script>
+    <script>
+        var RowStatus = "Q";
+
+        $(document).ready(function () {
+            $('#dg').datagrid('options').url = "/S01020/GetGridJSON";
+
+        });
+
+        function btnQuery() {
+            $("#dg").datagrid("load", {
+                "lbl_cmb1": $("#lbl_cmb1").combobox("getValue"),
+                "value_cmb1": $("#value_cmb1").textbox("getValue")
+            })
+        }
+
+        function btnAdd() {
+            $('#fm').form('clear');
+            $("#statusId").combobox("setValue", "10");
+            $('#dlg').dialog('center').dialog('open').dialog('setTitle', '新增資料 :');
+            $('#groupId').textbox('enable');
+            RowStatus = 'A';
+        }
+
+        function btnEdit() {
+            var row = $('#dg').datagrid('getSelected');
+
+            rowIndex = $("#dg").datagrid("getRowIndex", row);
+
+            if (row) {
+                RowStatus = 'M';
+                $('#dlg').dialog('center').dialog('open').dialog('setTitle', '修改資料 :');
+
+                $('#groupId').textbox('disable');
+                //debugger;
+                $('#fm').form('load', {
+                    groupId: row.groupId,
+                    groupName: row.groupName,
+                    statusId: row.statusId,
+                    memo: row.memo
+                });
+
+            }
+        }
+
+        function btnSave() {
+            var row = $('#dg').datagrid('getSelected');
+
+            $('#fm').form('submit', {
+
+                onSubmit: function () {
+                    return $(this).form('validate');
+                },
+                success: function (data) {
+                    var actRow = {
+                        RowStatus: RowStatus,
+                        groupId: $('#groupId').textbox('getValue'),
+                        groupName: $('#groupName').textbox('getValue'),
+                        statusId: $("#statusId").combobox("getValue"),
+                        statusName: $("#statusId").combobox("getText"),
+                        memo: $('#memo').textbox('getValue')
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        url: '/S01020/ActSingle',
+
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: JSON.stringify({ "actRow": actRow }),
+
+                        success: function (data) {
+                            if (data.resultCode == '10') {
+                                if (RowStatus == 'A') {
+                                    actRow.creatUser = data.row[0].creatUser;
+                                    actRow.creatTime = data.row[0].creatTime;
+                                    $('#dg').datagrid('appendRow', actRow);
+
+                                    rowIndex = $("#dg").datagrid("getRowIndex", actRow);
+                                    $("#dg").datagrid("selectRow", rowIndex);
+                                }
+                                else {
+                                    actRow.actUser = data.row[0].actUser;
+                                    actRow.actTime = data.row[0].actTime;
+
+                                    $('#dg').datagrid('updateRow', {
+                                        index: rowIndex,
+                                        row: actRow
+                                    });
+                                }
+                                RowStatus = "Q";
+                                $('#dlg').dialog('close');        // close the dialog
+
+                            }
+                            else {
+                                $.messager.alert('錯誤', data.error, 'error');
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        function btnDelete() {
+            var row = $('#dg').datagrid('getSelected');
+            if (row) {
+                $.messager.confirm('確認', '你確定要刪除這筆資料嗎?', function (r) {
+                    if (r) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/S01020/DeleteSingle",
+                            data:
+                                "pks=" + row.groupId,
+                            success: function (data) {
+                                if (data.resultCode == '10') {
+                                    $.messager.alert('成功', '刪除成功 !', 'info');
+                                    $('#dg').datagrid('reload');    // reload the user data
+                                } else {
+                                    $.messager.alert('錯誤', data.error, 'error');
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei';
+            background-color: white;
+        }
+
+        .datagrid-cell {
+            font-size: 14px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body id="body" class="easyui-layout">
+    <div id="divQuery" style="height: 80px; padding:10px;" data-options="region:'north',title:'Condition',split:true">
+        @Html.DropDownList("lbl_cmb1", selItem_lbl_cm1, null, new { id = "lbl_cmb1", @class = "easyui-combobox", editable = "false", style = "width:80px; height:30px;" })
+        <input id="value_cmb1" name="value_cmb1" class="easyui-textbox" style="height:30px;" />
+        <a href="javascript:void(0)" id="btnQuery" name="btnQuery" class="easyui-linkbutton" iconCls="icon-search" style="height:30px;" onclick="btnQuery()">Search</a>
+    </div>
+    <div data-options="region:'center',title:'@title',split:true">
+
+        <div id="toolbar">
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="btnAdd()">Add</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="btnEdit()">修改</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="btnDelete()">Delete</a>
+        </div>
+
+        <table id="dg" class="easyui-datagrid" toolbar="#toolbar" style="width:auto;" method="post" fit="true"
+               pagination="true" pagesize="50" rownumbers="true" singleselect="true">
+            <thead>
+                <tr>
+                    <th field="groupId" sortable="true" editor="text" align="center">Group Id</th>
+                    <th field="groupName" sortable="true" editor="text">Group Name</th>
+                    <th field="statusName" sortable="true" editor="text">Use Status</th>
+                    <th field="memo" sortable="true" editor="text">Memo</th>
+                    <th field="creatUser" sortable="true" editor="text">建立人員</th>
+                    <th field="creatTime" sortable="true" editor="text">建立時間</th>
+                    <th field="actUser" sortable="true" editor="text">異動人員</th>
+                    <th field="actTime" sortable="true" editor="text">異動時間</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+    <div id="dlg" class="easyui-dialog" style="width: 500px; height: 310px; padding: 10px 20px; " closed="true" buttons="#dlg-buttons" modal="true">
+
+        <div class="ftitle">@title</div>
+
+        <form id="fm" method="post" novalidate>
+            <div class="fitem">
+                <label>群組ID : </label>
+                <input id="groupId" name="groupId" class="easyui-textbox" required style="height:30px; width:250px;" data-options="validType:{length:[0,3]}">
+            </div>
+
+            <div class="fitem">
+                <label>群組名稱:</label>
+                <input id="groupName" name="groupName" class="easyui-textbox" required style="height:30px; width:250px;">
+            </div>
+
+            <div class="fitem">
+                <label>使用狀態:</label>
+                <select id="statusId" name="statusId" class="easyui-combobox" required validtype="selectOneValueCheck['statusId']" style="height:30px;width:250px;">
+                    <option value="">請選擇</option>
+                    <option value="10">啟用</option>
+                    <option value="20">停用</option>
+                </select>
+            </div>
+
+            <div class="fitem">
+                <label>備註:</label>
+                <input id="memo" name="memo" class="easyui-textbox" style="height:30px; width:250px;">
+            </div>
+        </form>
+
+        <div id="dlg-buttons">
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-ok" onclick="btnSave()">Save</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">Cancel</a>
+        </div>
+
+    </div>
+</body>
+</html>

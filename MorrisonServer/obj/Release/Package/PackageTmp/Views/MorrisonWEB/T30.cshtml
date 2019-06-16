@@ -1,0 +1,253 @@
+﻿
+@{
+    Layout = null;
+    var title = "Web Morrison ePOD App";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    <link href="~/Scripts/SB_Admin2/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/dist/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/morrisjs/morris.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Scripts/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.css" rel="stylesheet" />
+    <link href="~/Content/ZhCss2.css" rel="stylesheet" />
+
+    <script src="~/Scripts/SB_Admin2/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/raphael/raphael.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/morrisjs/morris.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/data/morris-data.js"></script>
+    <script src="~/Scripts/SB_Admin2/js/sb-admin-2.js"></script>
+    <script src="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.min.js"></script>
+    <script src="~/Vender/language/language.js"></script>
+
+    <script>
+        var webTicket = '@ViewBag.webTicket';
+
+        $(document).ready(function () {
+            initButton();
+            initData();
+
+            $('body').fadeIn('slow');
+        })
+
+        function initButton() {
+            $('#btnFind').on('click', btnFind);
+            $('#btnScan').on('click', btnScan);
+
+            //綁定
+            $('#btnSave').on('click', btnSave);
+        }
+
+        function initData() {
+        }
+
+        function btnFind() {
+
+            if ($('#dispatch_id').val() == '') {
+                return;
+            }
+
+            var actRow = {
+                'sysUserId': '@ViewBag.sysUserId',
+                'dispatch_id': $('#dispatch_id').val(),
+                'tranCompId': '@ViewBag.tranCompId',
+                'ticket': webTicket,
+                'clientIp': '0123456789'
+            }
+
+            GetAjaxV3('Delivery/T30_GetCarShduData', actRow, true, function (data) {
+                if (data != "connError") {
+                    var dg = '';
+                    if (data.resultCode == "10") {
+                        if (data.rows.length > 0) {
+                            var row = data.rows[0];
+
+                            dg += '<table class="table-bordered" style="width:100%;">';
+                            dg += '    <tbody>';
+
+                            for (var j = 0; j < row.details.length; j++) {
+                                var d_row = row.details[j];
+                                dg += '        <tr style="background-color:white;color:black;">';
+                                dg += '            <td style="text-align: center;"><span class="T30_lbl_Seq">Seq</span>.' + d_row.arriveSeq + '</td>';
+                                dg += '            <td colspan="2"><span class="T30_lbl_BOL">BOL</span>#<br />' + d_row.bol_no + '</td>';
+                                dg += '        </tr>';
+                                dg += '        <tr>';
+                                dg += '            <td style="text-align: center"><span class="T30_lbl_DestName">Dest Name</span></td>';
+                                dg += '            <td colspan="3">' + d_row.shipName + ' ' + d_row.shipName2 + '</td>';
+                                //dg += '            <td colspan="3">BENJAMIN<br>' + d_row.shipName + ' ' + d_row.shipName2 + '</td>';
+                                dg += '        </tr>';
+                                dg += '        <tr>';
+                                dg += '            <td style="text-align: center"><span class="T30_lbl_Address">Address</span></td>';
+                                dg += '            <td colspan="3">' + d_row.shipAddr + ' ' + d_row.shipAddr2 + '</td>';
+                                dg += '        </tr>';
+                                dg += '        <tr>';
+                                dg += '            <td style="text-align: center"><span class="T30_lbl_City">City/State/ZIP</span></td>';
+                                dg += '            <td colspan="3">' + d_row.shipCity + '/' + d_row.shipState + '/' + d_row.shipZip + '</td>';
+                                dg += '        </tr>';
+                                dg += '        <tr>';
+                                dg += '            <td style="text-align: center"><span class="T30_lbl_pallets">pallets</span></td>';
+                                dg += '            <td style="text-align: center"><span class="T30_lbl_cartons">cartons</span></td>';
+                                dg += '            <td style="text-align: center"><span class="T30_lbl_weight">weight</span></td>';
+                                dg += '        </tr>';
+                                dg += '        <tr>';
+                                dg += '            <td style="text-align: center">' + Math.round(d_row.plts) + '</td>';
+                                dg += '            <td style="text-align: center">' + Math.round(d_row.totalBoxesQty) + '</td>';
+                                dg += '            <td style="text-align: center">' + Math.round(d_row.wgt) + '</td>';
+                                dg += '        </tr>';
+                                dg += '    </tbody>';
+                            }
+                            dg += '</table>';
+
+                            $('#btnSave').show();
+                            $('#btnSave').attr('dispatch_id', row.dispatch_id);
+                        }
+                    } else {
+                        swal("Error", data.error, "warning");
+                    }
+                    $('#dg').html(dg);
+                }
+            });
+        }
+
+
+        function btnSave() {
+            var dispatch_id = $('#btnSave').attr('dispatch_id');
+
+            swal({
+                title: "Asking",
+                text: "Are you sure you want to bind the delivery note?？",
+                type: "info",
+                showCancelButton: true,
+                confirmButtonClass: "btn-info",
+                confirmButtonText: "Yes",
+                cancelButtonText: 'No',
+                closeOnConfirm: false
+            }, function () {
+
+                var actRow = {
+                    'dispatch_id': dispatch_id,
+                    'tranCompId': '@ViewBag.tranCompId',
+                    'carId': '@ViewBag.carId',
+                    'trailerId': '@ViewBag.trailerId',
+                    'ticket': webTicket,
+                    'clientIp': '0123456789'
+                }
+
+                GetAjaxV3('Delivery/T30_ActBindDispatch', actRow, true, function (data) {
+                    if (data != "connError") {
+                        if (data.resultCode == "10") {
+                            //swal("訊息", '綁定成功', "info");
+                            swal({
+                                title: "Info",
+                                text: "Binding success",
+                                type: "success",
+                                showCancelButton: false,
+                                confirmButtonClass: "btn-primary",
+                                confirmButtonText: "Ok",
+                                closeOnConfirm: false,
+                                closeOnCancel: false
+                            }, function (isConfirm) {
+                                window.location = "/MorrisonWEB/M10";
+                            });
+                        } else {
+                            swal("Error", data.error, "warning");
+                        }
+                    }
+                });
+            });
+        }
+
+        function GetAjaxV3(route, actRow, async, returnData) {
+            /// <summary>
+            /// 一般呼叫API的ajax方法，該方法會出現Loading的dialog，但前提是async必須設定為true
+            /// </summary>
+            /// <param name="route">str，API的路徑，範例：API檔案名稱/API功能名稱</param>
+            /// <param name="actRow">obj，傳給API的參數</param>
+            /// <param name="async">bit，設定是否為非同步</param>
+            /// <param name="returnData">obj，無須寫任何方法</param>
+            /// <returns>執行完畢後回傳API的結果，若resultCode為10，表示API執行成功，若為01表示API執行過程中有誤，若回傳connError表示連線失敗</returns>
+
+            $.ajax({
+                url: "/api/" + route,
+                type: "POST",
+                dataType: "json",
+                data: actRow,
+                async: async,
+                headers: {
+                    'Authorization': 'Basic ' + btoa('zhtech:24369238')
+                },
+                success: function (data) {
+                    returnData(data);
+                },
+                error: function (data) {
+                    returnData("connError");
+                }
+            })
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0c4da2;
+            color: #fff;
+        }
+
+        table tr td {
+            padding: 10px;
+        }
+    </style>
+
+</head>
+
+<body style="font-family:'Microsoft JhengHei';">
+    <div class="container">
+        <div class="row" style="height:60px;margin:0rem;">
+            <div class="col-12" style="height:60px;padding:0px;">
+
+                <div class="row" style="padding:15px 15px 10px 10px;font-size:18px">
+                    <table width="100%">
+                        <tr>
+                            <td width="10%" align="left">
+                                <a href="/MorrisonWEB/M10"><img src="~/images/s_backPage.png" width="25" /></a>
+                            </td>
+                            <td width="80%" align="center">
+                                <strong><span id="T30_lbl_title">Dispatch Order</span></strong>
+                            </td>
+                            <td width="10%" align="right">
+                                <a href="#" id="btnSave" style="display:none;"><img src="~/images/icon_check.png" style="width:40px;padding-top:5px;" /></a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <hr style="border-bottom: 2px solid white;margin:10px 0px 10px 0px;">
+        <div class="row" style="padding:15px;">
+            <div class="col-12">
+                <form>
+                    <div class="form-group">
+                        <label for="dispatch_id"><span class="T30_lbl_dispatch_id">Dispatch Order</span></label>
+                        <input type="text" class="form-control" id="dispatch_id">
+                    </div>
+                </form>
+            </div>
+            <div class="col-6" style="text-align:right;"><a href="#" id="btnFind" class="btn btn-block" style="border:1px solid white;background-color:#0c4da2;color:white;"><span class="T30_btn_btnFind">Find</span></a></div>
+            <div class="col-6" style="display:none"><a href="#" id="btnScan" class="btn btn-block" style="border:1px solid white;background-color:#0c4da2;color:white;"><span class="T30_btn_btnScan">Scan again</span></a></div>
+        </div>
+        <hr style="border-bottom: 2px solid white; ">
+        <div class="row">
+            <div class="col-12" id="dg" style="padding:15px;">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

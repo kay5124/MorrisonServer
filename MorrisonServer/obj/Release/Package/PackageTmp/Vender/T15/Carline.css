@@ -1,0 +1,92 @@
+﻿
+.timeline ul {
+    padding: 2em 0 0 2em; /* 圓圈列左右調整 */
+    margin: 0px;
+    list-style: none;
+    position: relative;
+    width:100%;
+}
+
+    .timeline ul::before { /*----------------- 線條------------------------ */
+        content: ' ';
+        height: 100%;
+        width: 1px;
+        background-color: #d9d9d9;
+        position: absolute;
+        top: -10px; /* 與HR接在一起 */
+        left: 2.5em; /* 線條左右 */
+        z-index: -1;
+    }
+/*  ---------------------------------- */
+.timeline li div { /* 每個div間格 */
+    width: 100%;
+    display: inline-block;
+    margin: 1em 0;
+    vertical-align: top;
+}
+
+/*小圓圈 空心的*/
+.timeline .bullet {
+    width: 1em;
+    height: 1em;
+    box-sizing: border-box;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1); /*  全圈被景色 */
+    z-index: 1;
+    margin-right: 1em;
+}
+    /* .timeline .bullet.pink {
+  border: 2px solid #F93B69;
+}
+.timeline .bullet.green {
+  border: 2px solid #B0E8E2;
+}
+.timeline .bullet.orange {
+  border: 2px solid #EB8B6E;
+} */
+    .timeline .bullet.fff {
+        border: 6px solid #fff; /* 全白圈 */
+    }
+
+    .timeline .bullet.null {
+        border: 2px solid #fff;
+        background-color: #0c4da2; /* 半透明 +被景色 解決*/
+    }
+
+.timeline .time { /*  時間名稱間格 */
+    width: 40%;
+    font-size: 16px; /* 時間大小 */
+    padding-top: 1.5vh;
+    margin-top: 0.2px; /* 時間與文字對其 */
+}
+
+.timeline .desc { /* h3 DIV大小 */
+    width: 40%;
+}
+
+.timeline h3 {
+    font-size: 16px;
+    font-weight: 400;
+    margin: 0;
+}
+
+.timeline h4 {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 400;
+    color: #fff;
+}
+
+.timeline .people img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.credits, .video {
+    position: absolute;
+    bottom: 10px;
+    color: #808080;
+    font-size: 100%;
+    text-decoration: underline;
+}

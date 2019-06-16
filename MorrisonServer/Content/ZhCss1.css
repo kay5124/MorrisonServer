@@ -1,0 +1,102 @@
+﻿.datagrid-header .datagrid-cell {
+    line-height: normal;
+    height: auto;
+}
+
+
+#fm {
+    margin: 0;
+    padding: 10px 10px;
+}
+
+.ftitle {
+    font-size: 14px;
+    font-weight: bold;
+    color: #666;
+    padding: 5px 0;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.fitem {
+    margin-top:2.5px;
+    margin-bottom: 2.5px;
+}
+
+    .fitem label {
+        display: inline-block;
+        width: 110px;
+        margin-left: 10px;
+    }
+    
+
+
+.easyui-validatebox {
+    width: 120px;
+}
+
+.easyui-combobox  {
+    width: 120px;
+}
+
+.easyui-datebox {
+    width: 120px;
+}
+
+.easyui-datetimebox {
+    width: 160px;
+}
+
+.easyui-textbox {
+    width: 120px;
+}
+
+.easyui-numberspinner {
+    width: 80px;
+}
+
+.zhitem_r {
+    margin-bottom: 5px;
+    float: left;
+    /*background-color:lightyellow;*/
+    /*display: inline-block;*/
+    /*margin-bottom: 5px;*/
+
+}
+
+    .zhitem_r label {
+        display: inline-block;
+        width: 80px;
+        margin-left: 10px;
+    }
+
+    .zhitem_r input {
+        display: inline-block;
+        width: 110px;
+        margin-left: 10px;
+        background-color: lightyellow;
+    }
+
+.zhlabel {
+    display: inline-block;
+    width: 110px;
+    margin-left: 10px;
+}
+
+.zhinput {
+    display: inline-block;
+    width: 110px;
+    margin-left: 10px;
+}
+
+.zhfitem {
+    margin-bottom: 5px;
+    width:150px;
+    /*background-color:lightyellow;*/
+    /*display: inline-block;*/
+}
+
+body{
+    margin:0;
+    border:0;
+}

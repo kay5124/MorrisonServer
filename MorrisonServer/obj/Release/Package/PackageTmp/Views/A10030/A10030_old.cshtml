@@ -1,0 +1,264 @@
+﻿
+@{
+    Layout = null;
+    var title = "版本設定";
+
+    var selItem_lbl_cmb1 = (List<SelectListItem>)ViewBag.selItem_lbl_cmb1;
+    var selItem_value_appSysId = (List<SelectListItem>)ViewBag.selItem_value_appSysId;
+
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    <link href="~/Content/themes/gray/easyui.css" rel="stylesheet" />
+    <link href="~/Content/themes/icon.css" rel="stylesheet" />
+
+    <link href="~/Content/ZhCss1.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-1.11.3.min.js"></script>
+    <script src="~/Scripts/jquery.easyui-1.4.5.min.js"></script>
+    <script src="~/Scripts/locale/easyui-lang-zh_TW.js"></script>
+    <script src="~/Scripts/ZhEeasyUI-01.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dg').datagrid('options').url = "/A10030/GetGridJSON";
+
+
+            $('#statusId').combobox({
+                onSelect: function (record) {
+                    if (record.value == '10') {
+                        document.getElementById("appUrl").style.display = "";
+                    } else {
+                        document.getElementById("appUrl").style.display = "none";
+                    }
+                }
+            })
+        });
+
+        function btnQuery() {
+            $("#dg").datagrid("load", {
+                "lbl_cmb1": $("#lbl_cmb1").combobox("getValue"),
+                "value_cmb1": $("#value_cmb1").textbox("getValue")
+            })
+        }
+
+        function btnAdd() {
+            $('#fm').form('clear');
+            $('#dlg').dialog('center').dialog('open').dialog('setTitle', '新增資料 :');
+            $('#systemId').textbox('enable');
+            $('#statusId').textbox('enable');
+            RowStatus = 'A';
+        }
+
+        function btnEdit() {
+            var row = $('#dg').datagrid('getSelected');
+
+            rowIndex = $("#dg").datagrid("getRowIndex", row);
+
+            if (row) {
+                RowStatus = 'M';
+                $('#dlg').dialog('center').dialog('open').dialog('setTitle', '修改資料 :');
+
+                if (row.statusId == '10') {
+                    document.getElementById("appUrl").style.display = "";
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/A10030/GetAppUrl',
+                        data: 'systemId=' + row.systemId,
+                        success: function (data) {
+                            if (data.resultCode == '10') {
+                                $('#aUrl').textbox('setValue', data.aUrl);
+                                $('#iUrl').textbox('setValue', data.iUrl);
+                            } else {
+                                $.messager.alert('錯誤', data.error, 'error');
+                            }
+                        }
+                    })
+                } else {
+                    document.getElementById("appUrl").style.display = "none";
+                }
+
+                $('#statusId').textbox('disable');
+                $('#systemId').textbox('disable');
+                //debugger;
+                $('#fm').form('load', {
+                    systemId: row.systemId,
+                    systemName: row.systemName,
+                    version: row.version
+                });
+
+
+
+            }
+        }
+
+        function btnSave() {
+            var row = $('#dg').datagrid('getSelected');
+
+            $('#fm').form('submit', {
+
+                onSubmit: function () {
+                    return $(this).form('validate');
+                },
+                success: function (data) {
+                    var actRow = {
+                        RowStatus: RowStatus,
+                        systemId: $('#systemId').textbox('getValue'),
+                        systemName: $('#systemName').textbox('getValue'),
+                        version: $('#version').textbox('getValue'),
+                        statusId: $('#statusId').combobox('getValue'),
+                        statusName: $('#statusId').combobox('getText'),
+                        aUrl: $("#aUrl").textbox("getText"),
+                        iUrl: $("#iUrl").textbox("getText")
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        url: '/A10030/ActSingle',
+
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: JSON.stringify({ "actRow": actRow }),
+
+                        success: function (data) {
+                            if (data.resultCode == '10') {
+                                if (RowStatus == 'A') {
+                                    $('#dg').datagrid('appendRow', actRow);
+
+                                    rowIndex = $("#dg").datagrid("getRowIndex", actRow);
+                                    $("#dg").datagrid("selectRow", rowIndex);
+                                }
+                                else {
+                                    $('#dg').datagrid('updateRow', {
+                                        index: rowIndex,
+                                        row: actRow
+                                    });
+                                }
+                                RowStatus = "Q";
+                                $('#dlg').dialog('close');        // close the dialog
+
+                            }
+                            else {
+                                $.messager.alert('錯誤', data.error, 'error');
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        function btnDelete() {
+            var row = $('#dg').datagrid('getSelected');
+            if (row) {
+                $.messager.confirm('確認', '你確定要刪除這筆資料嗎?', function (r) {
+                    if (r) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/A10030/DeleteSingle",
+                            data:
+                                "pks=" + row.systemId,
+                            success: function (data) {
+                                if (data.resultCode == '10') {
+                                    $.messager.alert('成功', '刪除成功 !', 'info');
+                                    $('#dg').datagrid('reload');    // reload the user data
+                                } else {
+                                    $.messager.alert('錯誤', data.error, 'error');
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei';
+            background-color: white;
+        }
+
+        .datagrid-cell {
+            font-size: 14px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body id="body" class="easyui-layout">
+    <div id="divQuery" style="height: 100px; padding:10px;" data-options="region:'north',title:'Condition',split:true">
+        @Html.DropDownList("lbl_cmb1", selItem_lbl_cmb1, null, new { id = "lbl_cmb1", @class = "easyui-combobox", editable = "false", style = "width:100px; height:30px;" })
+        <input type="text" class="easyui-textbox" style="height:30px;" id="value_cmb1" />
+        <a href="javascript:void(0)" id="btnQuery" name="btnQuery" class="easyui-linkbutton" iconCls="icon-search" style="height:30px;" onclick="btnQuery()">Search</a>
+    </div>
+    <div data-options="region:'center',title:'@title',split:true">
+
+        <div id="toolbar">
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="btnAdd()">Add</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="btnEdit()">修改</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="btnDelete()">Delete</a>
+        </div>
+
+        <table id="dg" class="easyui-datagrid" toolbar="#toolbar" style="width:auto;" method="post" fit="true"
+               pagination="true" pagesize="50" rownumbers="true" singleselect="true">
+            <thead>
+                <tr>
+                    <th field="systemId" sortable="true" editor="text" align="center">系統代碼</th>
+                    <th field="version" sortable="true" editor="text">版本</th>
+                    <th field="systemName" sortable="true" editor="text">系統名稱</th>
+                    <th field="statusName" sortable="true" editor="text">使用平台</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+    <div id="dlg" class="easyui-dialog" style="width: 500px; height: 310px; padding: 10px 20px; " closed="true" buttons="#dlg-buttons" modal="true">
+
+        <div class="ftitle">@title</div>
+
+        <form id="fm" method="post" novalidate>
+            <div class="fitem">
+                <label>系統代碼 : </label>
+                <input id="systemId" name="systemId" class="easyui-textbox" required style="height:30px; width:250px;" data-options="validType:{length:[0,255]}">
+            </div>
+
+            <div class="fitem">
+                <label>系統名稱:</label>
+                <input id="systemName" name="systemName" class="easyui-textbox" required style="height:30px; width:250px;">
+            </div>
+
+            <div class="fitem">
+                <label>版本號:</label>
+                <input id="version" name="version" class="easyui-textbox" required style="height:30px; width:250px;">
+            </div>
+
+            <div class="fitem">
+                <label>使用平台:</label>
+                @Html.DropDownList("statusId", selItem_value_appSysId, null, new { id = "statusId", @class = "easyui-combobox", editable = "false", style = "width:250px; height:30px;", required="required" })
+            </div>
+
+            <div id="appUrl" style="display:none;">
+                <div class="fitem">
+                    <label>Android路徑:</label>
+                    <input id="aUrl" name="aUrl" class="easyui-textbox" required style="height:30px; width:250px;">
+                </div>
+
+                <div class="fitem">
+                    <label>iOS路徑:</label>
+                    <input id="iUrl" name="iUrl" class="easyui-textbox" required style="height:30px; width:250px;">
+                </div>
+            </div>
+        </form>
+
+        <div id="dlg-buttons">
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-ok" onclick="btnSave()">Save</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">Cancel</a>
+        </div>
+    </div>
+</body>
+</html>

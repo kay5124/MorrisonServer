@@ -1,0 +1,364 @@
+﻿
+@{
+    Layout = null;
+
+    var title = "人員帳號維護";
+
+    var selItem_statusId = (List<SelectListItem>)ViewBag.selItem_statusId;
+    var selItem_lbl_cmb1 = (List<SelectListItem>)ViewBag.selItem_lbl_cmb1;
+    var selItem_appGroupId = (List<SelectListItem>)ViewBag.selItem_appGroupId;
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    @*<link href="~/Content/themes/default/easyui.css" rel="stylesheet" />*@
+    @*<link href="~/Content/themes/bootstrap/easyui.css" rel="stylesheet" />*@
+    <link href="~/Content/themes/gray/easyui.css" rel="stylesheet" />
+    <link href="~/Content/themes/icon.css" rel="stylesheet" />
+
+    <link href="~/Content/ZhCss1.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-1.11.3.min.js"></script>
+    <script src="~/Scripts/jquery.easyui-1.4.5.min.js"></script>
+    <script src="~/Scripts/locale/easyui-lang-zh_TW.js"></script>
+    <script src="~/Scripts/ZhEeasyUI-01.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#dg').datagrid('options').url = "/A10013/GetGridJSON";
+
+            $("#notiId").textbox("disable");
+
+            $('#isPushAll').change(function () {
+                if ($('#isPushAll').prop('checked')) {
+                    $('#appGroups').combobox('setValue', '');
+                }
+            })
+
+            $('#appGroups').combobox({
+                onSelect: function (rec) {
+                    $('#isPushAll').prop('checked', false);
+                }
+            })
+        });
+
+        function btnQuery() {
+
+            $('#dg').datagrid('load', {
+                "lbl_cmb1": $('#lbl_cmb1').combobox('getValue'),
+                "value_cmb1": $('#value_cmb1').textbox('getValue'),
+                'value_statusId': $('#value_statusId').combobox('getValue')
+            });
+
+            RowStatus = 'Q';
+        }
+
+        function btnAdd() {
+            if ($('#btnAdd').linkbutton('options').disabled == true) {
+                return;
+            }
+            RowStatus = 'A';
+
+            $('#fm').form('clear');
+            $('#dlg').dialog('center').dialog('open').dialog('setTitle', '新增資料 :');
+        }
+
+        function btnEdit() {
+            if ($('#btnEdit').linkbutton('options').disabled == true) {
+                return;
+            }
+
+            $('#fm').form('clear');
+
+            
+            Row = $('#dg').datagrid('getSelected');
+            RowIndex = $("#dg").datagrid("getRowIndex", Row);
+
+            if (Row.pushTime != "" && Row.pushTime != undefined) {
+                $.messager.alert('提示', '該筆資料已發送推播，無法進行異動', 'info');
+                return;
+            }
+
+            if (Row) {
+                $('#dlg').dialog('center').dialog('open').dialog('setTitle', '修改資料 :');
+                RowStatus = 'M';
+
+                $('#fm').form('load', {
+                    notiId: Row.notiId,
+                    title: Row.title,
+                    msg: Row.msg,
+                    msgHtml: Row.msgHtml,
+                    appGroups: Row.appGroupIds,
+                    isPushAll: Row.isPushAll
+                });
+
+                if (Row.isPushAll == "True") {
+                    $('#isPushAll').prop('checked', true);
+                } else {
+                    $('#isPushAll').prop('checked', false);
+                }
+            }
+        }
+
+        function btnSave() {
+
+            var row = $('#dg').datagrid('getSelected');
+
+            $('#fm').form('submit', {
+                onSubmit: function () {
+                    return $(this).form('validate');
+                },
+                success: function (data) {
+
+                    var actRow = {
+                        RowStatus: RowStatus,
+                        notiId: $('#notiId').textbox('getValue'),
+                        title: $('#title').textbox('getValue'),
+                        msg: $('#msg').val(),
+                        msgHtml: encodeURI($('#msgHtml').val()),
+                       
+                        appGroupNames: $('#appGroups').combobox('getText'),
+
+                        appGroups: $('#appGroups').combobox('getValues').toString(),   //.toString()
+                        isPushAll: $("#isPushAll").prop('checked')
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        url: '/A10013/ActSingle',
+
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: JSON.stringify({ "actRow": actRow }),
+
+                        success: function (data) {
+                            if (data.resultCode == '10') {
+                                if (RowStatus == 'A') {
+
+                                    actRow.notiId = data.row[0].notiId;
+                                    actRow.creatUser = data.row[0].creatUser;
+                                    actRow.creatTime = data.row[0].creatTime;
+                                    actRow.msgHtml = data.row[0].msgHtml;
+                                    $('#dg').datagrid('appendRow', actRow);
+
+                                    RowIndex = $("#dg").datagrid("getRowIndex", actRow);
+                                    $("#dg").datagrid("selectRow", RowIndex);
+                                }
+                                else {
+
+                                    actRow.actUser = data.row[0].actUser;
+                                    actRow.actTime = data.row[0].actTime;
+                                    actRow.msgHtml = data.row[0].msgHtml;
+
+                                    $('#dg').datagrid('updateRow', {
+                                        index: RowIndex,
+                                        row: actRow
+                                    });
+
+                                    $('#dg').datagrid('resize');
+                                }
+                                RowStatus = "Q";
+                                $('#dlg').dialog('close');        // close the dialog
+
+                            }
+                            else {
+                                $.messager.alert('錯誤', data.error, 'error');
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        function btnCancel() {
+            $('#dlg').dialog('close');
+            RowStatus = "Q";
+
+        }
+
+        function btnDelete() {
+
+            if ($('#btnDelete').linkbutton('options').disabled == true) {
+                return;
+            }
+
+            Row = $('#dg').datagrid('getSelected');
+            RowIndex = $("#dg").datagrid("getRowIndex", Row);
+
+            if (Row.pushTime != "" && Row.pushTime != undefined) {
+                $.messager.alert('提示', '該筆資料已發送推播，無法進行異動', 'info');
+                return;
+            }
+
+            if (Row) {
+                $.messager.confirm('確認', '你確定要刪除這筆資料嗎?', function (r) {
+                    if (r) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/A10013/DeleteSingle",
+                            data: "pks=" + Row.notiId,
+
+                            success: function (data) {
+                                if (data.resultCode == "10") {
+                                    $('#dg').datagrid('deleteRow', RowIndex);
+                                }
+                                else {
+                                    $.messager.alert('錯誤', data.error, 'error');
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        function btnPush() {
+
+            Row = $('#dg').datagrid('getSelected');
+            RowIndex = $("#dg").datagrid("getRowIndex", Row);
+
+            if (Row) {
+                $.messager.confirm('確認', '你確定要發送推播嗎？發送後就無法進行修改?', function (r) {
+                    if (r) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/A10013/ActPush",
+                            data: "pks=" + Row.notiId,
+
+                            success: function (data) {
+                                if (data.resultCode == "10") {
+                                    $.messager.alert('訊息', '發送成功', 'info');
+                                    $('#dg').datagrid('reload');
+                                }
+                                else {
+                                    $.messager.alert('錯誤', data.error, 'error');
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+    </script>
+
+
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei';
+            background-color: white;
+        }
+
+        .datagrid-cell {
+            font-size: 14px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body id="body" class="easyui-layout">
+    <!-- #region Create Query section -->
+
+    <div id="divQuery" data-options="region:'north',title:'Condition',split:true" style="height:90px;padding:10px;">
+        <table>
+            <tr>
+                <td width="250">
+                    推播狀態：
+                    @Html.DropDownList("value_statusId", selItem_statusId, null, new { @class = "easyui-combobox", editable = "false", style = "width: 150px;height:30px;" })
+                </td>
+                <td width="250">
+                    @Html.DropDownList("lbl_cmb1", selItem_lbl_cmb1, null, new { @class = "easyui-combobox", editable = "false", style = "width: 80px;height:30px;" })
+                    <input id="value_cmb1" name="value_cmb1" class="easyui-textbox" style="height:30px;width:150px;" />
+                </td>
+                <td width="250">
+                    <a href="javascript:void(0)" class="easyui-linkbutton" plain="false" onclick="btnQuery()" style="height:30px;" iconCls="icon-search">Search</a>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    <!-- #endregion -->
+    <!-- #region Create DataGrid to display -->
+
+    <div id="divGrid" data-options="region:'center',title:'Result'" style="background:#eee;">
+        <div id="toolbar">
+            <a href="#" id="btnAdd" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="btnAdd()">Add</a>
+            <a href="#" id="btnEdit" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="btnEdit()">修改</a>
+            <a href="#" id="btnDelete" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="btnDelete()">Delete</a>
+            <a href="#" id="btnPush" class="easyui-linkbutton" iconcls="icon-reload" plain="true" onclick="btnPush()">發送推播</a>
+        </div>
+
+        <table id="dg" class="easyui-datagrid" toolbar="#toolbar" style="width:auto;" method="post" fit="true"
+               pagination="true" pagesize="50" rownumbers="true" singleselect="true">
+            <thead frozen="true">
+                <tr>
+                    <th field="notiId" frozen="true" sortable="true" editor="text">推播代碼</th>
+                    <th field="title" frozen="true" sortable="true" editor="text">訊息標題</th>
+                    <th field="msg" frozen="true" sortable="true" editor="text">訊息內容</th>
+                    <th field="msgHtml" frozen="true" sortable="true" editor="text">內容html</th>
+                </tr>
+            </thead>
+            <thead>
+                <tr>
+                    <th field="isPushAll" sortable="true" editor="text">群體推播</th>
+                    <th field="appGroupNames" sortable="true" editor="text">使用者群組</th>
+                    <th field="pushTime" sortable="true" editor="text">推播時間</th>
+                    <th field="statusName" sortable="true" editor="text">Push Status</th>
+                    <th field="soundId" sortable="true" editor="text">聲音代碼</th>
+                    <th field="param" sortable="true" editor="text">傳入參數</th>
+                    <th field="backcolor" sortable="true" editor="text">顏色</th>
+                    <th field="creatUser" sortable="true" editor="text">建立人員</th>
+                    <th field="creatTime" sortable="true" editor="text">建立時間</th>
+                    <th field="actUser" sortable="true" editor="text">異動人員</th>
+                    <th field="actTime" sortable="true" editor="text">異動時間</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <!-- #endregion -->
+    <!-- #region Form dialog for Action -->
+
+    <div id="dlg" class="easyui-dialog" style="width: 700px; height: 520px; padding: 10px 20px; " closed="true" buttons="#dlg-buttons" modal="true">
+
+        <div class="ftitle">@title</div>
+
+        <form id="fm" method="post">
+            <div class="fitem">
+                <label>推播代碼 : </label>
+                <input id="notiId" name="notiId" class="easyui-textbox" style="width:200px;height:30px;" required disabled="disabled">
+            </div>
+            <div class="fitem">
+                <label>訊息標題 : </label>
+                <input id="title" name="title" class="easyui-textbox" style="width:400px;height:30px;" required>
+            </div>
+            <div class="fitem">
+                <label style="vertical-align:top;">訊息內容 : </label>
+                <textarea rows="5" cols="55" id="msg" name="msg"></textarea>
+            </div>
+            <div class="fitem" style="vertical-align:top;">
+                <label style="vertical-align:top;">訊息內容(Html) : </label>
+                <textarea rows="5" cols="55" id="msgHtml" name="msgHtml"></textarea>
+            </div>
+            <div class="fitem">
+                <label>推播群組 : </label>
+                @Html.DropDownList("appGroups", selItem_appGroupId, null, new { id = "appGroups", @class = "easyui-combobox", editable = "false", multiple = "true", style = "width:200px;height:30px;" })
+            </div>
+            <div class="fitem">
+                <label>推給所有人 : </label>
+                <input type="checkbox" id="isPushAll" name="isPushAll" style="width:20px;height:20px;" />
+            </div>
+        </form>
+    </div>
+
+    <div id="dlg-buttons">
+        <a href="javascript:void(0)" id="btnSave" class="easyui-linkbutton" iconcls="icon-ok" onclick="btnSave()" style="height:30px;">Save</a>
+        <a href="javascript:void(0)" id="btnCancel" class="easyui-linkbutton" iconcls="icon-cancel" onclick="btnCancel()" style="height:30px;">Cancel</a>
+    </div>
+    <!-- #endregion -->
+
+</body>
+</html>

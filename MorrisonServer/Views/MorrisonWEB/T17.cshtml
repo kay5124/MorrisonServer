@@ -1,0 +1,291 @@
+﻿
+@{
+    Layout = null;
+    var title = "Web Morrison ePOD App";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    <link href="~/Scripts/SB_Admin2/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/dist/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/morrisjs/morris.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Scripts/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.css" rel="stylesheet" />
+    <link href="~/Content/ZhCss2.css" rel="stylesheet" />
+    <link href="~/Vender/T30/Carline.css" rel="stylesheet" />
+
+    <script src="~/Scripts/SB_Admin2/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/raphael/raphael.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/morrisjs/morris.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/data/morris-data.js"></script>
+    <script src="~/Scripts/SB_Admin2/js/sb-admin-2.js"></script>
+    <script src="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.min.js"></script>
+    <script src="~/Vender/language/language.js"></script>
+
+    <script>
+        var webTicket = '@ViewBag.webTicket';
+        var paramPass = new Object();
+        var count = 0;
+        var dispatch_id = '';
+
+        $(document).ready(function () {
+            initData();
+            initButton();
+            $('body').fadeIn('slow');
+        });
+
+        function initData() {
+            var urlParam = window.location.href;
+            var paramLength = urlParam.indexOf('dispatch_id=') + 12;
+            dispatch_id = urlParam.substr(paramLength, urlParam.length - paramLength);
+            //localStorage.setItem('dispatch_id', dispatch_id);
+
+            $('#T17_lbl_title').html(dispatch_id);
+
+            GetBolData();
+        }
+
+        function initButton() {
+            $('#btnSave').on('click', btnSave);
+        }
+
+        function GetBolData() {
+            var actRow = {
+                'dispatch_id': dispatch_id,
+                'ticket': webTicket,
+                'clientIp': '0123456789'
+            }
+
+            GetAjaxV3('Delivery/T17_GetBolData', actRow, true, function (data) {
+                if (data != "connError") {
+                    if (data.resultCode == "10") {
+                        $('#oriShipOrder').html('');
+                        $('#newShipOrder').html('');
+                        if (data.rows.length > 0) {
+                            count = data.rows.length;
+
+                            for (var i = 0; i < data.rows.length; i++) {
+                                var dg = '';
+                                var row = data.rows[i];
+                                dg += '<div class="col-12" style="height:80px;">';
+                                dg += '    <a href="javascript:void(0)" id="seq_' + row.arriveSeqD + '" class="btn btn-block" style="border:1px solid white;background-color:#0c4da2;color:white;" onclick="btnChange(\'seq_' + row.arriveSeqD + '\',\'' + row.bol_no + '\')">';
+                                dg += '        <div class="row" style="padding-left:10px;">';
+                                dg += '            <div class="col-2">' + row.arriveSeqD + '</div>';
+                                dg += '            <div class="col-10" style="font-size:12px;text-align:left;">';
+                                dg += row.bol_no + '<br/>';
+                                dg += row.shipName + ' ' + row.shipName2 + '<br/>';
+                                dg += row.shipAddr + ' ' + row.shipAddr2;
+                                dg += '            </div>';
+                                dg += '        </div>';
+                                dg += '    </a>';
+                                dg += '</div>';
+                                $('#oriShipOrder').append(dg);
+                            }
+                        }
+                    } else {
+                        swal("Error", data.error, "warning");
+                    }
+                }
+            });
+        }
+
+        function btnChange(id, bol_no) {
+            $('#' + id).addClass('disabled');
+            $('#' + id).css('background-color', 'silver');
+            var html = $('#' + id).html();
+
+            var btn = '<div class="col-12" style="height:80px;" id="row_' + id + '" name="newShipOrderGroup" bol_no="' + bol_no + '"><a href="javascript:void(0)" id="' + id + '_new" class="btn btn-block" style="border:1px solid white;background-color:#0c4da2;color:white;" onclick="btnCancel(\'' + id + '\')">' + html + '</a></div>';
+
+            $('#newShipOrder').html($('#newShipOrder').html() + btn);
+        }
+
+        function btnCancel(id) {
+            $('#row_' + id).remove();
+            $('#' + id).removeClass('disabled');
+            $('#' + id).css('background-color', '#0c4da2');
+        }
+
+        function btnSave() {
+            var newOrderDiv = $('div[name="newShipOrderGroup"]');
+            if (newOrderDiv.length != count) {
+                swal("Error", 'You have not yet set distribution queue.', "warning");
+                //swal("Error", '您尚未設定配送順序', "warning");
+                return;
+            }
+
+            var newOrderArr = new Array();
+            for (var i = 0; i < newOrderDiv.length; i++) {
+                var tmpObj = {
+                    'arriveSeqD': newOrderDiv[i].id.replace('row_seq_', ''),
+                    'bol_no': $(newOrderDiv[i]).attr('bol_no')
+                }
+                newOrderArr.push(tmpObj);
+            }
+
+            var actRow = {
+                'dispatch_id': dispatch_id,
+                'newOrderArr': newOrderArr,
+                'ticket': webTicket,
+                'clientIp': '0123456789'
+            }
+
+            $.ajax({
+                url: "/api/Delivery/T17_ActBolArriveSeq",
+                type: "POST",
+                dataType: "json",
+                async: false,
+                contentType: 'application/json',
+                data: JSON.stringify(actRow),
+                headers: {
+                    'Authorization': 'Basic ' + btoa('zhtech:24369238')
+                },
+                success: function (data) {
+                    if (data.resultCode == "10") {
+                        window.location = '/MorrisonWEB/T15?dispatch_id=' + dispatch_id
+                        //onBackKeyDown();
+                    } else {
+                        swal("Error", data.error, "warning");
+                    }
+                }
+            })
+
+        }
+
+        function onBackDown() {
+            window.location = '/MorrisonWEB/T15?dispatch_id=' + dispatch_id
+        }
+
+        function GetAjaxV3(route, actRow, async, returnData) {
+            /// <summary>
+            /// 一般呼叫API的ajax方法，該方法會出現Loading的dialog，但前提是async必須設定為true
+            /// </summary>
+            /// <param name="route">str，API的路徑，範例：API檔案名稱/API功能名稱</param>
+            /// <param name="actRow">obj，傳給API的參數</param>
+            /// <param name="async">bit，設定是否為非同步</param>
+            /// <param name="returnData">obj，無須寫任何方法</param>
+            /// <returns>執行完畢後回傳API的結果，若resultCode為10，表示API執行成功，若為01表示API執行過程中有誤，若回傳connError表示連線失敗</returns>
+
+            $.ajax({
+                url: "/api/" + route,
+                type: "POST",
+                dataType: "json",
+                data: actRow,
+                async: async,
+                headers: {
+                    'Authorization': 'Basic ' + btoa('zhtech:24369238')
+                },
+                success: function (data) {
+                    returnData(data);
+                },
+                error: function (data) {
+                    returnData("connError");
+                }
+            })
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0c4da2;
+            color: #fff;
+        }
+
+        table tr td {
+            padding: 10px;
+        }
+
+        .footer {
+            background-color: #0c4da2;
+            z-index: 10;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            min-width: 110%;
+            transition: opacity 0.5s ease-out;
+            width: 110%;
+            overflow: hidden;
+            /*height: 52px;*/
+        }
+    </style>
+
+</head>
+
+<body style="font-family:'Microsoft JhengHei';">
+    <div class="container">
+        <div class="row" style="height:60px;margin:0rem;">
+            <div class="col-12" style="height:60px;padding:0px;">
+
+                <div class="row" style="padding:15px 15px 10px 10px;font-size:18px">
+                    <table width="100%">
+                        <tr>
+                            <td width="10%" align="left">
+                                <a href="javascript:void(0);" onclick="onBackDown()"><img src="~/images/s_backPage.png" width="25" /></a>
+                            </td>
+                            <td width="80%" align="center">
+                                <strong><span id="T17_lbl_title"></span></strong>
+                            </td>
+                            <td width="10%" align="right">
+                                <a href="#" id="btnSave"><img src="~/images/icon_check.png" style="width:30px;padding-top:5px;" /></a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <hr style="border-bottom: 2px solid white;margin:10px 0px 10px 0px;">
+        <div class="row" style="padding:0px;">
+            <div class="col-12" style="text-align:center;">
+                <h4><span id="T17_lbl_originalShipOrder">Original ship order</span></h4>
+            </div>
+            <div class="col-12">
+                <div class="row" id="oriShipOrder" style="padding:40px;">
+                    <!--<div class="col-12" style="height:80px;">
+                        <a href="javascript:void(0)" id="seq_1" class="btn btn-block" style="border:1px solid white;background-color:#0c4da2;color:white;" onclick="btnChange('seq_1')">
+                            <div class="row">
+                                <div class="col-2">1</div>
+                                <div class="col-10" style="font-size:12px;text-align:left;">
+                                    ORD20170709002<br/>
+                                    BENJAMIN SCHOOL DISTRICT #25<br/>
+                                    28 W 250 ST CHARLES RD
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12" style="height:50px;">
+                        <a href="javascript:void(0)" id="seq_2" class="btn btn-block" style="border:1px solid white;background-color:#0c4da2;color:white;" onclick="btnChange('seq_2')">
+                            <div class="row">
+                                <div class="col-2">2</div>
+                                <div class="col-10" style="font-size:12px;text-align:left;">
+                                    ORD20170710084<br />
+                                    ST CLARE CATHOLIC SCH<br />
+                                    214 W 3RD ST
+                                </div>
+                            </div>
+                        </a>
+                    </div>-->
+                </div>
+            </div>
+        </div>
+        <hr style="border-bottom: 2px solid white;margin:20px 0px 20px 0px;">
+
+        <div class="row" style="padding:0px;">
+            <div class="col-12" style="text-align:center;">
+                <h4><span id="T17_lbl_newShipOrder">New ship order</span></h4>
+            </div>
+            <div class="col-12">
+                <div class="row" id="newShipOrder" style="padding:40px;">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

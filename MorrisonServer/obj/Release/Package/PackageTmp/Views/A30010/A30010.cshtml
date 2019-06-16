@@ -1,0 +1,310 @@
+﻿
+@{
+    Layout = null;
+    var title = "Edit dispatch and BOL status.";
+
+    var selItem_lbl_cmb1 = (List<SelectListItem>)ViewBag.selItem_lbl_cmb1;
+    var selItem_statusId = (List<SelectListItem>)ViewBag.selItem_statusId;
+    var selItem_dcId = (List<SelectListItem>)ViewBag.selItem_dcId;
+    var selItem_Company = (List<SelectListItem>)ViewBag.selItem_Company;
+    var selItem_driver = (List<SelectListItem>)ViewBag.selItem_driver;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    <link href="~/Scripts/SB_Admin2/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/dist/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/morrisjs/morris.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Scripts/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.css" rel="stylesheet" />
+    <link href="~/Content/ZhCss2.css" rel="stylesheet" />
+
+    <script src="~/Scripts/SB_Admin2/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/raphael/raphael.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/morrisjs/morris.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/data/morris-data.js"></script>
+    <script src="~/Scripts/SB_Admin2/js/sb-admin-2.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-TW.js"></script>
+    <script src="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.min.js"></script>
+    <script src="~/Vender/zhScript/zhTable_angus.js"></script>
+
+    <script type="text/javascript">
+        var RowStatus = 'Q';
+
+        $(document).ready(function () {
+            $('#zhTb1').zhTable({
+                '_rows': 20,
+                '_columns': [
+                    { 'id': 'dispatch_id', 'text': 'Dispatch Id', 'sort': true },
+                    //{ 'id': 'dcName', 'text': 'DC Name', 'sort': true },
+                    { 'id': 'bindTime', 'text': 'Truck loading', 'sort': true },
+                    { 'id': 'realDelDate', 'text': 'OFD', 'sort': true },
+                    { 'id': 'realFinishTime', 'text': 'Last POD', 'sort': true },
+                    { 'id': 'tranCompName', 'text': 'Company', 'sort': true },
+                    { 'id': 'driverId', 'text': 'Driver Id', 'sort': true },
+                    { 'id': 'driverName', 'text': 'Driver Name', 'sort': true },
+                    { 'id': 'carId', 'text': 'Car No.', 'sort': true },
+                    { 'id': 'trailerId', 'text': 'Trailer Number', 'sort': true },
+                    { 'id': 'driverId2', 'text': 'Two driver id', 'sort': true },
+                    { 'id': 'driverName2', 'text': 'Two driver name', 'sort': true },
+                    { 'id': 'detailCount', 'text': 'BOL count', 'sort': true },
+                    { 'id': 'statusName', 'text': 'Status', 'sort': true },
+                    //{ 'id': 'actUser', 'text': 'ActUser', 'sort': true },
+                    //{ 'id': 'actUser', 'text': 'ActUser', 'sort': true },
+                    { 'id': 'btnClean', 'text': 'Action' },
+                    { 'id': 'btnEdit', 'text': 'Edit' }
+                ],
+                'url': '@ViewBag.ServerName' + '/A30010/GetGridJSON'
+            });
+            btnQuery();
+        });
+
+
+        function btnQuery() {
+            RowStatus = 'Q';
+
+            $('#zhTb1').zhTable('loadData', {
+                "lbl_cmb1": $("#lbl_cmb1").val(),
+                "date": $("#date").val(),
+                "dicpatch_Id": $("#value_dicpatch_Id").val()
+                //"value_cmb1": $("#value_cmb1").val(),
+                //"value_dcId": $("#value_dcId").val()
+            });
+        }
+
+
+
+        function btnClean(pk) {
+            swal({
+                title: "",
+                text: "Do you want to cancel dispatch ("+pk+")？",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Yes",
+                cancelButtonText: 'No',
+                closeOnConfirm: false
+            }, function () {
+                $.ajax({
+                    type: "POST",
+                    url: "/A30010/DeleteSingle",
+                    data:
+                        "pk=" + pk,
+                    success: function (data) {
+                        if (data.resultCode == '10') {
+                            swal("", "Successful", "success");
+                            $('#zhTb1').zhTable('reload');
+                        } else {
+                            swal("Error", data.error, "warning");
+                        }
+                    }
+                });
+            });
+        }
+
+        function btnEdit(pk) {
+            $('#fm').get(0).reset();
+
+            $.ajax({
+                type: "POST",
+                url: "/A30010/GetDispatchData",
+                data: "dispatch_id=" + pk,
+                success: function (data) {
+                    if (data.resultCode == "10") {
+                        //把值塞回來
+                        var dispatchData = data.dispatch[0];
+                        for (var val in dispatchData) {
+                            $("#" + val).val(dispatchData[val]);
+                        }
+                        //如果DB需要2位司機運送 開啟第二位司機欄
+                        if (parseInt(dispatchData["driverCnt"]) > 1) $("#driver2Div").show();
+
+                        $("#btnSave").attr("onClick","btnSave('"+pk+"')")
+                        //呼叫dialog
+                        $("#dlg").modal();
+                    } else {
+                        swal("Error", data.error, "warning");
+                    }
+                }
+            })
+        }
+
+        function btnSave(pk) {
+
+            var actRow = {
+                dispatch_id: pk,
+                tranCompId: $("#tranCompId").val(),
+                carId: $("#tranCompId").val(),
+                trailerId: $("#trailerId").val(),
+                driverId: $("#driverId").val(),
+                driverId2: $("#driverId2").val()
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/A30010/ActDispatchData",
+                contentType:"application/json",
+                dataType:"json",
+                data: JSON.stringify({ "actRow": actRow }),
+                success: function (data) {
+                    if (data.resultCode == "10") {
+                        $("#dlg").modal('toggle');
+                        swal("Successful", "Successful saving", "success");
+                        btnQuery();
+                    } else {
+                        swal("Error", data.error, "warning");
+                    }
+                }
+            })
+        }
+
+    </script>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei';
+            background-color: white;
+        }
+
+        .datagrid-cell {
+            font-size: 14px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body style="font-family:'Microsoft JhengHei';">
+    <div id="page-wrapper" style="padding:30px;margin:0px;">
+        <div class="panel panel-default">
+            <div class="panel-heading">Condition</div>
+            <div class="panel-body">
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="dcId">Station</label>
+                        @Html.DropDownList("value_dcId", selItem_dcId, null, new { id = "value_dcId", Class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="date">Schedule pick up date</label>
+                        <input type="date" id="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="value_dispatch_Id">Dispatch Id</label>
+                        <input id="value_dispatch_Id" name="value_dispatch_Id" class="form-control" />
+                        @*@Html.DropDownList("lbl_cmb1", selItem_lbl_cmb1, null, new { id = "lbl_cmb1", Class = "form-control" })*@
+                        @*<input id="value_cmb1" name="value_cmb1" class="form-control" />*@
+                    </div>
+                </div>
+
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <button id="btnQuery" onclick="btnQuery()" class="btn btn-default">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Result</div>
+            <div class="panel-body">
+                <div id="zhTb1">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="dlg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title"><strong id="dlgTitle">Edit dispatch and BOL status</strong></h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="fm">
+
+                        <div class="form-group">
+                            <label for="dcId">Station</label>
+                            <input class="form-control" id="dcId" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dispatch_id">Dispatch Id</label>
+                            <input class="form-control" id="dispatch_id" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bindTime">Truck loading</label>
+                            <input class="form-control" id="bindTime" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="realDelDate">OFD</label>
+                            <input class="form-control" id="realDelDate" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="taskStatus">Status</label>
+                            <input class="form-control" id="taskStatus" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tranCompId">Company</label>
+                            @Html.DropDownList("tranCompId", selItem_Company, null, new { id = "tranCompId", @class = "form-control" })
+                        </div>
+
+                        <div class="form-group">
+                            <label for="carId">Car No.</label>
+                            <input class="form-control" id="carId">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="trailerId">Trailer Number</label>
+                            <input class="form-control" id="trailerId">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="driverId">Driver Name(driver id)</label>
+                            @Html.DropDownList("driverId", selItem_driver, null, new { id = "driverId", @class = "form-control" })
+                        </div>
+
+                        <div class="form-group" id="driver2Div" style="display:none;">
+                            <label for="driverId2">Two Driver Name(two driver id)</label>
+                            @Html.DropDownList("driverId2", selItem_driver, null, new { id = "driverId2", @class = "form-control" })
+                        </div>
+
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="btnSave" onclick="btnSave()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Modal-->
+</body>
+</html>

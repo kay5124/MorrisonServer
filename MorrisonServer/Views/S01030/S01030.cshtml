@@ -1,0 +1,232 @@
+﻿
+@{
+    Layout = null;
+    var title = "System function authority";
+    //var title = "功能權限設定";
+
+    var selItem_groupId = (List<SelectListItem>)ViewBag.selItem_groupId;
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    <link href="~/Scripts/SB_Admin2/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/dist/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/morrisjs/morris.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Scripts/SB_Admin2/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Scripts/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.css" rel="stylesheet" />
+    <link href="~/Content/ZhCss2.css" rel="stylesheet" />
+
+    <script src="~/Scripts/SB_Admin2/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/raphael/raphael.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/morrisjs/morris.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/data/morris-data.js"></script>
+    <script src="~/Scripts/SB_Admin2/js/sb-admin-2.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/SB_Admin2/vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-TW.js"></script>
+    <script src="~/Vender/bootstrap-sweetalert-master/dist/sweetalert.min.js"></script>
+    <script src="~/Vender/zhScript/zhTable_angus.js"></script>
+    <script>
+        var arrFuncId = new Array();
+        var objActRow = new Object();
+
+        var $dg;
+        var RowStatus = 'Q';
+
+        var Row, RowIndex;
+        var Rows;
+
+        var CurrRowIndex;
+        var CurrRow;
+
+ 
+        //dg += '    <td data-th="選單權限" name="limitId" limitId="' + row.limitId + '" funcId="' + row.funcId.trim() + '">' + row.limitName + '</td>';
+        
+        
+
+        $(document).ready(function () {
+            $('#zhTb1').zhTable({
+                '_rows': 400,
+                '_columns': [
+                    { 'id': 'parentFuncId', 'text': 'Parent menu id' },
+                    { 'id': 'funcId', 'text': 'Menu Id' },
+                    { 'id': 'parentFuncName', 'text': 'Parent menu function' },
+                    { 'id': 'funcName', 'text': 'Parent menu permission' },
+                    { 'id': 'limitName', 'text': 'Menu permission', 'customizeProp': { 'customizeProp1': 'limitId', 'customizeProp2': 'funcId' } },
+                    { 'id': 'creatUser', 'text': 'CreatUser' },
+                    { 'id': 'creatTime', 'text': 'CreatTime' },
+                    { 'id': 'actUser', 'text': 'ActUser' },
+                    { 'id': 'actUser', 'text': 'ActUser' },
+                ],
+                'url': '@ViewBag.ServerName' + '/S01030/GetGridJSON'
+            });
+        });
+
+        function btnQuery(reload) {
+            $('#zhTb1').zhTable('loadData', {
+                "value_groupId": $("#value_groupId").val()
+            });
+
+            $('#zhTb1').zhTable('getJSONData', {
+                "value_groupId": $("#value_groupId").val()
+            }, true, function (data) {
+                arrFuncId = data;
+            });
+        }
+
+        function btnEdit() {
+            $('#btnEdit').hide();
+            $('#btnSave').show();
+            $('#btnCancel').show();
+            $('#btnQuery').attr('disabled', true);
+            $('#value_groupId').attr('disabled', true);
+
+            for (var i = 0 ; i < arrFuncId.length; i++) {
+                var ddlLimitId = '';
+                ddlLimitId += '<select name="ddlLimitId" id="' + arrFuncId[i].funcId.trim() + '" parentFuncId="' + arrFuncId[i].parentFuncId.trim() + '" onchange="ddlChange(\'' + arrFuncId[i].funcId.trim() + '\')" realRow="' + arrFuncId[i].realRow + '" class="form-control">';
+                if (arrFuncId[i].limitId == '0') {
+                    ddlLimitId += '<option value="0" selected="selected">Disable</option>';
+                    ddlLimitId += '<option value="1">Enable</option>';
+                } else {
+                    ddlLimitId += '<option value="0">Disable</option>';
+                    ddlLimitId += '<option value="1" selected="selected">Enable</option>';
+                }
+                ddlLimitId += '</select>';
+
+                $('td[funcId="' + arrFuncId[i].funcId.trim() + '"]').html(ddlLimitId);
+            }
+
+            //$('select[name="ddlLimitId"]').on('change', function () {
+            //    $('select[parentFuncId="' + this.id + '"]').val(this.value);
+
+            //    //if ($('select[parentFuncId="' + this.id + '"]').length > 0) {
+            //    //}
+            //})
+        }
+
+        function ddlChange(id) {
+            if (!objActRow.hasOwnProperty[id]) {
+                objActRow[id] = {
+                    groupId: $('#value_groupId').val(),
+                    funcId: id,
+                    limitId: $('#' + id).val(),
+                    realRow: $('#' + id).attr('realRow')
+                }
+            } else {
+                objActRow[id]['limitId'] = $('#' + id).val();
+            }
+
+            var tmp = $('select[parentFuncId="' + id + '"]');
+            if (tmp.length > 0) {
+                tmp.val($('#' + id).val());
+                for (var i = 0 ; i < tmp.length; i++) {
+                    ddlChange(tmp[i].id);
+                }
+            }
+        }
+
+        function btnCancel() {
+            $('#btnEdit').show();
+            $('#btnSave').hide();
+            $('#btnCancel').hide();
+            $('#value_groupId').attr('disabled', false);
+            $('#btnQuery').attr('disabled', false);
+
+            for (var i = 0 ; i < arrFuncId.length; i++) {
+                $('td[funcId="' + arrFuncId[i].funcId.trim() + '"]').html(arrFuncId[i].limitName);
+            }
+
+            objActRow = new Object();
+        }
+
+        function btnSave() {
+            var actRows = new Array();
+
+            if (objActRow != null || objActRow != '' || objActRow != undefined) {
+                for (var key in objActRow) {
+                    actRows.push(objActRow[key]);
+                }
+            }
+
+            if (actRows.length == 0) return; //沒有異動到不需儲存
+
+            //debugger;
+            $.ajax({
+                type: "POST",
+                url: '/S01030/ActRows',
+
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(actRows),
+
+                success: function (data) {
+                    if (data.resultCode == '10') {
+                        swal("Successful", "Successful saving", "success");
+                        btnCancel();
+                        btnQuery();
+                    }
+                    else {
+                        swal("Error", data.error, "warning");
+                    }
+                }
+            });
+            RowStatus = "";
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei';
+            background-color: white;
+        }
+
+        .datagrid-cell {
+            font-size: 14px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body style="font-family:'Microsoft JhengHei';">
+    <div id="page-wrapper" style="padding:30px;margin:0px;">
+        <div class="panel panel-default">
+            <div class="panel-heading">Condition</div>
+            <div class="panel-body">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="groupId">User Group</label>
+                        @Html.DropDownList("groupId", selItem_groupId, null, new { id = "value_groupId", Class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <button id="btnQuery" onclick="btnQuery()" class="btn btn-default">Search</button>
+                        <button id="btnEdit" onclick="btnEdit()" class="btn btn-primary">Edit</button>
+                        <button id="btnSave" onclick="btnSave()" class="btn btn-success" style="display:none;">Save</button>
+                        <button id="btnCancel" onclick="btnCancel()" class="btn btn-danger" style="display:none;">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Result</div>
+            <div class="panel-body">
+                <div id="zhTb1">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

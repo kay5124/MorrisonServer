@@ -1,0 +1,196 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.11.3.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Vender/amazon-cognito-identity-js/dist/amazon-cognito-identity.min.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.41.min.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#userId").keypress(function (e) {
+                code = (e.keyCode ? e.keyCode : e.which);
+                if (code == 13) btnLogin();
+            });
+            $("#password").keypress(function (e) {
+                code = (e.keyCode ? e.keyCode : e.which);
+                if (code == 13) btnLogin();
+            });
+        });
+
+        function btnLogin() {
+            //try {
+            //    var poolData = {
+            //        UserPoolId: 'us-east-1_pqWqqHhKH',
+            //        ClientId: '5bmf248qj0u6utvin0a1alopee'
+            //    };
+
+            //    var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+
+            //    var attributeList = [];
+
+            //    var dataEmail = {
+            //        Name: 'email',
+            //        Value: ''
+            //    };
+            //    var dataPhoneNumber = {
+            //        Name: 'phone_number',
+            //        Value: ''
+            //    };
+
+            //    var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
+            //    var attributePhoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(dataPhoneNumber);
+
+            //    attributeList.push(attributeEmail);
+            //    attributeList.push(attributePhoneNumber);
+
+            //    //userPool.signUp($('#userId').val(), $('#password').val(), attributeList, null, function (err, result) {
+            //    //    if (err) {
+            //    //        alert(err);
+            //    //        return;
+            //    //    }
+            //    //    cognitoUser = result.user;
+            //    //    alert('user name is ' + cognitoUser.getUsername());
+            //    //});
+                
+            //    var authenticationData = {
+            //        Username : $('#userId').val(), // your username here
+            //        Password : $('#password').val(), // your password here
+            //    };
+            //    var authenticationDetails = 
+            //new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+ 
+            //    var cognitoUser = 
+            //new AmazonCognitoIdentity.CognitoUser(userData);
+            //    cognitoUser.authenticateUser(authenticationDetails, {
+            //        onSuccess: function (result) {
+            //            var accessToken = result.getAccessToken().getJwtToken();
+            //        },
+ 
+            //        onFailure: function(err) {
+            //            alert(err);
+            //        },
+            //        mfaRequired: function(codeDeliveryDetails) {
+            //            var verificationCode = prompt('Please input verification code' ,'');
+            //            cognitoUser.sendMFACode(verificationCode, this);
+            //        }
+            //    });
+            //} catch (e) {
+            //    alert(e);
+            //}
+
+
+            //var authenticationData = {
+            //    Username: $('#userId').val(),
+            //    Password: $('#password').val(),
+            //};
+            //var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+            //var poolData = {
+            //    //UserPoolId: 'us-west-2_99yd4OwwE',
+            //    //ClientId: 'lbg2pt7v6micfu770tgvddql0'
+            //};
+            //var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+            //var userData = {
+            //    Username: 'username',
+            //    Pool: userPool
+            //};
+            //var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+            //cognitoUser.authenticateUser(authenticationDetails, {
+            //    onSuccess: function (result) {
+            //        var accessToken = result.getAccessToken().getJwtToken();
+
+            //        /* Use the idToken for Logins Map when Federating User Pools with identity pools or when passing through an Authorization Header to an API Gateway Authorizer*/
+            //        var idToken = result.idToken.jwtToken;
+            //    },
+
+            //    onFailure: function (err) {
+            //        alert(err);
+            //    },
+
+            //});
+
+
+
+
+            if ($('#userId').val() == '' || $('#password').val() == '') {
+                alert("請確實填入帳號或密碼");
+                return;
+            }
+
+            $.ajax({
+                url: '/Home/Login',
+                type: 'POST',
+                data: 'userId=' + $('#userId').val() + '&password=' + $('#password').val(),
+                success: function (data) {
+                    if (data.resultCode == '10') {
+                        window.location.href = data.GoPage;
+                    } else {
+                        alert(data.error);
+                    }
+                }
+            })
+        }
+
+
+        function btnRetrieve() {
+
+
+
+            var data = {
+                //UserPoolId: 'us-west-2_99yd4OwwE',
+                //ClientId: 'lbg2pt7v6micfu770tgvddql0'
+                UserPoolId: 'us-west-2_99yd4OwwE',
+                ClientId: 'lbg2pt7v6micfu770tgvddql0'
+            };
+            var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+            var cognitoUser = userPool.getCurrentUser();
+
+            if (cognitoUser != null) {
+                cognitoUser.getSession(function (err, session) {
+                    if (err) {
+                        alert(err);
+                        return;
+                    }
+                    console.log('session validity: ' + session.isValid());
+                });
+            }
+        }
+    </script>
+</head>
+<body>
+    <form class="form-horizontal" style="padding:30px;">
+        <div class="form-group">
+            <div class="form-group">
+                <label for="userId" class="col-sm-2 control-label">帳號</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" id="userId" maxlength="50">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-group">
+                <label for="password" class="col-sm-2 control-label">密碼</label>
+                <div class="col-sm-3">
+                    <input type="password" class="form-control" id="password" maxlength="20">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <a href="#" id="btnLogin" onclick="btnLogin()" class="btn btn-default">登入</a>
+                <a href="#" id="btnRetrieve" onclick="btnRetrieve()" class="btn btn-default">檢視</a>
+            </div>
+        </div>
+    </form>
+</body>
+</html>
